@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Perforaciones del Valle</title>
+<title>Servicios Santa Maria</title>
 <meta name="color-scheme" content="dark light">
 <style>
 :root{
@@ -33,7 +33,6 @@ body::before{
   background:linear-gradient(to bottom, rgba(0,0,0,.18), rgba(0,0,0,.06));
 }
 body::after{
-  /* patrón de celda solar (rejilla suave) */
   --sz:44px;
   background:
     repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0 1px, transparent 1px var(--sz)),
@@ -47,41 +46,173 @@ body::after{
 body.glow-historia .reflect{background:radial-gradient(900px 360px at 50% 86%, rgba(111,255,233,.18), transparent 70%);}
 body.glow-proyectos .reflect{background:radial-gradient(900px 360px at 50% 86%, rgba(124,58,237,.18), transparent 70%);}
 
-/* ===== Intro ===== */
-.intro{position:fixed; inset:0; display:grid; place-items:center; background:#0b1528; z-index:9999; animation:intro-hide 1.2s ease 2.6s forwards}
-.intro img{width:220px; aspect-ratio:1/1; object-fit:cover; border-radius:50%; background:#111827; padding:10px; box-shadow:0 0 35px rgba(111,255,233,.25); opacity:0; transform:scale(.84); animation:intro-logo 1.8s cubic-bezier(.2,.8,.2,1) .1s forwards}
-@keyframes intro-logo{0%{opacity:0;transform:scale(.84)}60%{opacity:.9;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+/* ===== Intro / Loader ===== */
+.intro{
+  position:fixed; inset:0;
+  display:grid; place-items:center;
+  background:radial-gradient(1200px 700px at 50% 30%, rgba(31,102,179,.25), transparent 60%),
+             radial-gradient(900px 600px at 50% 90%, rgba(111,255,233,.12), transparent 65%),
+             #071224;
+  z-index:9999;
+  animation:intro-hide 1.1s ease 2.9s forwards;
+}
+.intro .stack{
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+  text-align:center;
+  transform:translateY(6px);
+  opacity:0;
+  animation:intro-in 1.1s cubic-bezier(.2,.9,.2,1) .15s forwards;
+}
+@keyframes intro-in{to{opacity:1; transform:translateY(0)}}
 @keyframes intro-hide{to{opacity:0;visibility:hidden}}
+
+.intro .kicker{
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#eaf2ff;
+  opacity:.92;
+  font-size:12px;
+}
+.intro .title{
+  margin:0;
+  font-size:clamp(22px,3.4vw,34px);
+  line-height:1.1;
+  font-weight:1000;
+  color:#f4f8ff;
+  text-shadow:0 10px 30px rgba(0,0,0,.55);
+}
+.intro .sub{
+  margin:0;
+  color:rgba(234,242,255,.86);
+  font-weight:700;
+  letter-spacing:.02em;
+}
+
+/* Eclipse + Logo */
+.ecl{
+  width:min(320px,74vw);
+  aspect-ratio:1/1;
+  border-radius:50%;
+  position:relative;
+  display:grid; place-items:center;
+  background:radial-gradient(circle at 35% 28%, rgba(255,255,255,.08), transparent 40%),
+             radial-gradient(circle at 60% 65%, rgba(31,102,179,.18), transparent 55%),
+             radial-gradient(circle at 50% 50%, #050a12, #02040a 70%);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.06),
+    0 24px 80px rgba(0,0,0,.65),
+    0 0 90px rgba(31,102,179,.18);
+  overflow:hidden;
+}
+
+/* anillo animado */
+.ecl::before{
+  content:"";
+  position:absolute; inset:-8px;
+  border-radius:50%;
+  background:conic-gradient(from 180deg,
+    rgba(111,255,233,.0),
+    rgba(111,255,233,.85),
+    rgba(124,58,237,.85),
+    rgba(31,102,179,.85),
+    rgba(111,255,233,.0)
+  );
+  filter:blur(10px);
+  opacity:.55;
+  animation:ring 2.2s linear infinite;
+}
+@keyframes ring{to{transform:rotate(360deg)}}
+
+/* brillo barrido */
+.ecl::after{
+  content:"";
+  position:absolute; inset:-20%;
+  background:linear-gradient(120deg, transparent 40%, rgba(255,255,255,.10) 50%, transparent 60%);
+  transform:translateX(-30%) rotate(18deg);
+  animation:sweep 2.4s ease-in-out infinite;
+  opacity:.35;
+}
+@keyframes sweep{
+  0%{transform:translateX(-35%) rotate(18deg)}
+  50%{transform:translateX(35%) rotate(18deg)}
+  100%{transform:translateX(-35%) rotate(18deg)}
+}
+
+.ecl .logo{
+  width:46%;
+  max-width:160px;
+  aspect-ratio:1/1;
+  object-fit:contain;
+  border-radius:22px;
+  padding:12px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 14px 40px rgba(0,0,0,.55);
+  position:relative;
+  z-index:2;
+}
+
+/* puntos de carga */
+.dots{display:flex; gap:8px; margin-top:4px}
+.dot{
+  width:8px; height:8px; border-radius:999px;
+  background:rgba(234,242,255,.62);
+  animation:bounce 1.05s ease-in-out infinite;
+}
+.dot:nth-child(2){animation-delay:.12s}
+.dot:nth-child(3){animation-delay:.24s}
+@keyframes bounce{
+  0%,100%{transform:translateY(0); opacity:.55}
+  50%{transform:translateY(-8px); opacity:1}
+}
 
 /* ===== Header ===== */
 header{
   position:sticky; top:0; z-index:3;
   display:flex; justify-content:space-between; align-items:center;
-  gap:12px; padding:14px 20px;
+  gap:12px; padding:12px 18px;
   backdrop-filter:blur(10px) saturate(130%);
   background:rgba(255,255,255,.78);
   border-bottom:1px solid rgba(0,0,0,.06);
 }
-.brand{font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:#18324b;}
+.brandwrap{display:flex; align-items:center; gap:10px}
+.brandlogo{
+  width:34px; height:34px; border-radius:10px;
+  object-fit:contain;
+  background:rgba(255,255,255,.9);
+  border:1px solid rgba(0,0,0,.08);
+}
+.brand{
+  font-weight:900; letter-spacing:.05em; text-transform:uppercase; color:#18324b;
+  line-height:1;
+}
+.actions{display:flex; gap:10px; align-items:center}
 .btn{
   padding:10px 16px; border-radius:var(--radius);
   background:linear-gradient(135deg,var(--brand),var(--brand-2));
-  border:none; color:#fff; font-weight:700; cursor:pointer;
+  border:none; color:#fff; font-weight:800; cursor:pointer;
   box-shadow:0 6px 18px rgba(31,102,179,.25);
+}
+.btn.secondary{
+  background:#fff;
+  color:#18324b;
+  border:1px solid rgba(0,0,0,.1);
+  box-shadow:0 10px 28px rgba(0,0,0,.12);
 }
 
 /* ===== Chips ===== */
-.chip-dock{display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin:28px auto; z-index:3}
+.chip-dock{display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin:26px auto; z-index:3}
 .chip{
   background:rgba(255,255,255,.92); color:#0d2032;
-  border-radius:14px; padding:10px 22px; font-weight:800;
+  border-radius:14px; padding:10px 22px; font-weight:900;
   border:1px solid rgba(0,0,0,.1); cursor:pointer;
   transition:transform .2s, box-shadow .3s, background .3s;
 }
 .chip:hover{transform:translateY(-1px)}
 .chip.active{background:#eefcff; box-shadow:0 0 35px rgba(111,255,233,.45)}
 
-/* ===== Hero con overlay y badge eco ===== */
+/* ===== Hero ===== */
 .hero{ position:relative; z-index:2; padding:72px 18px 54px; }
 .hero::before{
   content:""; position:absolute; inset:0; z-index:-1;
@@ -90,13 +221,13 @@ header{
 }
 .hero .inner{ max-width:var(--wrap); margin:0 auto; text-align:center; }
 .hero h1{
-  margin:0 0 14px; font-weight:900; line-height:1.05;
-  font-size:clamp(36px,6vw,68px); color:#f1f6ff;
+  margin:0 0 14px; font-weight:1000; line-height:1.05;
+  font-size:clamp(34px,6vw,64px); color:#f1f6ff;
   text-shadow:0 3px 14px rgba(0,0,0,.45); letter-spacing:.02em;
 }
 .hero .lead{
   margin:0 auto; max-width:min(90ch, 92%);
-  font-size:clamp(16px,2.4vw,20px); line-height:1.55; font-weight:600;
+  font-size:clamp(16px,2.4vw,20px); line-height:1.55; font-weight:650;
   color:#e6edf7; background:rgba(8,20,35,.52);
   border:1px solid rgba(255,255,255,.18);
   padding:14px 18px; border-radius:16px;
@@ -106,11 +237,11 @@ header{
 .eco-badge{
   display:inline-flex; align-items:center; gap:10px; margin-top:14px;
   background:rgba(111,255,233,.14); color:#dffff8; border:1px solid rgba(111,255,233,.35);
-  padding:8px 14px; border-radius:999px; font-weight:700;
+  padding:8px 14px; border-radius:999px; font-weight:800;
 }
 .eco-badge svg{width:18px;height:18px}
 
-/* ===== KPI band (contador) ===== */
+/* ===== KPI band ===== */
 .kpis{
   max-width:var(--wrap); margin:28px auto 0; padding:10px 18px;
   display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
@@ -122,15 +253,15 @@ header{
   backdrop-filter:blur(8px);
   text-align:center; box-shadow:0 10px 28px rgba(0,0,0,.14);
 }
-.kpi .n{ font-size:clamp(28px,4.6vw,40px); font-weight:900; letter-spacing:.5px; }
-.kpi .t{ color:#2a3a4d; font-weight:700; opacity:.9 }
+.kpi .n{ font-size:clamp(28px,4.6vw,40px); font-weight:1000; letter-spacing:.5px; }
+.kpi .t{ color:#2a3a4d; font-weight:800; opacity:.9 }
 
-/* ===== Soluciones solares ===== */
+/* ===== Secciones ===== */
 .section{ position:relative; z-index:2; padding:38px 18px; }
 .section .wrap{ max-width:var(--wrap); margin:0 auto; }
 .h2{
   margin:0 0 16px; font-size:clamp(24px,3.6vw,34px); line-height:1.15;
-  color:#0f2033; letter-spacing:.01em; font-weight:900;
+  color:#0f2033; letter-spacing:.01em; font-weight:1000;
 }
 .sub{ color:#3b4d66; max-width:80ch; margin:0 0 18px; }
 
@@ -151,7 +282,7 @@ header{
 .card h3{ margin:6px 0 8px; font-size:18px; }
 .card p{ margin:0; color:#2e4157; }
 
-/* ===== Galería de proyectos (tilt) ===== */
+/* ===== Galería ===== */
 .gallery{
   margin-top:22px;
   display:grid; grid-template-columns:repeat(3,1fr); gap:14px;
@@ -168,31 +299,15 @@ header{
 .tag{
   position:absolute; left:10px; bottom:10px;
   background:rgba(0,0,0,.55); color:#eaf7ff; border:1px solid rgba(255,255,255,.25);
-  padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px;
+  padding:6px 10px; border-radius:999px; font-weight:800; font-size:12px;
 }
-
-/* ===== CTA ===== */
-.cta{
-  margin-top:28px; display:flex; flex-wrap:wrap; gap:12px; align-items:center;
-}
-.cta .btn-secondary{
-  background:#fff; color:#18324b; border:1px solid rgba(0,0,0,.1);
-  box-shadow:0 10px 28px rgba(0,0,0,.14);
-}
-.cta .whatsapp{
-  display:inline-flex; align-items:center; gap:10px;
-  background:linear-gradient(135deg,#25d366,#128c7e); color:#fff; border:none;
-  padding:10px 16px; border-radius:var(--radius); font-weight:800; cursor:pointer;
-  box-shadow:0 10px 26px rgba(0,0,0,.18);
-}
-.cta .whatsapp svg{ width:18px;height:18px }
 
 /* ===== Modal ===== */
 .modal{position:fixed; inset:0; z-index:50; display:none; align-items:center; justify-content:center}
 .modal.open{display:flex}
 .modal .backdrop{position:absolute; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(3px)}
 .modal .box{position:relative; width:min(980px,92vw); border-radius:16px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.55); background:#000}
-.modal .close{position:absolute; right:10px; top:8px; z-index:2; width:38px; height:38px; border-radius:10px; display:grid; place-items:center; border:none; cursor:pointer; background:rgba(255,255,255,.15); color:#fff; font-size:22px; font-weight:800}
+.modal .close{position:absolute; right:10px; top:8px; z-index:2; width:38px; height:38px; border-radius:10px; display:grid; place-items:center; border:none; cursor:pointer; background:rgba(255,255,255,.15); color:#fff; font-size:22px; font-weight:900}
 .modal .frame{position:relative; width:100%; height:0; padding-bottom:56.25%}
 .modal video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000}
 
@@ -204,12 +319,15 @@ header{
 @media (max-width: 640px){
   .grid{ grid-template-columns:1fr; }
   .gallery{ grid-template-columns:1fr; }
+  header{padding:10px 12px}
+  .btn{padding:10px 14px}
 }
 
 /* ===== Accesibilidad: menos transparencia ===== */
 @media (prefers-reduced-transparency: reduce){
   header{backdrop-filter:none; background:#ffffff}
   .hero .lead{backdrop-filter:none; background:#0e2238; color:#ffffff}
+  .intro{animation:none}
 }
 </style>
 </head>
@@ -220,13 +338,30 @@ header{
 
 <!-- Intro -->
 <div class="intro" aria-hidden="true">
-  <img src="Logo%20Perfo.png" alt="Perforaciones del Valle">
+  <div class="stack">
+    <div class="kicker">Servicios Santa Maria</div>
+    <h1 class="title">Ing. Roque Chaile</h1>
+    <div class="ecl" aria-hidden="true">
+      <img class="logo" src="Logo.png" alt="Servicios Santa Maria">
+    </div>
+    <div class="dots" aria-hidden="true">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+    <p class="sub">Perforación • Mantenimiento de pozos • Energía solar</p>
+  </div>
 </div>
 
 <!-- Header -->
 <header>
-  <div class="brand">Perforaciones del Valle</div>
-  <button class="btn" type="button" id="btnContactHeader">Contactar</button>
+  <div class="brandwrap">
+    <img class="brandlogo" src="Logo.png" alt="Logo Servicios Santa Maria">
+    <div class="brand">Servicios Santa Maria</div>
+  </div>
+
+  <div class="actions">
+    <button class="btn secondary" type="button" id="btnOperar">Operar</button>
+    <button class="btn" type="button" id="btnContactHeader">Contactar</button>
+  </div>
 </header>
 
 <!-- Chips -->
@@ -238,112 +373,104 @@ header{
 <!-- Hero -->
 <section class="hero">
   <div class="inner">
-    <h1>Bienvenido a Perforaciones del Valle</h1>
+    <h1>Servicios Santa Maria</h1>
     <p class="lead">
-      Un proyecto familiar 100% santamariano con búsqueda constante de <em>eficiencia ecológica</em> y compromiso con la sustentabilidad.
+      Servicios integrales en <em>perforación</em>, <em>mantenimiento de pozos</em> y <em>energía solar</em>, con compromiso local y enfoque en eficiencia.
     </p>
-    <span class="eco-badge" aria-label="Sello de eficiencia ecológica">
-      <!-- ícono hoja -->
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.2 3.8c-6.4 1.2-10.3 4.1-12.6 6.4C5.3 12.5 4 15 4 17.6c0 1.7 1.4 3.1 3.1 3.1 2.6 0 5.1-1.3 7.4-3.6 2.3-2.3 5.2-6.2 6.4-12.6l-0.7-0.7Z" stroke="currentColor" stroke-width="1.5"/></svg>
-      Eficiencia ecológica
+    <span class="eco-badge" aria-label="Compromiso con eficiencia y sustentabilidad">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M20.2 3.8c-6.4 1.2-10.3 4.1-12.6 6.4C5.3 12.5 4 15 4 17.6c0 1.7 1.4 3.1 3.1 3.1 2.6 0 5.1-1.3 7.4-3.6 2.3-2.3 5.2-6.2 6.4-12.6l-0.7-0.7Z" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      Eficiencia y sustentabilidad
     </span>
-    <div class="kpis" role="region" aria-label="Indicadores de impacto">
+
+    <div class="kpis" role="region" aria-label="Indicadores">
       <div class="kpi">
         <div class="n" data-count="250">0</div>
-        <div class="t">kW instalados</div>
+        <div class="t">Proyectos realizados</div>
       </div>
       <div class="kpi">
         <div class="n" data-count="180">0</div>
-        <div class="t">Ton CO₂ evitadas</div>
+        <div class="t">Servicios de mantenimiento</div>
       </div>
       <div class="kpi">
         <div class="n" data-count="320">0</div>
-        <div class="t">Hogares abastecidos</div>
+        <div class="t">Clientes asistidos</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Soluciones Solares -->
+<!-- Servicios -->
 <section class="section">
   <div class="wrap">
-    <h2 class="h2">Soluciones solares</h2>
-    <p class="sub">Acompañamos cada etapa: desde el estudio de sitio hasta el monitoreo en línea para maximizar el rendimiento de tus paneles.</p>
+    <h2 class="h2">Servicios</h2>
+    <p class="sub">Acompañamos cada etapa: diagnóstico, ejecución y seguimiento, priorizando calidad, seguridad y eficiencia.</p>
+
     <div class="grid">
       <article class="card">
         <div class="icon" aria-hidden="true">
-          <!-- panel -->
           <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
             <rect x="3" y="6" width="18" height="12" rx="2" ry="2" stroke="#fff" stroke-width="1.5"/>
             <path d="M3 10h18M3 14h18M8 6v12M16 6v12" stroke="#fff" stroke-width="1.2"/>
           </svg>
         </div>
-        <h3>Instalación fotovoltaica</h3>
-        <p>Proyección, dimensionamiento y montaje de sistemas on-grid y off-grid según tu demanda.</p>
+        <h3>Energía solar</h3>
+        <p>Diseño e instalación de sistemas fotovoltaicos on-grid / off-grid y soluciones de bombeo solar.</p>
       </article>
+
       <article class="card">
         <div class="icon" aria-hidden="true">
-          <!-- wrench -->
           <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
             <path d="M21 3a7 7 0 0 1-9.8 6.4L5 15.6V20h4.4l6.2-6.2A7 7 0 0 1 21 3Z" stroke="#fff" stroke-width="1.5"/>
           </svg>
         </div>
-        <h3>Mantenimiento & limpieza</h3>
-        <p>Planes preventivos y correctivos para asegurar la máxima eficiencia a lo largo del año.</p>
+        <h3>Mantenimiento</h3>
+        <p>Planes preventivos/correctivos para pozos y sistemas: limpieza, revisión y mejoras de rendimiento.</p>
       </article>
+
       <article class="card">
         <div class="icon" aria-hidden="true">
-          <!-- monitor -->
           <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
             <rect x="3" y="4" width="18" height="12" rx="2" stroke="#fff" stroke-width="1.5"/>
             <path d="M7 19h10M12 16v3" stroke="#fff" stroke-width="1.5"/>
           </svg>
         </div>
-        <h3>Monitoreo en tiempo real</h3>
-        <p>Seguimiento de producción y alertas: detectá pérdidas y actuá antes de que impacten.</p>
+        <h3>Monitoreo</h3>
+        <p>Seguimiento y control para detectar pérdidas, prevenir fallas y optimizar el funcionamiento.</p>
       </article>
+
       <article class="card">
         <div class="icon" aria-hidden="true">
-          <!-- water pump -->
           <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
             <path d="M4 17c2 0 2-3 4-3s2 3 4 3 2-3 4-3 2 3 4 3" stroke="#fff" stroke-width="1.5"/>
             <path d="M6 7h12v4H6z" stroke="#fff" stroke-width="1.5"/>
           </svg>
         </div>
-        <h3>Bombeo solar</h3>
-        <p>Soluciones de agua con energía solar para producción y uso domiciliario rural.</p>
+        <h3>Perforación</h3>
+        <p>Servicio de perforación y puesta en marcha, con enfoque en seguridad y calidad de ejecución.</p>
       </article>
     </div>
 
     <!-- Galería -->
-    <div class="gallery" aria-label="Proyectos solares">
+    <div class="gallery" aria-label="Trabajos / Proyectos">
       <figure class="photo">
-        <img src="solar1.jpg" alt="Matriz de paneles solares sobre estructura metálica">
-        <figcaption class="tag">Off-grid rural</figcaption>
+        <img src="solar1.jpg" alt="Proyecto 1">
+        <figcaption class="tag">Trabajo 1</figcaption>
       </figure>
       <figure class="photo">
-        <img src="solar2.jpg" alt="Instalación fotovoltaica en techo inclinado">
-        <figcaption class="tag">Techo inclinado</figcaption>
+        <img src="solar2.jpg" alt="Proyecto 2">
+        <figcaption class="tag">Trabajo 2</figcaption>
       </figure>
       <figure class="photo">
-        <img src="solar3.jpg" alt="Parrilla de paneles con orientación óptima">
-        <figcaption class="tag">On-grid urbano</figcaption>
+        <img src="solar3.jpg" alt="Proyecto 3">
+        <figcaption class="tag">Trabajo 3</figcaption>
       </figure>
-    </div>
-
-    <!-- CTA -->
-    <div class="cta" role="group" aria-label="Contacto">
-      <button class="whatsapp" id="btnWhats">
-        <!-- ícono WhatsApp -->
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.5 11.8c0 4.8-3.9 8.7-8.7 8.7-1.5 0-3-.4-4.3-1.1L4 20l.7-3.4A8.6 8.6 0 0 1 3 11.8c0-4.8 3.9-8.7 8.7-8.7s8.8 3.9 8.8 8.7Z" stroke="#fff" stroke-width="1.2"/><path d="M9.3 8.9c-.2-.5-.4-.5-.6-.5h-.5c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3 .2.5.4.7c.3.4.9 1.2 2 1.7.9.4 1.7.5 2.3.5.7 0 1.4-.2 1.9-.7.3-.2.5-.6.6-.9.1-.3.1-.6 0-.8-.1-.2-.2-.2-.5-.3l-1.5-.7c-.2-.1-.3-.1-.5.1l-.6.7c-.1.1-.2.1-.4 0-.2-.1-.9-.4-1.7-1.1-.6-.5-1-1.2-1.1-1.4-.1-.2 0-.3.1-.4l.3-.3c.1-.1.1-.2.2-.3.1-.1.1-.2.1-.3s0-.2 0-.3l-.7-1.7Z" fill="#fff"/></svg>
-        Consultar por WhatsApp
-      </button>
-      <button class="btn btn-secondary" id="btnCotizar">Solicitar cotización</button>
     </div>
   </div>
 </section>
 
-<!-- Modal del video -->
+<!-- Modal del video (queda igual; abre con “Ver Proyectos”) -->
 <div class="modal" id="videoModal" role="dialog" aria-modal="true" aria-label="Video de proyectos">
   <div class="backdrop" data-close="1"></div>
   <div class="box">
@@ -412,10 +539,16 @@ const io=new IntersectionObserver(entries=>{
 },{threshold:.4});
 if(els.length) io.observe(els[0]);
 
-/* ===== CTA acciones ===== */
-document.getElementById("btnContactHeader").addEventListener("click",()=>window.location.href="mailto:info@perforacionesdelvalle.com?subject=Consulta%20energ%C3%ADa%20solar");
-document.getElementById("btnCotizar").addEventListener("click",()=>window.location.href="mailto:info@perforacionesdelvalle.com?subject=Solicitud%20de%20cotizaci%C3%B3n%20solar");
-document.getElementById("btnWhats").addEventListener("click",()=>window.open("https://wa.me/5490000000000?text=Hola%20Perforaciones%20del%20Valle%2C%20quisiera%20hacer%20una%20consulta%20sobre%20paneles%20solares.","_blank"));
+/* ===== Acciones Header ===== */
+document.getElementById("btnOperar").addEventListener("click",()=>{
+  window.location.href="operar.html"; // <- esta será la página del dueño (presupuestos)
+});
+
+document.getElementById("btnContactHeader").addEventListener("click",()=>{
+  const msg = "Hola, estoy interesado en solicitar información. ¿Podrían asesorarme por servicio de perforación, mantenimiento de pozo o energía/paneles solares? Muchas gracias.";
+  const url = "https://wa.me/5493838497748?text=" + encodeURIComponent(msg);
+  window.open(url,"_blank");
+});
 </script>
 </body>
 </html>
