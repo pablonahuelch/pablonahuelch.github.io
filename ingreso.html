@@ -1,1 +1,201 @@
-operar.html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Ingreso - Servicios Santa Maria</title>
+<meta name="color-scheme" content="light dark">
+<style>
+  :root{
+    --brand:#1f66b3; --brand2:#7c3aed;
+    --bg:#0b1322; --card:rgba(255,255,255,.92);
+    --ink:#0d1e2e; --muted:#4b5b71; --line:rgba(0,0,0,.12);
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; min-height:100vh;
+    font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+    background:
+      radial-gradient(1000px 500px at 15% 10%, rgba(31,102,179,.25), transparent 60%),
+      radial-gradient(1000px 500px at 85% 85%, rgba(124,58,237,.22), transparent 60%),
+      radial-gradient(800px 400px at 50% 55%, rgba(111,255,233,.10), transparent 62%),
+      #071224;
+    display:grid; place-items:center;
+    padding:22px;
+  }
+  .card{
+    width:min(920px, 96vw);
+    background:var(--card);
+    border:1px solid rgba(255,255,255,.35);
+    border-radius:22px;
+    overflow:hidden;
+    box-shadow:0 30px 90px rgba(0,0,0,.45);
+    display:grid;
+    grid-template-columns: 1.15fr .85fr;
+  }
+  .left{
+    padding:30px 28px;
+    background:
+      linear-gradient(135deg, rgba(31,102,179,.10), rgba(124,58,237,.08)),
+      rgba(255,255,255,.92);
+    border-right:1px solid rgba(0,0,0,.08);
+  }
+  .brand{
+    display:flex; align-items:center; gap:14px;
+    margin-bottom:14px;
+  }
+  .brand img{
+    width:56px; height:56px; object-fit:contain;
+    background:#fff; border-radius:14px;
+    border:1px solid rgba(0,0,0,.10);
+    padding:8px;
+  }
+  .brand h1{
+    margin:0;
+    font-size:20px;
+    line-height:1.1;
+    letter-spacing:.02em;
+  }
+  .brand p{
+    margin:6px 0 0;
+    color:var(--muted);
+    font-weight:700;
+  }
+  .info{
+    margin-top:16px;
+    padding:14px 14px;
+    border:1px solid rgba(0,0,0,.10);
+    border-radius:16px;
+    background:rgba(255,255,255,.75);
+    color:#16263a;
+    line-height:1.45;
+    font-weight:650;
+  }
+  .right{
+    padding:30px 28px;
+    background:rgba(255,255,255,.92);
+  }
+  .h2{
+    margin:0 0 14px;
+    font-size:22px;
+    font-weight:1000;
+    color:#10233a;
+  }
+  label{display:block; font-weight:900; color:#132a43; margin:12px 0 6px}
+  select,input{
+    width:100%;
+    height:46px;
+    padding:10px 12px;
+    border-radius:14px;
+    border:1px solid rgba(0,0,0,.14);
+    background:#fff;
+    outline:none;
+    font-weight:750;
+    color:#0d1e2e;
+  }
+  input:focus, select:focus{border-color:rgba(31,102,179,.55); box-shadow:0 0 0 4px rgba(31,102,179,.12)}
+  .row{display:flex; gap:10px; align-items:center; margin-top:12px}
+  .btn{
+    height:46px; border:none; cursor:pointer;
+    border-radius:16px;
+    padding:0 16px;
+    font-weight:1000;
+  }
+  .btn.primary{
+    width:100%;
+    background:linear-gradient(135deg,var(--brand),var(--brand2));
+    color:#fff;
+    box-shadow:0 10px 26px rgba(31,102,179,.25);
+  }
+  .btn.ghost{
+    background:#fff;
+    border:1px solid rgba(0,0,0,.14);
+    color:#17324d;
+  }
+  .hint{
+    margin-top:10px;
+    color:#4a5d75;
+    font-weight:650;
+    font-size:13px;
+  }
+  .err{
+    display:none;
+    margin-top:12px;
+    padding:10px 12px;
+    border-radius:14px;
+    background:rgba(178,13,13,.10);
+    border:1px solid rgba(178,13,13,.25);
+    color:#7a0b0b;
+    font-weight:900;
+  }
+  @media (max-width: 860px){
+    .card{grid-template-columns:1fr}
+    .left{border-right:none; border-bottom:1px solid rgba(0,0,0,.08)}
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="left">
+    <div class="brand">
+      <img src="Logo.png" alt="Logo Servicios Santa Maria">
+      <div>
+        <h1>Servicios Santa Maria</h1>
+        <p>Portal interno • Presupuestos</p>
+      </div>
+    </div>
+
+    <div class="info">
+      Ingresá con tu usuario para acceder al generador de presupuestos.<br>
+      Luego podrás <b>agregar ítems</b>, ver el <b>total</b> y <b>imprimir/guardar en PDF</b>.
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="h2">Ingreso</div>
+
+    <label for="usuario">Usuario</label>
+    <select id="usuario">
+      <option value="roque">Ingeniero Roque Chaile</option>
+    </select>
+
+    <label for="pass">Contraseña</label>
+    <input id="pass" type="password" placeholder="••••••••" autocomplete="current-password">
+
+    <button class="btn primary" id="btnIngresar" type="button">Ingresar</button>
+
+    <div class="row">
+      <button class="btn ghost" type="button" id="btnVolver">Volver al inicio</button>
+    </div>
+
+    <div class="hint">Acceso restringido.</div>
+    <div class="err" id="err">Usuario o contraseña incorrectos.</div>
+  </div>
+</div>
+
+<script>
+  const PASS_OK = "16503745";
+  const btn = document.getElementById("btnIngresar");
+  const err = document.getElementById("err");
+
+  function login(){
+    const pass = document.getElementById("pass").value.trim();
+    if(pass === PASS_OK){
+      localStorage.setItem("SSM_AUTH", "ok");
+      window.location.href = "presupuesto.html";
+      return;
+    }
+    err.style.display = "block";
+  }
+
+  btn.addEventListener("click", login);
+  document.getElementById("pass").addEventListener("keydown", (e)=>{ if(e.key==="Enter") login(); });
+
+  document.getElementById("btnVolver").addEventListener("click", ()=>{
+    window.location.href = "index.html";
+  });
+</script>
+</body>
+</html>
