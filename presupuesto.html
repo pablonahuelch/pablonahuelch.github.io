@@ -1,473 +1,776 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Presupuesto - Servicios Santa Maria</title>
-<meta name="color-scheme" content="light">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Servicios Santa Maria • Presupuesto</title>
+
 <style>
   :root{
-    --ink:#0d1e2e;
-    --line:#000;
-    --bg:#f3f6fb;
-    --paper:#fff;
+    --brand:#1f66b3;
+    --ink:#0f2137;
+    --muted:#516070;
+    --bg:#eef2f7;
+    --paper:#ffffff;
+    --line:#1a1a1a;
+    --soft:#d7dde6;
+    --radius:14px;
   }
+
   *{box-sizing:border-box}
+  html,body{height:100%}
   body{
     margin:0;
-    font-family:Calibri, Arial, sans-serif;
+    font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
     background:var(--bg);
     color:var(--ink);
   }
 
-  /* Barra superior (no se imprime) */
+  /* ===== Barra superior ===== */
   .topbar{
-    position:sticky; top:0; z-index:5;
-    background:#0c1b2e;
+    position:sticky; top:0; z-index:50;
+    background:linear-gradient(180deg,#0b213a,#0b213a);
     color:#fff;
-    padding:10px 14px;
-    display:flex; gap:10px; align-items:center; justify-content:space-between;
+    padding:12px 14px;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,.18);
   }
-  .topbar .left{display:flex; gap:10px; align-items:center}
-  .topbar img{width:34px;height:34px;object-fit:contain;background:#fff;border-radius:10px;padding:4px}
-  .topbar .t{font-weight:900; letter-spacing:.02em}
-  .topbar .actions{display:flex; gap:8px; flex-wrap:wrap}
+  .topbar .left{
+    display:flex; align-items:center; gap:10px; min-width:240px;
+  }
+  .miniLogo{
+    width:34px; height:34px; border-radius:10px;
+    background:#fff;
+    padding:4px;
+    object-fit:contain;
+  }
+  .topbar .title{
+    font-weight:800;
+    line-height:1.15;
+  }
+  .topbar .hint{
+    font-size:12px; opacity:.85; margin-top:2px;
+  }
+  .topbar .right{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  }
   .btn{
-    border:none; cursor:pointer;
-    padding:10px 12px;
+    border:none;
+    cursor:pointer;
     border-radius:12px;
-    font-weight:900;
+    padding:10px 14px;
+    font-weight:800;
+    letter-spacing:.2px;
   }
-  .btn.primary{background:#1f66b3; color:#fff}
-  .btn.ghost{background:#fff; color:#0c1b2e}
-  .btn.danger{background:#b20d0d; color:#fff}
-  .hint{opacity:.85; font-size:12px; font-weight:650}
+  .btn.light{background:#fff;color:#0b213a}
+  .btn.brand{background:linear-gradient(135deg,#1f66b3,#134a86); color:#fff}
+  .btn.danger{background:#b20d0d;color:#fff}
+  .btn.gray{background:#e9eef6;color:#0b213a}
+  .btn.small{padding:9px 12px; border-radius:12px}
 
-  /* Hoja A4 */
+  /* ===== Layout ===== */
   .wrap{
-    padding:18px 14px 40px;
+    max-width:1100px;
+    margin:18px auto 42px;
+    padding:0 12px;
+  }
+
+  .actions{
     display:flex;
     justify-content:center;
+    gap:12px;
+    margin:10px 0 14px;
+    flex-wrap:wrap;
   }
+
+  /* ===== Hoja ===== */
   .sheet{
-    width:210mm;
-    min-height:297mm;
+    width: 820px;           /* A4 aprox en pantalla */
+    max-width: 100%;
+    margin: 0 auto;
     background:var(--paper);
-    box-shadow:0 18px 55px rgba(0,0,0,.18);
+    border:1px solid var(--soft);
+    box-shadow:0 18px 60px rgba(0,0,0,.15);
     padding:0;
   }
 
-  /* Marco/Grilla tipo Excel */
+  /* ===== Cabecera tipo “excel” ===== */
   .box{
-    border:2px solid var(--line);
-  }
-  .gridTop{
-    display:grid;
-    grid-template-columns: 58mm 1fr 74mm;
-    border-bottom:2px solid var(--line);
-    min-height:54mm;
-  }
-  .cell{padding:10px 10px}
-  .cell + .cell{border-left:2px solid var(--line)}
-  .logo{
-    display:flex; align-items:flex-start; justify-content:flex-start;
-    gap:10px;
-  }
-  .logo img{
-    width:52mm; height:52mm;
-    object-fit:contain;
-    display:block;
+    border:1.6px solid var(--line);
+    margin:28px 28px 0;
   }
 
-  /* Centro con leyenda */
+  .headRow{
+    display:grid;
+    grid-template-columns: 240px 1fr 300px;
+    min-height:150px;
+    border-bottom:1.6px solid var(--line);
+  }
+
+  /* IMPORTANTE: SIN LÍNEA DIVISORIA ENTRE LOGO Y TEXTO CENTRAL */
+  .hCell{
+    padding:10px 12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .hCell.logo{border-right:none;}     /* <- sin divisor */
+  .hCell.center{border-left:none;}    /* <- sin divisor */
+
+  /* mantenemos divisor SOLO entre “centro” y “derecha” */
+  .hCell.center{border-right:1.6px solid var(--line);}
+  .hCell.right{border-left:none;}
+
+  .logoBig{
+    width:150px;
+    height:150px;
+    object-fit:contain;
+  }
+
   .legend{
     text-align:center;
-    font-weight:700;
-    font-size:12px;
+    font-weight:800;
+    font-size:11px;
     line-height:1.35;
-    letter-spacing:.02em;
-    padding-top:10px;
-    white-space:pre-line;
+    letter-spacing:.25px;
+    text-transform:uppercase;
+    padding:0 10px;
   }
 
-  /* Cuadro derecho */
-  .rightbox{
+  .rightInfo{
+    width:100%;
+    display:flex;
+    justify-content:center;  /* bloque centrado dentro de la celda */
+  }
+  .rightInfo .card{
+    width: 88%;
+    text-align:left;         /* texto alineado a la izquierda */
     font-size:12px;
-    line-height:1.5;
-    font-weight:700;
-    padding-top:14px;
-    white-space:pre-line;
+    line-height:1.6;
+    font-weight:800;
   }
+  .rightInfo .card b{font-weight:900}
 
-  /* Fila domicilio / iva */
-  .rowLine{
+  .midRow{
     display:grid;
-    grid-template-columns: 1fr;
-    border-bottom:2px solid var(--line);
+    grid-template-columns:1fr;
+    border-bottom:1.6px solid var(--line);
+  }
+  .addr{
     padding:8px 10px;
     font-size:12px;
-    font-weight:700;
+    font-weight:800;
   }
+  .addr strong{font-weight:900}
+  .addr.center{text-align:center}
 
-  /* PROFORMA */
-  .proforma{
-    text-align:center;
+  .ivaRow{
+    border-bottom:1.6px solid var(--line);
+    padding:8px 10px;
+    font-size:12px;
     font-weight:900;
-    padding:8px 10px;
-    border-bottom:2px solid var(--line);
-    letter-spacing:.03em;
   }
 
-  /* Cliente */
-  .cliente{
+  .proforma{
+    border-bottom:1.6px solid var(--line);
+    text-align:center;
     padding:10px 10px;
-    border-bottom:2px solid var(--line);
+    font-weight:900;
+    letter-spacing:.6px;
+  }
+
+  .client{
+    border-bottom:1.6px solid var(--line);
+    padding:10px 10px 8px;
     font-size:12px;
   }
-  .cliente .r{display:flex; gap:10px; margin:4px 0}
-  .cliente label{min-width:80px; font-weight:900}
-  .cliente input{
-    flex:1;
+  .clientGrid{
+    display:grid;
+    grid-template-columns: 90px 1fr;
+    gap:8px 10px;
+    align-items:center;
+  }
+  .client label{
+    font-weight:900;
+  }
+  .lineInput{
     border:none;
     border-bottom:1px solid #000;
-    outline:none;
-    font-family:inherit;
+    padding:6px 6px 4px;
     font-size:12px;
-    padding:2px 4px;
+    outline:none;
+    width:100%;
   }
 
-  /* Tabla detalle */
-  .tablaHead{
+  /* ===== Tabla detalle ===== */
+  .detailRow{
     display:grid;
-    grid-template-columns: 1fr 46mm;
-    border-bottom:2px solid var(--line);
+    grid-template-columns: 1fr 170px;
+    min-height:460px;
+  }
+  .detailLeft{
+    border-right:1.6px solid var(--line);
+    padding:0;
+  }
+  .detailRight{
+    padding:0;
+  }
+
+  .detailHead{
+    display:grid;
+    grid-template-columns: 1fr;
+    text-align:center;
+    font-size:12px;
+    font-weight:900;
+    padding:8px 10px;
+    border-bottom:1.6px solid var(--line);
+  }
+
+  .priceHead{
+    text-align:center;
+    font-size:12px;
+    font-weight:900;
+    padding:8px 10px;
+    border-bottom:1.6px solid var(--line);
+  }
+
+  .items{
+    padding:8px 10px 10px;
+  }
+
+  .itemRow{
+    display:grid;
+    grid-template-columns: 34px 1fr;
+    align-items:center;
+    gap:8px;
+    padding:6px 0;
+  }
+  .itemRow .n{
     font-weight:900;
     font-size:12px;
   }
-  .tablaHead div{padding:8px 10px; text-align:center}
-  .tablaHead div + div{border-left:2px solid var(--line)}
-
-  .tablaBody{
-    display:grid;
-    grid-template-columns: 1fr 46mm;
-    min-height:130mm; /* espacio grande como Excel */
-    border-bottom:2px solid var(--line);
-  }
-  .colLeft{border-right:2px solid var(--line)}
-  .items{
-    padding:6px 10px;
-    font-size:12px;
-    line-height:1.4;
-  }
-  .items .itemRow{
-    display:grid;
-    grid-template-columns: 28px 1fr;
-    gap:6px;
-    margin:6px 0;
-    align-items:start;
-  }
-  .items .n{font-weight:900}
-  .items input.desc{
-    width:100%;
+  .itemRow input.desc{
     border:none;
     border-bottom:1px dotted #000;
-    outline:none;
-    font-family:inherit;
+    padding:5px 6px 4px;
     font-size:12px;
-    padding:2px 4px;
+    outline:none;
+    width:100%;
   }
 
   .prices{
-    padding:6px 10px;
-    font-size:12px;
+    padding:8px 10px 10px;
   }
-  .prices .pRow{
-    display:flex;
-    justify-content:flex-end;
-    gap:8px;
+  .priceRow{
+    display:grid;
+    grid-template-columns: 16px 1fr;
     align-items:center;
-    margin:6px 0;
+    gap:8px;
+    padding:6px 0;
   }
-  .prices .pRow span{min-width:14px; text-align:right; font-weight:900}
-  .prices input{
-    width:100%;
+  .priceRow .peso{
+    font-weight:900;
+  }
+  .priceRow input.money{
     border:none;
     border-bottom:1px dotted #000;
-    outline:none;
-    font-family:inherit;
+    padding:5px 6px 4px;
     font-size:12px;
+    outline:none;
+    width:100%;
     text-align:right;
-    padding:2px 4px;
   }
 
-  /* Validez + total */
-  .footerRow{
+  /* ===== Footer (SIEMPRE JUNTO: total + leyendas + firma) ===== */
+  .footerBlock{
+    border-top:1.6px solid var(--line);
     display:grid;
-    grid-template-columns: 1fr 46mm;
-    min-height:26mm;
+    grid-template-columns: 1fr 170px;
   }
-  .footerRow .leftF{padding:8px 10px; font-size:12px; font-weight:900}
-  .footerRow .rightF{
-    border-left:2px solid var(--line);
-    padding:8px 10px;
+  .footerLeft{
+    border-right:1.6px solid var(--line);
+    padding:10px 10px 12px;
+    font-size:12px;
+  }
+  .footerRight{
+    padding:10px 10px 12px;
     display:flex;
-    align-items:flex-end;
+    flex-direction:column;
     justify-content:flex-end;
+    gap:10px;
+  }
+  .totalBox{
+    display:grid;
+    grid-template-columns: 16px 1fr;
+    gap:8px;
+    align-items:center;
+    margin-top:auto;
+    border-top:1px solid #000;
+    padding-top:8px;
+    font-weight:900;
+  }
+  .totalBox .peso{font-weight:900}
+  .totalBox .val{
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+  }
+
+  .footLines{
+    margin-top:6px;
+    display:grid;
+    gap:6px;
+  }
+  .footLines .small{
     font-size:12px;
     font-weight:900;
   }
-  .totalBox{
-    width:100%;
-    display:flex;
-    justify-content:flex-end;
-    gap:8px;
-    align-items:center;
-  }
-  .totalBox .money{min-width:14px}
-  .totalBox .total{
-    min-width:100px;
-    text-align:right;
-    font-size:13px;
+  .footLines .muted{
+    font-weight:800;
   }
 
-  /* Firma */
-  .firma{
-    padding:18px 10px 24px;
+  .signatureArea{
+    margin:18px 28px 28px;
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    gap:14px;
+  }
+  .sigWrap{
+    width:260px;
     text-align:center;
   }
-  .firma img{
-    width:180px;
-    max-width:60%;
+  .sigImg{
+    width:240px;
+    height:auto;
     object-fit:contain;
     display:block;
     margin:0 auto 6px;
   }
-  .firma .name{
+  .sigText{
+    font-size:11px;
     font-weight:900;
-    font-size:12px;
-    letter-spacing:.02em;
+    line-height:1.2;
+    text-transform:uppercase;
   }
-  .firma .mat{
-    font-weight:700;
-    font-size:12px;
-  }
-
-  /* Panel “Agregar item” (no se imprime) */
-  .adder{
-    margin:14px auto 0;
-    width:210mm;
-    display:flex;
-    gap:10px;
-    justify-content:flex-end;
-    padding:0 14px;
+  .sigText span{
+    display:block;
+    font-weight:800;
+    text-transform:none;
+    margin-top:2px;
   }
 
-  .adder .btn{border-radius:12px}
-
-  /* Impresión */
+  /* ===== Controls (no imprimir) ===== */
+  .noPrint{}
   @media print{
     body{background:#fff}
-    .topbar,.adder{display:none !important}
-    .wrap{padding:0}
-    .sheet{box-shadow:none}
+    .topbar, .actions, .noPrint{display:none !important}
+    .wrap{max-width:none; margin:0; padding:0}
+    .sheet{box-shadow:none; border:none; width:auto; max-width:none}
+
+    /* A4 */
+    @page { size: A4; margin: 10mm; }
+
+    /* Evitar cortes feos */
+    .box, .signatureArea { break-inside: avoid; page-break-inside: avoid; }
+    .footerBlock { break-inside: avoid; page-break-inside: avoid; }
+    .signatureArea { break-inside: avoid; page-break-inside: avoid; }
+
+    /* Si el detalle ocupa varias páginas, que el footer y firma vayan juntos a la siguiente */
   }
+
+  /* ===== Toggle IVA ===== */
+  .toggle{
+    display:inline-flex; align-items:center; gap:10px;
+    background:#fff;
+    border:1px solid rgba(0,0,0,.12);
+    border-radius:999px;
+    padding:8px 12px;
+    box-shadow:0 10px 26px rgba(0,0,0,.10);
+  }
+  .toggle label{font-weight:900}
+  .toggle input{width:18px;height:18px; accent-color: var(--brand);}
+
 </style>
 </head>
+
 <body>
 
-<div class="topbar">
-  <div class="left">
-    <img src="Logo.png" alt="Logo">
-    <div>
-      <div class="t">Servicios Santa Maria • Presupuesto</div>
-      <div class="hint">Tip: “Imprimir / Guardar PDF” → destino “Guardar como PDF”.</div>
+  <div class="topbar">
+    <div class="left">
+      <img class="miniLogo" src="Logo.png" alt="Logo" />
+      <div>
+        <div class="title">Servicios Santa Maria • Presupuesto</div>
+        <div class="hint">Tip: “Imprimir / Guardar PDF” → destino “Guardar como PDF”.</div>
+      </div>
+    </div>
+    <div class="right">
+      <button class="btn light" id="btnVolver" type="button">Volver</button>
+      <button class="btn brand" id="btnPrint" type="button">Imprimir / Guardar PDF</button>
+      <button class="btn danger" id="btnSalir" type="button">Salir</button>
     </div>
   </div>
-  <div class="actions">
-    <button class="btn ghost" id="btnVolver" type="button">Volver</button>
-    <button class="btn primary" id="btnPrint" type="button">Imprimir / Guardar PDF</button>
-    <button class="btn danger" id="btnSalir" type="button">Salir</button>
-  </div>
-</div>
 
-<div class="adder">
-  <button class="btn primary" id="btnAdd" type="button">+ Agregar ítem</button>
-  <button class="btn ghost" id="btnDel" type="button">– Quitar último</button>
-</div>
+  <div class="wrap">
 
-<div class="wrap">
-  <div class="sheet">
+    <div class="actions noPrint">
+      <button class="btn brand small" id="btnAdd" type="button">+ Agregar item</button>
+      <button class="btn gray small" id="btnRemove" type="button">− Quitar último</button>
 
-    <div class="box">
+      <div class="toggle" title="Marcá si el monto incluye IVA">
+        <label for="chkIva">Contiene IVA</label>
+        <input id="chkIva" type="checkbox" />
+      </div>
+    </div>
 
-      <!-- Encabezado -->
-      <div class="gridTop">
-        <div class="cell logo">
-          <img src="Logo.png" alt="Servicios Santa Maria">
+    <div class="sheet" id="sheet">
+
+      <div class="box">
+
+        <!-- CABECERA -->
+        <div class="headRow">
+          <div class="hCell logo">
+            <img class="logoBig" src="Logo.png" alt="Servicios Santa Maria" />
+          </div>
+
+          <div class="hCell center">
+            <div class="legend" id="legendText">
+              PERFORACIONES - FILMACIONES - SISTEMA DE RIEGO ESTUDIO DE SUELO ASESORAMIENTO DE SISTEMA PRODUCTIVOS
+              REFRIGERACION INDUSTRIAL, COMERCIAL, FAMILIAR TENDIDO DE MEDIA TENSION-MANTENIMIENTO DE TABLERO
+            </div>
+          </div>
+
+          <div class="hCell right">
+            <div class="rightInfo">
+              <div class="card">
+                <div><b>FECHA :</b> <span id="fechaHoy">--/--/----</span></div>
+                <div><b>C.U.I.T.:</b> 20-16503745-7</div>
+                <div><b>INGRESOS BRUTOS:</b> 20-16503745-7</div>
+                <div><b>INICIO DE ACTIVIDADES:</b> 01/07/2018</div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="cell legend" id="legend">
-PERFORACIONES - FILMACIONES - SISTEMA DE RIEGO
-ESTUDIO DE SUELO
-ASESORAMIENTO DE SISTEMA PRODUCTIVOS
-REFRIGERACION INDUSTRIAL, COMERCIAL, FAMILIAR
-TENDIDO DE MEDIA TENSION-MANTENIMIENTO DE TABLERO
+        <div class="midRow">
+          <div class="addr">
+            B° Jardín C28 - Cel (3838) 497748 - <strong>SANTA MARIA CATAMARCA</strong>
+          </div>
         </div>
 
-        <div class="cell rightbox" id="datos">
-C.U.I.T.: 20-16503745-7
-INGRESOS BRUTOS: 20-16503745-7
-INICIO DE ACTIVIDADES: 01/07/2018
+        <div class="ivaRow">I.V.A. RESPONSABLE INSCRIPTO</div>
+
+        <div class="proforma">PROFORMA</div>
+
+        <!-- DATOS CLIENTE -->
+        <div class="client">
+          <div class="clientGrid">
+            <label>Señor(es):</label>
+            <input class="lineInput" id="txtCliente" placeholder="Ej: Comuna de Amaicha del Valle" />
+            <label>Domicilio:</label>
+            <input class="lineInput" id="txtDomicilio" placeholder="Ej: Amaicha" />
+          </div>
         </div>
-      </div>
 
-      <!-- Domicilio / IVA -->
-      <div class="rowLine">
-        B° Jardín C28 - Cel (3838) 497748 · SANTA MARIA CATAMARCA
-      </div>
-      <div class="rowLine">
-        I.V.A. RESPONSABLE INSCRIPTO
-      </div>
+        <!-- DETALLE -->
+        <div class="detailRow">
 
-      <!-- PROFORMA -->
-      <div class="proforma">PROFORMA</div>
+          <div class="detailLeft">
+            <div class="detailHead">DETALLE</div>
+            <div class="items" id="items"></div>
+          </div>
 
-      <!-- Cliente -->
-      <div class="cliente">
-        <div class="r">
-          <label>Señor(es):</label>
-          <input id="cliente" placeholder="Ej: Comuna de Amaicha del Valle">
+          <div class="detailRight">
+            <div class="priceHead">Precio TOTAL</div>
+            <div class="prices" id="prices"></div>
+          </div>
+
         </div>
-        <div class="r">
-          <label>Domicilio:</label>
-          <input id="domicilio" placeholder="Ej: Amaicha">
+
+        <!-- FOOTER (TOTAL + LEYENDAS) -->
+        <div class="footerBlock">
+          <div class="footerLeft">
+            <div class="footLines">
+              <div class="small">
+                <span class="muted">Son:</span>
+                <span id="montoLetras">pesos cero</span>
+              </div>
+              <div class="small" id="ivaLinea">El monto <b>NO</b> contiene IVA</div>
+              <div class="small">La validez de la oferta es de <b>10 días</b></div>
+            </div>
+          </div>
+
+          <div class="footerRight">
+            <div class="totalBox">
+              <div class="peso">$</div>
+              <div class="val" id="total">$ 0,00</div>
+            </div>
+          </div>
         </div>
+
       </div>
 
-      <!-- Tabla -->
-      <div class="tablaHead">
-        <div>DETALLE</div>
-        <div>Precio TOTAL</div>
-      </div>
-
-      <div class="tablaBody">
-        <div class="colLeft">
-          <div class="items" id="items"></div>
-        </div>
-        <div class="prices" id="prices"></div>
-      </div>
-
-      <!-- Validez + total -->
-      <div class="footerRow">
-        <div class="leftF">La validez de la oferta es de 10 días</div>
-        <div class="rightF">
-          <div class="totalBox">
-            <span class="money">$</span>
-            <span class="total" id="total">$ 0,00</span>
+      <!-- FIRMA (siempre junto con el footer al imprimir) -->
+      <div class="signatureArea">
+        <div class="sigWrap">
+          <img class="sigImg" src="firma.png" alt="Firma" />
+          <div class="sigText">
+            CHAILE TRANSITO ROQUE
+            <span>Matricula Profesional 1757</span>
           </div>
         </div>
       </div>
 
     </div>
-
-    <!-- Firma -->
-    <div class="firma">
-      <img src="firma.png" alt="Firma">
-      <div class="name">CHAILE TRANSITO ROQUE</div>
-      <div class="mat">Matrícula Profesional 1757</div>
-    </div>
-
   </div>
-</div>
 
 <script>
-  // Seguridad simple por localStorage (cliente)
-  if(localStorage.getItem("SSM_AUTH") !== "ok"){
-    window.location.href="ingreso.html";
-  }
+/* =========================
+   Helpers
+========================= */
+const fmtARS = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  const fmt = new Intl.NumberFormat("es-AR", { minimumFractionDigits:2, maximumFractionDigits:2 });
-
-  const itemsDiv = document.getElementById("items");
-  const pricesDiv = document.getElementById("prices");
-  const totalEl = document.getElementById("total");
-
-  let count = 0;
-
-  function parseMoney(v){
-    if(!v) return 0;
-    // permite "18000000" o "18.000.000,50"
-    let s = (""+v).trim();
+function parseMoney(v){
+  // admite: 1.234.567,89  |  1234567.89  |  1234567
+  if(!v) return 0;
+  let s = String(v).trim();
+  // quitar símbolos
+  s = s.replace(/\$/g,"").replace(/\s+/g,"");
+  // si tiene coma como decimal
+  if(s.includes(",") && s.lastIndexOf(",") > s.lastIndexOf(".")){
     s = s.replace(/\./g,"").replace(",",".");
-    const n = Number(s);
-    return Number.isFinite(n) ? n : 0;
+  }else{
+    // si usa puntos como miles, los quitamos si hay más de uno
+    const dots = (s.match(/\./g)||[]).length;
+    if(dots >= 2) s = s.replace(/\./g,"");
+  }
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
+}
+
+function moneyStr(n){
+  return fmtARS.format(n);
+}
+
+function pad2(n){ return String(n).padStart(2,"0"); }
+function fechaHoyES(){
+  const d = new Date();
+  return `${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${d.getFullYear()}`;
+}
+
+/* =========================
+   Número a letras (ES)
+   - suficiente para presupuestos (hasta miles de millones)
+========================= */
+function toWordsES(n){
+  n = Math.floor(n);
+  if(n === 0) return "cero";
+
+  const unidades = ["","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve"];
+  const especiales = {
+    10:"diez",11:"once",12:"doce",13:"trece",14:"catorce",15:"quince",
+    16:"dieciséis",17:"diecisiete",18:"dieciocho",19:"diecinueve"
+  };
+  const decenas = ["","diez","veinte","treinta","cuarenta","cincuenta","sesenta","setenta","ochenta","noventa"];
+  const centenas = ["","ciento","doscientos","trescientos","cuatrocientos","quinientos","seiscientos","setecientos","ochocientos","novecientos"];
+
+  function menosDeCien(x){
+    if(x < 10) return unidades[x];
+    if(x < 20) return especiales[x];
+    if(x < 30){
+      if(x === 20) return "veinte";
+      return "veinti" + unidades[x-20];
+    }
+    const d = Math.floor(x/10);
+    const u = x%10;
+    return u ? `${decenas[d]} y ${unidades[u]}` : decenas[d];
   }
 
-  function recalc(){
-    let sum = 0;
-    document.querySelectorAll('input[data-money="1"]').forEach(inp=>{
-      sum += parseMoney(inp.value);
+  function menosDeMil(x){
+    if(x === 100) return "cien";
+    if(x < 100) return menosDeCien(x);
+    const c = Math.floor(x/100);
+    const r = x%100;
+    return r ? `${centenas[c]} ${menosDeCien(r)}` : centenas[c];
+  }
+
+  function seccion(x, div, singular, plural){
+    const q = Math.floor(x/div);
+    const r = x%div;
+    if(q === 0) return ["", x];
+    let words = "";
+    if(q === 1) words = singular;
+    else words = `${convert(q)} ${plural}`;
+    return [words, r];
+  }
+
+  function convert(x){
+    let out = "";
+    let r = x;
+
+    // miles de millones
+    if(r >= 1_000_000_000){
+      const [w, rest] = seccion(r, 1_000_000_000, "mil millones", "mil millones");
+      out += w;
+      r = rest;
+      if(r) out += " ";
+    }
+
+    // millones
+    if(r >= 1_000_000){
+      const q = Math.floor(r/1_000_000);
+      r = r%1_000_000;
+      if(q === 1) out += "un millón";
+      else out += `${convert(q)} millones`;
+      if(r) out += " ";
+    }
+
+    // miles
+    if(r >= 1000){
+      const q = Math.floor(r/1000);
+      r = r%1000;
+      if(q === 1) out += "mil";
+      else out += `${menosDeMil(q)} mil`;
+      if(r) out += " ";
+    }
+
+    // resto
+    if(r > 0){
+      out += menosDeMil(r);
+    }
+
+    return out.trim();
+  }
+
+  let txt = convert(n);
+
+  // ajuste: "uno" -> "un" cuando va antes de "mil/millón/millones" ya quedó bien en reglas,
+  // pero al final para “pesos” suele verse mejor "un" si termina en "uno".
+  txt = txt.replace(/\buno\b$/,"un");
+  return txt;
+}
+
+function pesosEnLetras(total){
+  const entero = Math.floor(total);
+  const cent = Math.round((total - entero) * 100);
+  const letras = toWordsES(entero);
+  const centTxt = String(cent).padStart(2,"0");
+  return `pesos ${letras} con ${centTxt}/100`;
+}
+
+/* =========================
+   Items (vacíos por defecto)
+========================= */
+const itemsEl = document.getElementById("items");
+const pricesEl = document.getElementById("prices");
+const totalEl = document.getElementById("total");
+const montoLetrasEl = document.getElementById("montoLetras");
+const ivaLineaEl = document.getElementById("ivaLinea");
+const chkIva = document.getElementById("chkIva");
+
+let rows = [];
+
+function render(){
+  itemsEl.innerHTML = "";
+  pricesEl.innerHTML = "";
+
+  rows.forEach((r, i) => {
+    // izquierda
+    const rowL = document.createElement("div");
+    rowL.className = "itemRow";
+    rowL.innerHTML = `
+      <div class="n">${i+1}-</div>
+      <input class="desc" value="${escapeHtml(r.desc)}" placeholder="Detalle del item..." />
+    `;
+    rowL.querySelector("input").addEventListener("input", (e)=>{
+      rows[i].desc = e.target.value;
     });
-    totalEl.textContent = "$ " + fmt.format(sum);
-  }
+    itemsEl.appendChild(rowL);
 
-  function addRow(descValue="", priceValue=""){
-    count++;
-
-    const row = document.createElement("div");
-    row.className = "itemRow";
-    row.innerHTML = `
-      <div class="n">${count}-</div>
-      <input class="desc" placeholder="Detalle del ítem..." value="${descValue.replace(/"/g,'&quot;')}">
+    // derecha
+    const rowR = document.createElement("div");
+    rowR.className = "priceRow";
+    rowR.innerHTML = `
+      <div class="peso">$</div>
+      <input class="money" value="${escapeHtml(r.money)}" placeholder="0,00" inputmode="decimal" />
     `;
-    itemsDiv.appendChild(row);
-
-    const prow = document.createElement("div");
-    prow.className = "pRow";
-    prow.innerHTML = `
-      <span>$</span>
-      <input data-money="1" inputmode="decimal" placeholder="0,00" value="${priceValue}">
-    `;
-    const inp = prow.querySelector("input");
-    inp.addEventListener("input", recalc);
-    inp.addEventListener("blur", ()=>{
-      const n = parseMoney(inp.value);
-      inp.value = n ? fmt.format(n) : "";
+    const inp = rowR.querySelector("input");
+    inp.addEventListener("input", ()=>{
+      rows[i].money = inp.value;
       recalc();
     });
-
-    pricesDiv.appendChild(prow);
-    recalc();
-  }
-
-  function removeLast(){
-    if(count<=0) return;
-    itemsDiv.lastElementChild?.remove();
-    pricesDiv.lastElementChild?.remove();
-    count--;
-    // renumerar
-    [...itemsDiv.querySelectorAll(".itemRow .n")].forEach((nEl,i)=> nEl.textContent = (i+1)+"-");
-    recalc();
-  }
-
-  // Inicial: podés arrancar con algunos ítems precargados (como en tu ejemplo)
-  addRow("Traslado de equipos", "");
-  addRow("Perforación exploratoria en 8 pulgadas 150m", "");
-  addRow("Perfilaje eléctrico, para determinar acuíferos", "");
-
-  document.getElementById("btnAdd").addEventListener("click", ()=> addRow());
-  document.getElementById("btnDel").addEventListener("click", removeLast);
-
-  document.getElementById("btnPrint").addEventListener("click", ()=> window.print());
-
-  document.getElementById("btnSalir").addEventListener("click", ()=>{
-    localStorage.removeItem("SSM_AUTH");
-    window.location.href="ingreso.html";
+    inp.addEventListener("blur", ()=>{
+      // formatear al salir
+      const n = parseMoney(inp.value);
+      rows[i].money = n ? moneyStr(n) : "";
+      inp.value = rows[i].money;
+      recalc();
+    });
+    pricesEl.appendChild(rowR);
   });
 
-  document.getElementById("btnVolver").addEventListener("click", ()=>{
-    window.location.href="index.html";
-  });
+  recalc();
+}
+
+function recalc(){
+  let total = 0;
+  rows.forEach(r => total += parseMoney(r.money));
+  totalEl.textContent = "$ " + moneyStr(total);
+
+  montoLetrasEl.textContent = pesosEnLetras(total);
+
+  if(chkIva.checked){
+    ivaLineaEl.innerHTML = 'El monto <b>SI</b> contiene IVA';
+  }else{
+    ivaLineaEl.innerHTML = 'El monto <b>NO</b> contiene IVA';
+  }
+}
+
+function addRow(){
+  rows.push({ desc:"", money:"" });
+  render();
+}
+
+function removeRow(){
+  if(rows.length>1){
+    rows.pop();
+    render();
+  }
+}
+
+function escapeHtml(s){
+  return String(s ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+/* =========================
+   Init
+========================= */
+document.getElementById("fechaHoy").textContent = fechaHoyES();
+
+// arrancamos vacío (sin ítems precargados)
+rows = [{ desc:"", money:"" }, { desc:"", money:"" }, { desc:"", money:"" }];
+render();
+
+document.getElementById("btnAdd").addEventListener("click", addRow);
+document.getElementById("btnRemove").addEventListener("click", removeRow);
+chkIva.addEventListener("change", recalc);
+
+document.getElementById("btnPrint").addEventListener("click", ()=> window.print());
+
+// navegación simple
+document.getElementById("btnVolver").addEventListener("click", ()=>{
+  // si querés, cambiá el destino:
+  window.location.href = "ingreso.html";
+});
+document.getElementById("btnSalir").addEventListener("click", ()=>{
+  window.location.href = "index.html";
+});
 </script>
+
 </body>
 </html>
