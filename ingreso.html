@@ -1,201 +1,282 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Ingreso - Servicios Santa Maria</title>
-<meta name="color-scheme" content="light dark">
-<style>
-  :root{
-    --brand:#1f66b3; --brand2:#7c3aed;
-    --bg:#0b1322; --card:rgba(255,255,255,.92);
-    --ink:#0d1e2e; --muted:#4b5b71; --line:rgba(0,0,0,.12);
-    --radius:16px;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0; min-height:100vh;
-    font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
-    background:
-      radial-gradient(1000px 500px at 15% 10%, rgba(31,102,179,.25), transparent 60%),
-      radial-gradient(1000px 500px at 85% 85%, rgba(124,58,237,.22), transparent 60%),
-      radial-gradient(800px 400px at 50% 55%, rgba(111,255,233,.10), transparent 62%),
-      #071224;
-    display:grid; place-items:center;
-    padding:22px;
-  }
-  .card{
-    width:min(920px, 96vw);
-    background:var(--card);
-    border:1px solid rgba(255,255,255,.35);
-    border-radius:22px;
-    overflow:hidden;
-    box-shadow:0 30px 90px rgba(0,0,0,.45);
-    display:grid;
-    grid-template-columns: 1.15fr .85fr;
-  }
-  .left{
-    padding:30px 28px;
-    background:
-      linear-gradient(135deg, rgba(31,102,179,.10), rgba(124,58,237,.08)),
-      rgba(255,255,255,.92);
-    border-right:1px solid rgba(0,0,0,.08);
-  }
-  .brand{
-    display:flex; align-items:center; gap:14px;
-    margin-bottom:14px;
-  }
-  .brand img{
-    width:56px; height:56px; object-fit:contain;
-    background:#fff; border-radius:14px;
-    border:1px solid rgba(0,0,0,.10);
-    padding:8px;
-  }
-  .brand h1{
-    margin:0;
-    font-size:20px;
-    line-height:1.1;
-    letter-spacing:.02em;
-  }
-  .brand p{
-    margin:6px 0 0;
-    color:var(--muted);
-    font-weight:700;
-  }
-  .info{
-    margin-top:16px;
-    padding:14px 14px;
-    border:1px solid rgba(0,0,0,.10);
-    border-radius:16px;
-    background:rgba(255,255,255,.75);
-    color:#16263a;
-    line-height:1.45;
-    font-weight:650;
-  }
-  .right{
-    padding:30px 28px;
-    background:rgba(255,255,255,.92);
-  }
-  .h2{
-    margin:0 0 14px;
-    font-size:22px;
-    font-weight:1000;
-    color:#10233a;
-  }
-  label{display:block; font-weight:900; color:#132a43; margin:12px 0 6px}
-  select,input{
-    width:100%;
-    height:46px;
-    padding:10px 12px;
-    border-radius:14px;
-    border:1px solid rgba(0,0,0,.14);
-    background:#fff;
-    outline:none;
-    font-weight:750;
-    color:#0d1e2e;
-  }
-  input:focus, select:focus{border-color:rgba(31,102,179,.55); box-shadow:0 0 0 4px rgba(31,102,179,.12)}
-  .row{display:flex; gap:10px; align-items:center; margin-top:12px}
-  .btn{
-    height:46px; border:none; cursor:pointer;
-    border-radius:16px;
-    padding:0 16px;
-    font-weight:1000;
-  }
-  .btn.primary{
-    width:100%;
-    background:linear-gradient(135deg,var(--brand),var(--brand2));
-    color:#fff;
-    box-shadow:0 10px 26px rgba(31,102,179,.25);
-  }
-  .btn.ghost{
-    background:#fff;
-    border:1px solid rgba(0,0,0,.14);
-    color:#17324d;
-  }
-  .hint{
-    margin-top:10px;
-    color:#4a5d75;
-    font-weight:650;
-    font-size:13px;
-  }
-  .err{
-    display:none;
-    margin-top:12px;
-    padding:10px 12px;
-    border-radius:14px;
-    background:rgba(178,13,13,.10);
-    border:1px solid rgba(178,13,13,.25);
-    color:#7a0b0b;
-    font-weight:900;
-  }
-  @media (max-width: 860px){
-    .card{grid-template-columns:1fr}
-    .left{border-right:none; border-bottom:1px solid rgba(0,0,0,.08)}
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Servicios Santa Maria - Portal Interno</title>
+  <meta name="color-scheme" content="dark light" />
+  <style>
+    :root{
+      --ink:#0b1220;
+      --glass: rgba(255,255,255,.14);
+      --glass2: rgba(255,255,255,.10);
+      --line: rgba(255,255,255,.28);
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:#fff;
+      overflow:hidden;
+      background:#000;
+    }
+
+    /* Fondo */
+    .bg{
+      position:fixed; inset:0;
+      background: url("fondo.jpg") center/cover no-repeat fixed;
+      filter: saturate(1.05) contrast(1.05);
+      transform: scale(1.02);
+    }
+    /* Capa para mejorar legibilidad */
+    .veil{
+      position:fixed; inset:0;
+      background:
+        radial-gradient(1200px 700px at 70% 15%, rgba(0,0,0,.15), rgba(0,0,0,.55)),
+        linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.55));
+    }
+
+    /* Layout */
+    .wrap{
+      position:relative;
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+
+    .panel{
+      width:min(520px, 92vw);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, var(--glass), var(--glass2));
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .panel-inner{
+      padding:26px 26px 22px;
+    }
+
+    /* Título animado */
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      margin-bottom:18px;
+      user-select:none;
+    }
+
+    .brand h1{
+      margin:0;
+      font-size: 28px;
+      letter-spacing:.2px;
+      line-height:1.1;
+      font-weight: 850;
+
+      background: linear-gradient(90deg,
+        #ffffff 0%,
+        #a7d8ff 20%,
+        #9b7bff 40%,
+        #6fffe9 60%,
+        #ffffff 80%,
+        #a7d8ff 100%
+      );
+      background-size: 220% 100%;
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+
+      animation: shimmer 3.2s ease-in-out infinite;
+      text-shadow: 0 8px 26px rgba(0,0,0,.35);
+    }
+
+    .brand .sub{
+      margin:0;
+      font-size: 14px;
+      opacity:.9;
+      letter-spacing:.35px;
+    }
+
+    @keyframes shimmer{
+      0%{background-position: 0% 50%}
+      50%{background-position: 100% 50%}
+      100%{background-position: 0% 50%}
+    }
+
+    /* Form */
+    .form{
+      display:grid;
+      gap:12px;
+      margin-top: 10px;
+    }
+
+    label{
+      font-size:12px;
+      opacity:.92;
+      letter-spacing:.25px;
+    }
+
+    .field{
+      display:grid;
+      gap:6px;
+    }
+
+    select, input{
+      height:44px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.28);
+      outline: none;
+      background: rgba(10,18,32,.35);
+      color:#fff;
+      font-size: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+    }
+
+    select:focus, input:focus{
+      border-color: rgba(111,255,233,.55);
+      box-shadow:
+        0 0 0 3px rgba(111,255,233,.18),
+        inset 0 1px 0 rgba(255,255,255,.10);
+    }
+
+    /* Placeholder visible en oscuro */
+    input::placeholder{color: rgba(255,255,255,.65)}
+
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-top: 10px;
+    }
+
+    .btn{
+      height:44px;
+      border-radius: 12px;
+      border:0;
+      cursor:pointer;
+      padding: 0 14px;
+      font-weight: 750;
+      letter-spacing:.2px;
+      color:#082036;
+      background: linear-gradient(135deg, #6fffe9, #a7d8ff);
+      box-shadow: 0 12px 26px rgba(0,0,0,.28);
+      transition: transform .15s ease, filter .15s ease;
+    }
+    .btn:hover{transform: translateY(-1px); filter: brightness(1.02)}
+    .btn:active{transform: translateY(0px); filter: brightness(.98)}
+
+    .hint{
+      font-size:12px;
+      opacity:.85;
+    }
+
+    .error{
+      margin-top:10px;
+      display:none;
+      padding:10px 12px;
+      border-radius: 12px;
+      border:1px solid rgba(255,120,120,.45);
+      background: rgba(140,0,0,.18);
+      font-size: 13px;
+      line-height:1.25;
+    }
+
+    /* Esquinas suaves */
+    .panel-topline{
+      height: 4px;
+      background: linear-gradient(90deg, rgba(111,255,233,.95), rgba(167,216,255,.9), rgba(155,123,255,.9));
+      opacity:.9;
+    }
+
+    /* Mobile */
+    @media (max-width: 420px){
+      .panel-inner{padding:22px}
+      .brand h1{font-size:24px}
+    }
+  </style>
 </head>
 <body>
+  <div class="bg"></div>
+  <div class="veil"></div>
 
-<div class="card">
-  <div class="left">
-    <div class="brand">
-      <img src="Logo.png" alt="Logo Servicios Santa Maria">
-      <div>
-        <h1>Servicios Santa Maria</h1>
-        <p>Portal interno • Presupuestos</p>
+  <main class="wrap">
+    <section class="panel" aria-label="Portal interno">
+      <div class="panel-topline"></div>
+      <div class="panel-inner">
+        <div class="brand">
+          <h1>Servicios Santa Maria</h1>
+          <p class="sub">Portal interno</p>
+        </div>
+
+        <form class="form" id="loginForm" autocomplete="off">
+          <div class="field">
+            <label for="usuario">Usuario</label>
+            <select id="usuario" required>
+              <option value="" selected disabled>Seleccionar…</option>
+              <option value="Ingeniero Roque Chaile">Ingeniero Roque Chaile</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="pass">Contraseña</label>
+            <input id="pass" type="password" inputmode="numeric" placeholder="Ingresar contraseña" required />
+          </div>
+
+          <div class="row">
+            <span class="hint">Acceso restringido</span>
+            <button class="btn" type="submit">Ingresar</button>
+          </div>
+
+          <div class="error" id="errBox" role="alert"></div>
+        </form>
       </div>
-    </div>
+    </section>
+  </main>
 
-    <div class="info">
-      Ingresá con tu usuario para acceder al generador de presupuestos.<br>
-      Luego podrás <b>agregar ítems</b>, ver el <b>total</b> y <b>imprimir/guardar en PDF</b>.
-    </div>
-  </div>
+  <script>
+    // Credenciales (tal como pediste)
+    const VALID_USER = "Ingeniero Roque Chaile";
+    const VALID_PASS = "16503745";
 
-  <div class="right">
-    <div class="h2">Ingreso</div>
+    const form = document.getElementById("loginForm");
+    const userEl = document.getElementById("usuario");
+    const passEl = document.getElementById("pass");
+    const errBox = document.getElementById("errBox");
 
-    <label for="usuario">Usuario</label>
-    <select id="usuario">
-      <option value="roque">Ingeniero Roque Chaile</option>
-    </select>
+    // Mejor UX: al cambiar usuario, enfocar contraseña
+    userEl.addEventListener("change", () => passEl.focus());
 
-    <label for="pass">Contraseña</label>
-    <input id="pass" type="password" placeholder="••••••••" autocomplete="current-password">
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      errBox.style.display = "none";
+      errBox.textContent = "";
 
-    <button class="btn primary" id="btnIngresar" type="button">Ingresar</button>
+      const u = (userEl.value || "").trim();
+      const p = (passEl.value || "").trim();
 
-    <div class="row">
-      <button class="btn ghost" type="button" id="btnVolver">Volver al inicio</button>
-    </div>
+      if (u === VALID_USER && p === VALID_PASS) {
+        // Marca sesión simple (por si después querés bloquear presupuesto.html si no está logueado)
+        sessionStorage.setItem("ssm_auth", "ok");
+        sessionStorage.setItem("ssm_user", u);
 
-    <div class="hint">Acceso restringido.</div>
-    <div class="err" id="err">Usuario o contraseña incorrectos.</div>
-  </div>
-</div>
+        // Redirección
+        window.location.href = "presupuesto.html";
+        return;
+      }
 
-<script>
-  const PASS_OK = "16503745";
-  const btn = document.getElementById("btnIngresar");
-  const err = document.getElementById("err");
-
-  function login(){
-    const pass = document.getElementById("pass").value.trim();
-    if(pass === PASS_OK){
-      localStorage.setItem("SSM_AUTH", "ok");
-      window.location.href = "presupuesto.html";
-      return;
-    }
-    err.style.display = "block";
-  }
-
-  btn.addEventListener("click", login);
-  document.getElementById("pass").addEventListener("keydown", (e)=>{ if(e.key==="Enter") login(); });
-
-  document.getElementById("btnVolver").addEventListener("click", ()=>{
-    window.location.href = "index.html";
-  });
-</script>
+      errBox.textContent = "Usuario o contraseña incorrectos.";
+      errBox.style.display = "block";
+      passEl.select();
+      passEl.focus();
+    });
+  </script>
 </body>
 </html>
