@@ -1,1 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Presupuesto - Servicios Santa Maria</title>
+<meta name="color-scheme" content="light">
+<style>
+  :root{
+    --ink:#0d1e2e;
+    --line:#000;
+    --bg:#f3f6fb;
+    --paper:#fff;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Calibri, Arial, sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+  }
 
+  /* Barra superior (no se imprime) */
+  .topbar{
+    position:sticky; top:0; z-index:5;
+    background:#0c1b2e;
+    color:#fff;
+    padding:10px 14px;
+    display:flex; gap:10px; align-items:center; justify-content:space-between;
+  }
+  .topbar .left{display:flex; gap:10px; align-items:center}
+  .topbar img{width:34px;height:34px;object-fit:contain;background:#fff;border-radius:10px;padding:4px}
+  .topbar .t{font-weight:900; letter-spacing:.02em}
+  .topbar .actions{display:flex; gap:8px; flex-wrap:wrap}
+  .btn{
+    border:none; cursor:pointer;
+    padding:10px 12px;
+    border-radius:12px;
+    font-weight:900;
+  }
+  .btn.primary{background:#1f66b3; color:#fff}
+  .btn.ghost{background:#fff; color:#0c1b2e}
+  .btn.danger{background:#b20d0d; color:#fff}
+  .hint{opacity:.85; font-size:12px; font-weight:650}
+
+  /* Hoja A4 */
+  .wrap{
+    padding:18px 14px 40px;
+    display:flex;
+    justify-content:center;
+  }
+  .sheet{
+    width:210mm;
+    min-height:297mm;
+    background:var(--paper);
+    box-shadow:0 18px 55px rgba(0,0,0,.18);
+    padding:0;
+  }
+
+  /* Marco/Grilla tipo Excel */
+  .box{
+    border:2px solid var(--line);
+  }
+  .gridTop{
+    display:grid;
+    grid-template-columns: 58mm 1fr 74mm;
+    border-bottom:2px solid var(--line);
+    min-height:54mm;
+  }
+  .cell{padding:10px 10px}
+  .cell + .cell{border-left:2px solid var(--line)}
+  .logo{
+    display:flex; align-items:flex-start; justify-content:flex-start;
+    gap:10px;
+  }
+  .logo img{
+    width:52mm; height:52mm;
+    object-fit:contain;
+    display:block;
+  }
+
+  /* Centro con leyenda */
+  .legend{
+    text-align:center;
+    font-weight:700;
+    font-size:12px;
+    line-height:1.35;
+    letter-spacing:.02em;
+    padding-top:10px;
+    white-space:pre-line;
+  }
+
+  /* Cuadro derecho */
+  .rightbox{
+    font-size:12px;
+    line-height:1.5;
+    font-weight:700;
+    padding-top:14px;
+    white-space:pre-line;
+  }
+
+  /* Fila domicilio / iva */
+  .rowLine{
+    display:grid;
+    grid-template-columns: 1fr;
+    border-bottom:2px solid var(--line);
+    padding:8px 10px;
+    font-size:12px;
+    font-weight:700;
+  }
+
+  /* PROFORMA */
+  .proforma{
+    text-align:center;
+    font-weight:900;
+    padding:8px 10px;
+    border-bottom:2px solid var(--line);
+    letter-spacing:.03em;
+  }
+
+  /* Cliente */
+  .cliente{
+    padding:10px 10px;
+    border-bottom:2px solid var(--line);
+    font-size:12px;
+  }
+  .cliente .r{display:flex; gap:10px; margin:4px 0}
+  .cliente label{min-width:80px; font-weight:900}
+  .cliente input{
+    flex:1;
+    border:none;
+    border-bottom:1px solid #000;
+    outline:none;
+    font-family:inherit;
+    font-size:12px;
+    padding:2px 4px;
+  }
+
+  /* Tabla detalle */
+  .tablaHead{
+    display:grid;
+    grid-template-columns: 1fr 46mm;
+    border-bottom:2px solid var(--line);
+    font-weight:900;
+    font-size:12px;
+  }
+  .tablaHead div{padding:8px 10px; text-align:center}
+  .tablaHead div + div{border-left:2px solid var(--line)}
+
+  .tablaBody{
+    display:grid;
+    grid-template-columns: 1fr 46mm;
+    min-height:130mm; /* espacio grande como Excel */
+    border-bottom:2px solid var(--line);
+  }
+  .colLeft{border-right:2px solid var(--line)}
+  .items{
+    padding:6px 10px;
+    font-size:12px;
+    line-height:1.4;
+  }
+  .items .itemRow{
+    display:grid;
+    grid-template-columns: 28px 1fr;
+    gap:6px;
+    margin:6px 0;
+    align-items:start;
+  }
+  .items .n{font-weight:900}
+  .items input.desc{
+    width:100%;
+    border:none;
+    border-bottom:1px dotted #000;
+    outline:none;
+    font-family:inherit;
+    font-size:12px;
+    padding:2px 4px;
+  }
+
+  .prices{
+    padding:6px 10px;
+    font-size:12px;
+  }
+  .prices .pRow{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    align-items:center;
+    margin:6px 0;
+  }
+  .prices .pRow span{min-width:14px; text-align:right; font-weight:900}
+  .prices input{
+    width:100%;
+    border:none;
+    border-bottom:1px dotted #000;
+    outline:none;
+    font-family:inherit;
+    font-size:12px;
+    text-align:right;
+    padding:2px 4px;
+  }
+
+  /* Validez + total */
+  .footerRow{
+    display:grid;
+    grid-template-columns: 1fr 46mm;
+    min-height:26mm;
+  }
+  .footerRow .leftF{padding:8px 10px; font-size:12px; font-weight:900}
+  .footerRow .rightF{
+    border-left:2px solid var(--line);
+    padding:8px 10px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:flex-end;
+    font-size:12px;
+    font-weight:900;
+  }
+  .totalBox{
+    width:100%;
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    align-items:center;
+  }
+  .totalBox .money{min-width:14px}
+  .totalBox .total{
+    min-width:100px;
+    text-align:right;
+    font-size:13px;
+  }
+
+  /* Firma */
+  .firma{
+    padding:18px 10px 24px;
+    text-align:center;
+  }
+  .firma img{
+    width:180px;
+    max-width:60%;
+    object-fit:contain;
+    display:block;
+    margin:0 auto 6px;
+  }
+  .firma .name{
+    font-weight:900;
+    font-size:12px;
+    letter-spacing:.02em;
+  }
+  .firma .mat{
+    font-weight:700;
+    font-size:12px;
+  }
+
+  /* Panel “Agregar item” (no se imprime) */
+  .adder{
+    margin:14px auto 0;
+    width:210mm;
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+    padding:0 14px;
+  }
+
+  .adder .btn{border-radius:12px}
+
+  /* Impresión */
+  @media print{
+    body{background:#fff}
+    .topbar,.adder{display:none !important}
+    .wrap{padding:0}
+    .sheet{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="left">
+    <img src="Logo.png" alt="Logo">
+    <div>
+      <div class="t">Servicios Santa Maria • Presupuesto</div>
+      <div class="hint">Tip: “Imprimir / Guardar PDF” → destino “Guardar como PDF”.</div>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn ghost" id="btnVolver" type="button">Volver</button>
+    <button class="btn primary" id="btnPrint" type="button">Imprimir / Guardar PDF</button>
+    <button class="btn danger" id="btnSalir" type="button">Salir</button>
+  </div>
+</div>
+
+<div class="adder">
+  <button class="btn primary" id="btnAdd" type="button">+ Agregar ítem</button>
+  <button class="btn ghost" id="btnDel" type="button">– Quitar último</button>
+</div>
+
+<div class="wrap">
+  <div class="sheet">
+
+    <div class="box">
+
+      <!-- Encabezado -->
+      <div class="gridTop">
+        <div class="cell logo">
+          <img src="Logo.png" alt="Servicios Santa Maria">
+        </div>
+
+        <div class="cell legend" id="legend">
+PERFORACIONES - FILMACIONES - SISTEMA DE RIEGO
+ESTUDIO DE SUELO
+ASESORAMIENTO DE SISTEMA PRODUCTIVOS
+REFRIGERACION INDUSTRIAL, COMERCIAL, FAMILIAR
+TENDIDO DE MEDIA TENSION-MANTENIMIENTO DE TABLERO
+        </div>
+
+        <div class="cell rightbox" id="datos">
+C.U.I.T.: 20-16503745-7
+INGRESOS BRUTOS: 20-16503745-7
+INICIO DE ACTIVIDADES: 01/07/2018
+        </div>
+      </div>
+
+      <!-- Domicilio / IVA -->
+      <div class="rowLine">
+        B° Jardín C28 - Cel (3838) 497748 · SANTA MARIA CATAMARCA
+      </div>
+      <div class="rowLine">
+        I.V.A. RESPONSABLE INSCRIPTO
+      </div>
+
+      <!-- PROFORMA -->
+      <div class="proforma">PROFORMA</div>
+
+      <!-- Cliente -->
+      <div class="cliente">
+        <div class="r">
+          <label>Señor(es):</label>
+          <input id="cliente" placeholder="Ej: Comuna de Amaicha del Valle">
+        </div>
+        <div class="r">
+          <label>Domicilio:</label>
+          <input id="domicilio" placeholder="Ej: Amaicha">
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="tablaHead">
+        <div>DETALLE</div>
+        <div>Precio TOTAL</div>
+      </div>
+
+      <div class="tablaBody">
+        <div class="colLeft">
+          <div class="items" id="items"></div>
+        </div>
+        <div class="prices" id="prices"></div>
+      </div>
+
+      <!-- Validez + total -->
+      <div class="footerRow">
+        <div class="leftF">La validez de la oferta es de 10 días</div>
+        <div class="rightF">
+          <div class="totalBox">
+            <span class="money">$</span>
+            <span class="total" id="total">$ 0,00</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Firma -->
+    <div class="firma">
+      <img src="firma.png" alt="Firma">
+      <div class="name">CHAILE TRANSITO ROQUE</div>
+      <div class="mat">Matrícula Profesional 1757</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Seguridad simple por localStorage (cliente)
+  if(localStorage.getItem("SSM_AUTH") !== "ok"){
+    window.location.href="ingreso.html";
+  }
+
+  const fmt = new Intl.NumberFormat("es-AR", { minimumFractionDigits:2, maximumFractionDigits:2 });
+
+  const itemsDiv = document.getElementById("items");
+  const pricesDiv = document.getElementById("prices");
+  const totalEl = document.getElementById("total");
+
+  let count = 0;
+
+  function parseMoney(v){
+    if(!v) return 0;
+    // permite "18000000" o "18.000.000,50"
+    let s = (""+v).trim();
+    s = s.replace(/\./g,"").replace(",",".");
+    const n = Number(s);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function recalc(){
+    let sum = 0;
+    document.querySelectorAll('input[data-money="1"]').forEach(inp=>{
+      sum += parseMoney(inp.value);
+    });
+    totalEl.textContent = "$ " + fmt.format(sum);
+  }
+
+  function addRow(descValue="", priceValue=""){
+    count++;
+
+    const row = document.createElement("div");
+    row.className = "itemRow";
+    row.innerHTML = `
+      <div class="n">${count}-</div>
+      <input class="desc" placeholder="Detalle del ítem..." value="${descValue.replace(/"/g,'&quot;')}">
+    `;
+    itemsDiv.appendChild(row);
+
+    const prow = document.createElement("div");
+    prow.className = "pRow";
+    prow.innerHTML = `
+      <span>$</span>
+      <input data-money="1" inputmode="decimal" placeholder="0,00" value="${priceValue}">
+    `;
+    const inp = prow.querySelector("input");
+    inp.addEventListener("input", recalc);
+    inp.addEventListener("blur", ()=>{
+      const n = parseMoney(inp.value);
+      inp.value = n ? fmt.format(n) : "";
+      recalc();
+    });
+
+    pricesDiv.appendChild(prow);
+    recalc();
+  }
+
+  function removeLast(){
+    if(count<=0) return;
+    itemsDiv.lastElementChild?.remove();
+    pricesDiv.lastElementChild?.remove();
+    count--;
+    // renumerar
+    [...itemsDiv.querySelectorAll(".itemRow .n")].forEach((nEl,i)=> nEl.textContent = (i+1)+"-");
+    recalc();
+  }
+
+  // Inicial: podés arrancar con algunos ítems precargados (como en tu ejemplo)
+  addRow("Traslado de equipos", "");
+  addRow("Perforación exploratoria en 8 pulgadas 150m", "");
+  addRow("Perfilaje eléctrico, para determinar acuíferos", "");
+
+  document.getElementById("btnAdd").addEventListener("click", ()=> addRow());
+  document.getElementById("btnDel").addEventListener("click", removeLast);
+
+  document.getElementById("btnPrint").addEventListener("click", ()=> window.print());
+
+  document.getElementById("btnSalir").addEventListener("click", ()=>{
+    localStorage.removeItem("SSM_AUTH");
+    window.location.href="ingreso.html";
+  });
+
+  document.getElementById("btnVolver").addEventListener("click", ()=>{
+    window.location.href="index.html";
+  });
+</script>
+</body>
+</html>
