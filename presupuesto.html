@@ -1,776 +1,738 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Servicios Santa Maria • Presupuesto</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Servicios Santa Maria • Presupuesto</title>
 
-<style>
-  :root{
-    --brand:#1f66b3;
-    --ink:#0f2137;
-    --muted:#516070;
-    --bg:#eef2f7;
-    --paper:#ffffff;
-    --line:#1a1a1a;
-    --soft:#d7dde6;
-    --radius:14px;
-  }
+  <style>
+    :root{
+      --brand:#1f66b3;
+      --brand2:#134a86;
+      --bg:#f2f6fb;
+      --card:#ffffff;
+      --ink:#152233;
+      --muted:#6b7483;
+      --line:#0f0f10;          /* borde negro “excel” */
+      --soft:#dfe6ef;          /* UI */
+      --shadow:0 16px 50px rgba(8,20,40,.12);
+      --radius:16px;
+    }
 
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;
-    background:var(--bg);
-    color:var(--ink);
-  }
+    *{box-sizing:border-box}
+    html,body{height:100%}
 
-  /* ===== Barra superior ===== */
-  .topbar{
-    position:sticky; top:0; z-index:50;
-    background:linear-gradient(180deg,#0b213a,#0b213a);
-    color:#fff;
-    padding:12px 14px;
-    display:flex; align-items:center; justify-content:space-between;
-    gap:12px;
-    box-shadow:0 10px 30px rgba(0,0,0,.18);
-  }
-  .topbar .left{
-    display:flex; align-items:center; gap:10px; min-width:240px;
-  }
-  .miniLogo{
-    width:34px; height:34px; border-radius:10px;
-    background:#fff;
-    padding:4px;
-    object-fit:contain;
-  }
-  .topbar .title{
-    font-weight:800;
-    line-height:1.15;
-  }
-  .topbar .hint{
-    font-size:12px; opacity:.85; margin-top:2px;
-  }
-  .topbar .right{
-    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
-  }
-  .btn{
-    border:none;
-    cursor:pointer;
-    border-radius:12px;
-    padding:10px 14px;
-    font-weight:800;
-    letter-spacing:.2px;
-  }
-  .btn.light{background:#fff;color:#0b213a}
-  .btn.brand{background:linear-gradient(135deg,#1f66b3,#134a86); color:#fff}
-  .btn.danger{background:#b20d0d;color:#fff}
-  .btn.gray{background:#e9eef6;color:#0b213a}
-  .btn.small{padding:9px 12px; border-radius:12px}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+    }
 
-  /* ===== Layout ===== */
-  .wrap{
-    max-width:1100px;
-    margin:18px auto 42px;
-    padding:0 12px;
-  }
+    /* ===== Barra superior (UI) ===== */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      background:linear-gradient(90deg,#0b213a,#0f2a4b);
+      color:#fff;
+      box-shadow:0 8px 20px rgba(0,0,0,.15);
+    }
+    .topbar .inner{
+      max-width:1200px;
+      margin:0 auto;
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .brand img{
+      width:34px;height:34px; border-radius:10px;
+      object-fit:cover; background:#fff;
+    }
+    .brand small{
+      display:block;
+      font-weight:500;
+      opacity:.85;
+      margin-top:2px;
+    }
+    .actions{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    }
+    .btn{
+      border:0;
+      padding:12px 16px;
+      border-radius:999px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:0 8px 18px rgba(0,0,0,.15);
+    }
+    .btn.secondary{background:#ffffff; color:#0b213a}
+    .btn.primary{background:linear-gradient(180deg,var(--brand),var(--brand2)); color:#fff}
+    .btn.danger{background:#c01616; color:#fff}
+    .btn:active{transform:translateY(1px)}
 
-  .actions{
-    display:flex;
-    justify-content:center;
-    gap:12px;
-    margin:10px 0 14px;
-    flex-wrap:wrap;
-  }
+    /* ===== Controles (UI) ===== */
+    .controls{
+      max-width:1200px;
+      margin:18px auto 0;
+      padding:0 16px;
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .pill{
+      background:#fff;
+      border:1px solid rgba(15,33,55,.08);
+      border-radius:999px;
+      padding:10px 14px;
+      box-shadow:0 10px 26px rgba(8,20,40,.10);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:800;
+    }
+    .pill input[type="checkbox"]{
+      width:20px;height:20px;
+      accent-color:var(--brand);
+      cursor:pointer;
+    }
 
-  /* ===== Hoja ===== */
-  .sheet{
-    width: 820px;           /* A4 aprox en pantalla */
-    max-width: 100%;
-    margin: 0 auto;
-    background:var(--paper);
-    border:1px solid var(--soft);
-    box-shadow:0 18px 60px rgba(0,0,0,.15);
-    padding:0;
-  }
+    /* ===== Hoja A4 ===== */
+    .pageWrap{
+      max-width:1200px;
+      margin:16px auto 40px;
+      padding:0 16px;
+      display:flex;
+      justify-content:center;
+    }
 
-  /* ===== Cabecera tipo “excel” ===== */
-  .box{
-    border:1.6px solid var(--line);
-    margin:28px 28px 0;
-  }
+    .sheet{
+      width:210mm;
+      min-height:297mm;
+      background:var(--card);
+      box-shadow:var(--shadow);
+      border-radius:10px;
+      padding:14mm 14mm 14mm;
+      position:relative;
+    }
 
-  .headRow{
-    display:grid;
-    grid-template-columns: 240px 1fr 300px;
-    min-height:150px;
-    border-bottom:1.6px solid var(--line);
-  }
+    /* “Tabla” estilo Excel */
+    .box{
+      border:2px solid var(--line);
+      width:100%;
+    }
+    .row{
+      display:grid;
+      grid-template-columns: 1fr;
+    }
+    .cell{
+      padding:8px 10px;
+    }
+    .hline{ border-top:2px solid var(--line); }
+    .vline{ border-left:2px solid var(--line); }
+    .tight{ padding:6px 10px; }
 
-  /* IMPORTANTE: SIN LÍNEA DIVISORIA ENTRE LOGO Y TEXTO CENTRAL */
-  .hCell{
-    padding:10px 12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  .hCell.logo{border-right:none;}     /* <- sin divisor */
-  .hCell.center{border-left:none;}    /* <- sin divisor */
+    /* Encabezado (3 columnas, pero 1ra+2da unificadas SIN línea divisoria interna) */
+    .headRow{
+      display:grid;
+      grid-template-columns: 2fr 1fr; /* izquierda (logo+texto) + derecha (datos) */
+      min-height:105px;
+    }
 
-  /* mantenemos divisor SOLO entre “centro” y “derecha” */
-  .hCell.center{border-right:1.6px solid var(--line);}
-  .hCell.right{border-left:none;}
+    .leftHead{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:10px 12px;
+    }
 
-  .logoBig{
-    width:150px;
-    height:150px;
-    object-fit:contain;
-  }
+    .logo{
+      width:92px; height:92px;
+      object-fit:contain;
+      flex:0 0 auto;
+    }
 
-  .legend{
-    text-align:center;
-    font-weight:800;
-    font-size:11px;
-    line-height:1.35;
-    letter-spacing:.25px;
-    text-transform:uppercase;
-    padding:0 10px;
-  }
+    .servicesText{
+      flex:1;
+      text-align:center;
+      font-weight:800;
+      font-size:11.5px;
+      line-height:1.25;
+      letter-spacing:.15px;
+      text-transform:uppercase;
+      padding:0 4px;
+    }
 
-  .rightInfo{
-    width:100%;
-    display:flex;
-    justify-content:center;  /* bloque centrado dentro de la celda */
-  }
-  .rightInfo .card{
-    width: 88%;
-    text-align:left;         /* texto alineado a la izquierda */
-    font-size:12px;
-    line-height:1.6;
-    font-weight:800;
-  }
-  .rightInfo .card b{font-weight:900}
+    .rightHead{
+      padding:10px 12px;
+      display:flex;
+      align-items:center;   /* centrado vertical */
+      justify-content:flex-start;
+      text-align:left;      /* a la izquierda, como pediste */
+      font-weight:800;
+      font-size:12.5px;
+      line-height:1.55;
+      white-space:nowrap;
+    }
 
-  .midRow{
-    display:grid;
-    grid-template-columns:1fr;
-    border-bottom:1.6px solid var(--line);
-  }
-  .addr{
-    padding:8px 10px;
-    font-size:12px;
-    font-weight:800;
-  }
-  .addr strong{font-weight:900}
-  .addr.center{text-align:center}
+    .metaLine{ display:block; }
 
-  .ivaRow{
-    border-bottom:1.6px solid var(--line);
-    padding:8px 10px;
-    font-size:12px;
-    font-weight:900;
-  }
+    /* Lineas bajo encabezado */
+    .addrLine{
+      font-weight:800;
+      text-align:center;
+      font-size:12.5px;
+      padding:8px 10px;
+    }
+    .ivaLine{
+      font-weight:800;
+      font-size:12.5px;
+      padding:8px 10px;
+    }
+    .title{
+      text-align:center;
+      font-weight:900;
+      letter-spacing:.8px;
+      padding:10px 10px;
+    }
 
-  .proforma{
-    border-bottom:1.6px solid var(--line);
-    text-align:center;
-    padding:10px 10px;
-    font-weight:900;
-    letter-spacing:.6px;
-  }
+    /* Cliente */
+    .client{
+      display:grid;
+      grid-template-columns: 110px 1fr;
+      gap:10px;
+      padding:10px 10px;
+      font-size:12.5px;
+      align-items:center;
+    }
+    .client label{ font-weight:800; }
+    .lineInput{
+      border:0;
+      border-bottom:1px solid rgba(0,0,0,.55);
+      outline:none;
+      padding:6px 6px;
+      font-size:12.5px;
+      background:transparent;
+      width:100%;
+    }
 
-  .client{
-    border-bottom:1.6px solid var(--line);
-    padding:10px 10px 8px;
-    font-size:12px;
-  }
-  .clientGrid{
-    display:grid;
-    grid-template-columns: 90px 1fr;
-    gap:8px 10px;
-    align-items:center;
-  }
-  .client label{
-    font-weight:900;
-  }
-  .lineInput{
-    border:none;
-    border-bottom:1px solid #000;
-    padding:6px 6px 4px;
-    font-size:12px;
-    outline:none;
-    width:100%;
-  }
+    /* Detalle + Precio */
+    .detailHeader{
+      display:grid;
+      grid-template-columns: 1fr 180px;
+      border-top:2px solid var(--line);
+      border-bottom:2px solid var(--line);
+      font-weight:900;
+      text-align:center;
+      font-size:12px;
+      padding:0;
+    }
+    .detailHeader > div{
+      padding:8px 10px;
+    }
+    .detailHeader > div:last-child{
+      border-left:2px solid var(--line);
+    }
 
-  /* ===== Tabla detalle ===== */
-  .detailRow{
-    display:grid;
-    grid-template-columns: 1fr 170px;
-    min-height:460px;
-  }
-  .detailLeft{
-    border-right:1.6px solid var(--line);
-    padding:0;
-  }
-  .detailRight{
-    padding:0;
-  }
+    .items{
+      display:grid;
+      grid-template-columns: 1fr 180px;
+      min-height:360px;
+    }
+    .items .left{
+      padding:10px 10px 12px;
+    }
+    .items .right{
+      padding:10px 10px 12px;
+      border-left:2px solid var(--line);
+    }
 
-  .detailHead{
-    display:grid;
-    grid-template-columns: 1fr;
-    text-align:center;
-    font-size:12px;
-    font-weight:900;
-    padding:8px 10px;
-    border-bottom:1.6px solid var(--line);
-  }
+    .itemRow{
+      display:grid;
+      grid-template-columns: 34px 1fr;
+      gap:8px;
+      align-items:end;
+      margin:8px 0;
+      font-size:12.5px;
+    }
+    .n{
+      font-weight:900;
+      text-align:right;
+      padding-right:6px;
+    }
+    .itemText{
+      border:0;
+      border-bottom:1px dotted rgba(0,0,0,.6);
+      outline:none;
+      padding:6px 4px;
+      font-size:12.5px;
+      background:transparent;
+      width:100%;
+    }
 
-  .priceHead{
-    text-align:center;
-    font-size:12px;
-    font-weight:900;
-    padding:8px 10px;
-    border-bottom:1.6px solid var(--line);
-  }
+    .priceRow{
+      display:grid;
+      grid-template-columns: 16px 1fr;
+      gap:8px;
+      align-items:end;
+      margin:8px 0;
+      font-size:12.5px;
+    }
+    .peso{
+      font-weight:900;
+      text-align:center;
+    }
+    .itemPrice{
+      border:0;
+      border-bottom:1px dotted rgba(0,0,0,.6);
+      outline:none;
+      padding:6px 4px;
+      font-size:12.5px;
+      text-align:right;
+      background:transparent;
+      width:100%;
+    }
 
-  .items{
-    padding:8px 10px 10px;
-  }
+    /* Pie: leyendas + total + firma todo JUNTO */
+    .footer{
+      border-top:2px solid var(--line);
+      display:grid;
+      grid-template-columns: 1fr 180px;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .footer .leftFoot{
+      padding:8px 10px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      min-height:120px;
+    }
+    .footer .rightFoot{
+      border-left:2px solid var(--line);
+      padding:8px 10px;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-end;
+      gap:10px;
+    }
+    .footLine{
+      font-size:11.5px;
+      font-weight:800;
+      line-height:1.25;
+    }
+    .totalBox{
+      border-top:1px solid rgba(0,0,0,.65);
+      padding-top:10px;
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      gap:10px;
+      font-weight:900;
+    }
+    .totalBox .lbl{font-size:12px}
+    .totalBox .amt{font-size:16px}
 
-  .itemRow{
-    display:grid;
-    grid-template-columns: 34px 1fr;
-    align-items:center;
-    gap:8px;
-    padding:6px 0;
-  }
-  .itemRow .n{
-    font-weight:900;
-    font-size:12px;
-  }
-  .itemRow input.desc{
-    border:none;
-    border-bottom:1px dotted #000;
-    padding:5px 6px 4px;
-    font-size:12px;
-    outline:none;
-    width:100%;
-  }
+    /* Firma dentro del cuadro */
+    .signWrap{
+      margin-top:auto; /* empuja firma hacia abajo */
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-end;
+      gap:6px;
+      padding-top:8px;
+    }
+    .signWrap img{
+      width:180px;
+      height:auto;
+      object-fit:contain;
+      display:block;
+    }
+    .signName{
+      text-align:center;
+      font-weight:900;
+      font-size:11px;
+      line-height:1.2;
+    }
 
-  .prices{
-    padding:8px 10px 10px;
-  }
-  .priceRow{
-    display:grid;
-    grid-template-columns: 16px 1fr;
-    align-items:center;
-    gap:8px;
-    padding:6px 0;
-  }
-  .priceRow .peso{
-    font-weight:900;
-  }
-  .priceRow input.money{
-    border:none;
-    border-bottom:1px dotted #000;
-    padding:5px 6px 4px;
-    font-size:12px;
-    outline:none;
-    width:100%;
-    text-align:right;
-  }
-
-  /* ===== Footer (SIEMPRE JUNTO: total + leyendas + firma) ===== */
-  .footerBlock{
-    border-top:1.6px solid var(--line);
-    display:grid;
-    grid-template-columns: 1fr 170px;
-  }
-  .footerLeft{
-    border-right:1.6px solid var(--line);
-    padding:10px 10px 12px;
-    font-size:12px;
-  }
-  .footerRight{
-    padding:10px 10px 12px;
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-end;
-    gap:10px;
-  }
-  .totalBox{
-    display:grid;
-    grid-template-columns: 16px 1fr;
-    gap:8px;
-    align-items:center;
-    margin-top:auto;
-    border-top:1px solid #000;
-    padding-top:8px;
-    font-weight:900;
-  }
-  .totalBox .peso{font-weight:900}
-  .totalBox .val{
-    text-align:right;
-    font-variant-numeric:tabular-nums;
-  }
-
-  .footLines{
-    margin-top:6px;
-    display:grid;
-    gap:6px;
-  }
-  .footLines .small{
-    font-size:12px;
-    font-weight:900;
-  }
-  .footLines .muted{
-    font-weight:800;
-  }
-
-  .signatureArea{
-    margin:18px 28px 28px;
-    display:flex;
-    justify-content:flex-end;
-    align-items:center;
-    gap:14px;
-  }
-  .sigWrap{
-    width:260px;
-    text-align:center;
-  }
-  .sigImg{
-    width:240px;
-    height:auto;
-    object-fit:contain;
-    display:block;
-    margin:0 auto 6px;
-  }
-  .sigText{
-    font-size:11px;
-    font-weight:900;
-    line-height:1.2;
-    text-transform:uppercase;
-  }
-  .sigText span{
-    display:block;
-    font-weight:800;
-    text-transform:none;
-    margin-top:2px;
-  }
-
-  /* ===== Controls (no imprimir) ===== */
-  .noPrint{}
-  @media print{
-    body{background:#fff}
-    .topbar, .actions, .noPrint{display:none !important}
-    .wrap{max-width:none; margin:0; padding:0}
-    .sheet{box-shadow:none; border:none; width:auto; max-width:none}
-
-    /* A4 */
-    @page { size: A4; margin: 10mm; }
-
-    /* Evitar cortes feos */
-    .box, .signatureArea { break-inside: avoid; page-break-inside: avoid; }
-    .footerBlock { break-inside: avoid; page-break-inside: avoid; }
-    .signatureArea { break-inside: avoid; page-break-inside: avoid; }
-
-    /* Si el detalle ocupa varias páginas, que el footer y firma vayan juntos a la siguiente */
-  }
-
-  /* ===== Toggle IVA ===== */
-  .toggle{
-    display:inline-flex; align-items:center; gap:10px;
-    background:#fff;
-    border:1px solid rgba(0,0,0,.12);
-    border-radius:999px;
-    padding:8px 12px;
-    box-shadow:0 10px 26px rgba(0,0,0,.10);
-  }
-  .toggle label{font-weight:900}
-  .toggle input{width:18px;height:18px; accent-color: var(--brand);}
-
-</style>
+    /* ===== Impresión ===== */
+    @media print{
+      body{background:#fff}
+      .topbar, .controls{display:none !important}
+      .pageWrap{margin:0; padding:0}
+      .sheet{
+        box-shadow:none;
+        border-radius:0;
+        width:auto;
+        min-height:auto;
+        padding:0;
+      }
+      /* opcional: evitar que Chrome agregue márgenes grandes */
+      @page{ size:A4; margin:10mm; }
+    }
+  </style>
 </head>
 
 <body>
-
+  <!-- Barra superior -->
   <div class="topbar">
-    <div class="left">
-      <img class="miniLogo" src="Logo.png" alt="Logo" />
-      <div>
-        <div class="title">Servicios Santa Maria • Presupuesto</div>
-        <div class="hint">Tip: “Imprimir / Guardar PDF” → destino “Guardar como PDF”.</div>
+    <div class="inner">
+      <div class="brand">
+        <img src="Logo.png" alt="Logo">
+        <div>
+          Servicios Santa Maria • Presupuesto
+          <small>Tip: “Imprimir / Guardar PDF” → destino “Guardar como PDF”.</small>
+        </div>
       </div>
-    </div>
-    <div class="right">
-      <button class="btn light" id="btnVolver" type="button">Volver</button>
-      <button class="btn brand" id="btnPrint" type="button">Imprimir / Guardar PDF</button>
-      <button class="btn danger" id="btnSalir" type="button">Salir</button>
+      <div class="actions">
+        <button class="btn secondary" type="button" onclick="history.back()">Volver</button>
+        <button class="btn primary" type="button" onclick="window.print()">Imprimir / Guardar PDF</button>
+        <button class="btn danger" type="button" onclick="salir()">Salir</button>
+      </div>
     </div>
   </div>
 
-  <div class="wrap">
+  <!-- Controles -->
+  <div class="controls">
+    <button class="btn primary" type="button" onclick="addItem()">+ Agregar item</button>
+    <button class="btn secondary" type="button" onclick="removeLast()">− Quitar último</button>
 
-    <div class="actions noPrint">
-      <button class="btn brand small" id="btnAdd" type="button">+ Agregar item</button>
-      <button class="btn gray small" id="btnRemove" type="button">− Quitar último</button>
-
-      <div class="toggle" title="Marcá si el monto incluye IVA">
-        <label for="chkIva">Contiene IVA</label>
-        <input id="chkIva" type="checkbox" />
-      </div>
+    <div class="pill" title="Marca si el monto incluye IVA">
+      <span>Contiene IVA</span>
+      <input id="chkIva" type="checkbox" onchange="renderFooterText()">
     </div>
+  </div>
 
-    <div class="sheet" id="sheet">
+  <!-- Hoja -->
+  <div class="pageWrap">
+    <div class="sheet">
 
       <div class="box">
-
-        <!-- CABECERA -->
+        <!-- Encabezado -->
         <div class="headRow">
-          <div class="hCell logo">
-            <img class="logoBig" src="Logo.png" alt="Servicios Santa Maria" />
-          </div>
-
-          <div class="hCell center">
-            <div class="legend" id="legendText">
+          <!-- Izquierda: LOGO + TEXTO (sin línea divisoria interna) -->
+          <div class="leftHead">
+            <img class="logo" src="Logo.png" alt="Logo">
+            <div class="servicesText" id="servicesText">
               PERFORACIONES - FILMACIONES - SISTEMA DE RIEGO ESTUDIO DE SUELO ASESORAMIENTO DE SISTEMA PRODUCTIVOS
               REFRIGERACION INDUSTRIAL, COMERCIAL, FAMILIAR TENDIDO DE MEDIA TENSION-MANTENIMIENTO DE TABLERO
             </div>
           </div>
 
-          <div class="hCell right">
-            <div class="rightInfo">
-              <div class="card">
-                <div><b>FECHA :</b> <span id="fechaHoy">--/--/----</span></div>
-                <div><b>C.U.I.T.:</b> 20-16503745-7</div>
-                <div><b>INGRESOS BRUTOS:</b> 20-16503745-7</div>
-                <div><b>INICIO DE ACTIVIDADES:</b> 01/07/2018</div>
-              </div>
+          <!-- Derecha: datos -->
+          <div class="rightHead vline">
+            <div>
+              <span class="metaLine" id="fechaLine">FECHA : --/--/----</span>
+              <span class="metaLine">C.U.I.T.: 20-16503745-7</span>
+              <span class="metaLine">INGRESOS BRUTOS: 20-16503745-7</span>
+              <span class="metaLine">INICIO DE ACTIVIDADES: 01/07/2018</span>
             </div>
           </div>
         </div>
 
-        <div class="midRow">
-          <div class="addr">
-            B° Jardín C28 - Cel (3838) 497748 - <strong>SANTA MARIA CATAMARCA</strong>
-          </div>
+        <div class="hline addrLine">B° Jardín C28 - Cel (3838) 497748 - SANTA MARIA CATAMARCA</div>
+        <div class="hline ivaLine">I.V.A. RESPONSABLE INSCRIPTO</div>
+        <div class="hline title">PROFORMA</div>
+
+        <!-- Cliente -->
+        <div class="hline client">
+          <label>Señor(es):</label>
+          <input class="lineInput" id="inpSenores" placeholder="Ej: Comuna de Amaicha del Valle">
+        </div>
+        <div class="client" style="border-top:0">
+          <label>Domicilio:</label>
+          <input class="lineInput" id="inpDomicilio" placeholder="Ej: Amaicha">
         </div>
 
-        <div class="ivaRow">I.V.A. RESPONSABLE INSCRIPTO</div>
-
-        <div class="proforma">PROFORMA</div>
-
-        <!-- DATOS CLIENTE -->
-        <div class="client">
-          <div class="clientGrid">
-            <label>Señor(es):</label>
-            <input class="lineInput" id="txtCliente" placeholder="Ej: Comuna de Amaicha del Valle" />
-            <label>Domicilio:</label>
-            <input class="lineInput" id="txtDomicilio" placeholder="Ej: Amaicha" />
-          </div>
+        <!-- Detalle -->
+        <div class="detailHeader">
+          <div>DETALLE</div>
+          <div>Precio TOTAL</div>
         </div>
 
-        <!-- DETALLE -->
-        <div class="detailRow">
-
-          <div class="detailLeft">
-            <div class="detailHead">DETALLE</div>
-            <div class="items" id="items"></div>
-          </div>
-
-          <div class="detailRight">
-            <div class="priceHead">Precio TOTAL</div>
-            <div class="prices" id="prices"></div>
-          </div>
-
+        <div class="items">
+          <div class="left" id="itemsLeft"></div>
+          <div class="right" id="itemsRight"></div>
         </div>
 
-        <!-- FOOTER (TOTAL + LEYENDAS) -->
-        <div class="footerBlock">
-          <div class="footerLeft">
-            <div class="footLines">
-              <div class="small">
-                <span class="muted">Son:</span>
-                <span id="montoLetras">pesos cero</span>
+        <!-- Pie -->
+        <div class="footer">
+          <div class="leftFoot">
+            <div class="footLine" id="lineMonto">Son pesos: —</div>
+            <div class="footLine" id="lineIva">El monto NO contiene IVA</div>
+            <div class="footLine">La validez de la oferta es de 10 días</div>
+
+            <!-- Firma (dentro del mismo cuadro) -->
+            <div class="signWrap">
+              <img src="firma.png" alt="Firma">
+              <div class="signName">
+                CHAILE TRANSITO ROQUE<br>
+                Matricula Profesional 1757
               </div>
-              <div class="small" id="ivaLinea">El monto <b>NO</b> contiene IVA</div>
-              <div class="small">La validez de la oferta es de <b>10 días</b></div>
             </div>
           </div>
 
-          <div class="footerRight">
+          <div class="rightFoot">
             <div class="totalBox">
-              <div class="peso">$</div>
-              <div class="val" id="total">$ 0,00</div>
+              <span class="lbl">$</span>
+              <span class="amt" id="grandTotal">$ 0,00</span>
             </div>
           </div>
         </div>
 
       </div>
-
-      <!-- FIRMA (siempre junto con el footer al imprimir) -->
-      <div class="signatureArea">
-        <div class="sigWrap">
-          <img class="sigImg" src="firma.png" alt="Firma" />
-          <div class="sigText">
-            CHAILE TRANSITO ROQUE
-            <span>Matricula Profesional 1757</span>
-          </div>
-        </div>
-      </div>
+      <!-- /box -->
 
     </div>
   </div>
 
-<script>
-/* =========================
-   Helpers
-========================= */
-const fmtARS = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  <script>
+    // ===== Helpers =====
+    const fmtARS = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-function parseMoney(v){
-  // admite: 1.234.567,89  |  1234567.89  |  1234567
-  if(!v) return 0;
-  let s = String(v).trim();
-  // quitar símbolos
-  s = s.replace(/\$/g,"").replace(/\s+/g,"");
-  // si tiene coma como decimal
-  if(s.includes(",") && s.lastIndexOf(",") > s.lastIndexOf(".")){
-    s = s.replace(/\./g,"").replace(",",".");
-  }else{
-    // si usa puntos como miles, los quitamos si hay más de uno
-    const dots = (s.match(/\./g)||[]).length;
-    if(dots >= 2) s = s.replace(/\./g,"");
-  }
-  const n = Number(s);
-  return Number.isFinite(n) ? n : 0;
-}
-
-function moneyStr(n){
-  return fmtARS.format(n);
-}
-
-function pad2(n){ return String(n).padStart(2,"0"); }
-function fechaHoyES(){
-  const d = new Date();
-  return `${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${d.getFullYear()}`;
-}
-
-/* =========================
-   Número a letras (ES)
-   - suficiente para presupuestos (hasta miles de millones)
-========================= */
-function toWordsES(n){
-  n = Math.floor(n);
-  if(n === 0) return "cero";
-
-  const unidades = ["","uno","dos","tres","cuatro","cinco","seis","siete","ocho","nueve"];
-  const especiales = {
-    10:"diez",11:"once",12:"doce",13:"trece",14:"catorce",15:"quince",
-    16:"dieciséis",17:"diecisiete",18:"dieciocho",19:"diecinueve"
-  };
-  const decenas = ["","diez","veinte","treinta","cuarenta","cincuenta","sesenta","setenta","ochenta","noventa"];
-  const centenas = ["","ciento","doscientos","trescientos","cuatrocientos","quinientos","seiscientos","setecientos","ochocientos","novecientos"];
-
-  function menosDeCien(x){
-    if(x < 10) return unidades[x];
-    if(x < 20) return especiales[x];
-    if(x < 30){
-      if(x === 20) return "veinte";
-      return "veinti" + unidades[x-20];
-    }
-    const d = Math.floor(x/10);
-    const u = x%10;
-    return u ? `${decenas[d]} y ${unidades[u]}` : decenas[d];
-  }
-
-  function menosDeMil(x){
-    if(x === 100) return "cien";
-    if(x < 100) return menosDeCien(x);
-    const c = Math.floor(x/100);
-    const r = x%100;
-    return r ? `${centenas[c]} ${menosDeCien(r)}` : centenas[c];
-  }
-
-  function seccion(x, div, singular, plural){
-    const q = Math.floor(x/div);
-    const r = x%div;
-    if(q === 0) return ["", x];
-    let words = "";
-    if(q === 1) words = singular;
-    else words = `${convert(q)} ${plural}`;
-    return [words, r];
-  }
-
-  function convert(x){
-    let out = "";
-    let r = x;
-
-    // miles de millones
-    if(r >= 1_000_000_000){
-      const [w, rest] = seccion(r, 1_000_000_000, "mil millones", "mil millones");
-      out += w;
-      r = rest;
-      if(r) out += " ";
+    function parseMoney(val){
+      if(val == null) return 0;
+      const s = String(val).trim();
+      if(!s) return 0;
+      // Permite: "1.234.567,89" o "1234567.89" o "1234567"
+      let t = s.replace(/\s/g,'');
+      // si tiene coma, asumimos decimal coma
+      if (t.includes(',')) {
+        t = t.replace(/\./g,'').replace(',', '.');
+      }
+      const n = Number(t);
+      return Number.isFinite(n) ? n : 0;
     }
 
-    // millones
-    if(r >= 1_000_000){
-      const q = Math.floor(r/1_000_000);
-      r = r%1_000_000;
-      if(q === 1) out += "un millón";
-      else out += `${convert(q)} millones`;
-      if(r) out += " ";
+    function setToday(){
+      const d = new Date();
+      const dd = String(d.getDate()).padStart(2,'0');
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const yyyy = d.getFullYear();
+      document.getElementById('fechaLine').textContent = `FECHA : ${dd}/${mm}/${yyyy}`;
     }
 
-    // miles
-    if(r >= 1000){
-      const q = Math.floor(r/1000);
-      r = r%1000;
-      if(q === 1) out += "mil";
-      else out += `${menosDeMil(q)} mil`;
-      if(r) out += " ";
-    }
+    // ===== Items =====
+    let items = []; // { text:'', price:0 }
 
-    // resto
-    if(r > 0){
-      out += menosDeMil(r);
-    }
+    function renderItems(){
+      const left = document.getElementById('itemsLeft');
+      const right = document.getElementById('itemsRight');
+      left.innerHTML = '';
+      right.innerHTML = '';
 
-    return out.trim();
-  }
+      items.forEach((it, idx) => {
+        // Left row
+        const row = document.createElement('div');
+        row.className = 'itemRow';
+        row.innerHTML = `
+          <div class="n">${idx+1}-</div>
+          <input class="itemText" value="${escapeHtml(it.text || '')}" placeholder="Detalle del item..." data-idx="${idx}">
+        `;
+        left.appendChild(row);
 
-  let txt = convert(n);
+        // Right row
+        const prow = document.createElement('div');
+        prow.className = 'priceRow';
+        prow.innerHTML = `
+          <div class="peso">$</div>
+          <input class="itemPrice" value="${it.price ? fmtARS.format(it.price) : ''}" placeholder="0,00" data-idx="${idx}">
+        `;
+        right.appendChild(prow);
+      });
 
-  // ajuste: "uno" -> "un" cuando va antes de "mil/millón/millones" ya quedó bien en reglas,
-  // pero al final para “pesos” suele verse mejor "un" si termina en "uno".
-  txt = txt.replace(/\buno\b$/,"un");
-  return txt;
-}
+      // Bind events
+      left.querySelectorAll('.itemText').forEach(inp=>{
+        inp.addEventListener('input', (e)=>{
+          const i = Number(e.target.dataset.idx);
+          items[i].text = e.target.value;
+        });
+      });
 
-function pesosEnLetras(total){
-  const entero = Math.floor(total);
-  const cent = Math.round((total - entero) * 100);
-  const letras = toWordsES(entero);
-  const centTxt = String(cent).padStart(2,"0");
-  return `pesos ${letras} con ${centTxt}/100`;
-}
+      right.querySelectorAll('.itemPrice').forEach(inp=>{
+        inp.addEventListener('input', (e)=>{
+          // no recalculamos en cada tecla para no molestar
+        });
+        inp.addEventListener('blur', (e)=>{
+          const i = Number(e.target.dataset.idx);
+          const n = parseMoney(e.target.value);
+          items[i].price = n;
+          e.target.value = n ? fmtARS.format(n) : '';
+          recalc();
+        });
+      });
 
-/* =========================
-   Items (vacíos por defecto)
-========================= */
-const itemsEl = document.getElementById("items");
-const pricesEl = document.getElementById("prices");
-const totalEl = document.getElementById("total");
-const montoLetrasEl = document.getElementById("montoLetras");
-const ivaLineaEl = document.getElementById("ivaLinea");
-const chkIva = document.getElementById("chkIva");
-
-let rows = [];
-
-function render(){
-  itemsEl.innerHTML = "";
-  pricesEl.innerHTML = "";
-
-  rows.forEach((r, i) => {
-    // izquierda
-    const rowL = document.createElement("div");
-    rowL.className = "itemRow";
-    rowL.innerHTML = `
-      <div class="n">${i+1}-</div>
-      <input class="desc" value="${escapeHtml(r.desc)}" placeholder="Detalle del item..." />
-    `;
-    rowL.querySelector("input").addEventListener("input", (e)=>{
-      rows[i].desc = e.target.value;
-    });
-    itemsEl.appendChild(rowL);
-
-    // derecha
-    const rowR = document.createElement("div");
-    rowR.className = "priceRow";
-    rowR.innerHTML = `
-      <div class="peso">$</div>
-      <input class="money" value="${escapeHtml(r.money)}" placeholder="0,00" inputmode="decimal" />
-    `;
-    const inp = rowR.querySelector("input");
-    inp.addEventListener("input", ()=>{
-      rows[i].money = inp.value;
       recalc();
-    });
-    inp.addEventListener("blur", ()=>{
-      // formatear al salir
-      const n = parseMoney(inp.value);
-      rows[i].money = n ? moneyStr(n) : "";
-      inp.value = rows[i].money;
-      recalc();
-    });
-    pricesEl.appendChild(rowR);
-  });
+    }
 
-  recalc();
-}
+    function addItem(){
+      items.push({ text:'', price:0 });
+      renderItems();
+      // foco al último detalle
+      const last = document.querySelector('#itemsLeft .itemRow:last-child .itemText');
+      if(last) last.focus();
+    }
 
-function recalc(){
-  let total = 0;
-  rows.forEach(r => total += parseMoney(r.money));
-  totalEl.textContent = "$ " + moneyStr(total);
+    function removeLast(){
+      if(items.length <= 1) return; // dejamos mínimo 1 línea como pediste
+      items.pop();
+      renderItems();
+    }
 
-  montoLetrasEl.textContent = pesosEnLetras(total);
+    // ===== Total + pie =====
+    function recalc(){
+      const total = items.reduce((acc, it)=> acc + (Number(it.price)||0), 0);
+      document.getElementById('grandTotal').textContent = '$ ' + fmtARS.format(total);
+      renderFooterText(total);
+    }
 
-  if(chkIva.checked){
-    ivaLineaEl.innerHTML = 'El monto <b>SI</b> contiene IVA';
-  }else{
-    ivaLineaEl.innerHTML = 'El monto <b>NO</b> contiene IVA';
-  }
-}
+    function renderFooterText(totalOverride){
+      const total = (typeof totalOverride === 'number') ? totalOverride
+        : items.reduce((acc, it)=> acc + (Number(it.price)||0), 0);
 
-function addRow(){
-  rows.push({ desc:"", money:"" });
-  render();
-}
+      const cents = Math.round((total - Math.floor(total)) * 100);
+      const entero = Math.floor(total);
 
-function removeRow(){
-  if(rows.length>1){
-    rows.pop();
-    render();
-  }
-}
+      const letras = numeroALetras(entero);
+      const cc = String(cents).padStart(2,'0');
 
-function escapeHtml(s){
-  return String(s ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
+      document.getElementById('lineMonto').textContent =
+        `Son pesos: ${capitalize(letras)} con ${cc}/100`;
 
-/* =========================
-   Init
-========================= */
-document.getElementById("fechaHoy").textContent = fechaHoyES();
+      const iva = document.getElementById('chkIva').checked;
+      document.getElementById('lineIva').textContent =
+        iva ? 'El monto SI contiene IVA' : 'El monto NO contiene IVA';
+    }
 
-// arrancamos vacío (sin ítems precargados)
-rows = [{ desc:"", money:"" }, { desc:"", money:"" }, { desc:"", money:"" }];
-render();
+    function capitalize(s){
+      s = (s||'').trim();
+      if(!s) return s;
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
 
-document.getElementById("btnAdd").addEventListener("click", addRow);
-document.getElementById("btnRemove").addEventListener("click", removeRow);
-chkIva.addEventListener("change", recalc);
+    // Conversión básica a letras (es-AR) para enteros (hasta miles de millones)
+    function numeroALetras(n){
+      if(n === 0) return 'cero';
 
-document.getElementById("btnPrint").addEventListener("click", ()=> window.print());
+      const unidades = [
+        '', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'
+      ];
+      const especiales = [
+        'diez','once','doce','trece','catorce','quince','dieciséis','diecisiete','dieciocho','diecinueve'
+      ];
+      const decenas = [
+        '', '', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'
+      ];
+      const centenas = [
+        '', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos',
+        'seiscientos', 'setecientos', 'ochocientos', 'novecientos'
+      ];
 
-// navegación simple
-document.getElementById("btnVolver").addEventListener("click", ()=>{
-  // si querés, cambiá el destino:
-  window.location.href = "ingreso.html";
-});
-document.getElementById("btnSalir").addEventListener("click", ()=>{
-  window.location.href = "index.html";
-});
-</script>
+      function menosDeCien(x){
+        if(x < 10) return unidades[x];
+        if(x < 20) return especiales[x-10];
+        if(x < 30){
+          if(x === 20) return 'veinte';
+          return 'veinti' + unidades[x-20];
+        }
+        const d = Math.floor(x/10);
+        const u = x % 10;
+        return u ? `${decenas[d]} y ${unidades[u]}` : decenas[d];
+      }
 
+      function menosDeMil(x){
+        if(x === 0) return '';
+        if(x === 100) return 'cien';
+        const c = Math.floor(x/100);
+        const r = x % 100;
+        const cTxt = c ? centenas[c] : '';
+        const rTxt = r ? menosDeCien(r) : '';
+        return [cTxt, rTxt].filter(Boolean).join(' ');
+      }
+
+      function seccion(x, divisor, singular, plural){
+        const cnt = Math.floor(x / divisor);
+        const resto = x % divisor;
+        if(cnt === 0) return { txt:'', resto:x };
+        let txt = '';
+        if(cnt === 1) txt = singular;
+        else txt = `${numeroALetras(cnt)} ${plural}`;
+        return { txt, resto };
+      }
+
+      let txt = '';
+      let resto = n;
+
+      // miles de millones
+      if(resto >= 1000000000){
+        const s = seccion(resto, 1000000000, 'mil millones', 'mil millones');
+        txt += (txt ? ' ' : '') + s.txt;
+        resto = s.resto;
+      }
+
+      // millones
+      if(resto >= 1000000){
+        const cnt = Math.floor(resto / 1000000);
+        resto = resto % 1000000;
+        txt += (txt ? ' ' : '') + (cnt === 1 ? 'un millón' : `${numeroALetras(cnt)} millones`);
+      }
+
+      // miles
+      if(resto >= 1000){
+        const cnt = Math.floor(resto / 1000);
+        resto = resto % 1000;
+        if(cnt === 1) txt += (txt ? ' ' : '') + 'mil';
+        else txt += (txt ? ' ' : '') + `${numeroALetras(cnt)} mil`;
+      }
+
+      // resto < 1000
+      if(resto > 0){
+        txt += (txt ? ' ' : '') + menosDeMil(resto);
+      }
+
+      // Ajuste “uno” -> “un” cuando corresponde (al final puede quedar “uno”)
+      // Para “pesos” suele quedar bien “un”.
+      txt = txt.replace(/\buno\b/g, 'un');
+
+      return txt.trim();
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#039;");
+    }
+
+    // ===== Salir =====
+    function salir(){
+      // ajustá a tu login si querés
+      window.location.href = "ingreso.html";
+    }
+
+    // ===== Init =====
+    (function init(){
+      setToday();
+
+      // SOLO 1 línea inicial (en blanco), como pediste
+      items = [{ text:'', price:0 }];
+      renderItems();
+
+      // Si el usuario pega valores, recalcular
+      document.addEventListener('input', (e)=>{
+        if(e.target && e.target.id === 'chkIva') renderFooterText();
+      });
+    })();
+  </script>
 </body>
 </html>
