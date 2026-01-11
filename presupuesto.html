@@ -54,7 +54,6 @@
     .brand img{
       width:34px;height:34px; border-radius:10px;
       object-fit:cover; background:#fff;
-      flex:0 0 auto;
     }
     .brand .txt{
       min-width:0;
@@ -67,11 +66,9 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
-      max-width:520px;
     }
     .actions{
       display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-      justify-content:flex-end;
     }
     .btn{
       border:0;
@@ -81,6 +78,7 @@
       cursor:pointer;
       box-shadow:0 8px 18px rgba(0,0,0,.15);
       user-select:none;
+      -webkit-tap-highlight-color: transparent;
     }
     .btn.secondary{background:#ffffff; color:#0b213a}
     .btn.primary{background:linear-gradient(180deg,var(--brand),var(--brand2)); color:#fff}
@@ -115,7 +113,7 @@
       cursor:pointer;
     }
 
-    /* ===== Hoja A4 (screen) ===== */
+    /* ===== Hoja ===== */
     .pageWrap{
       max-width:1200px;
       margin:16px auto 40px;
@@ -124,21 +122,23 @@
       justify-content:center;
     }
 
+    /* En pantalla: “A4” fijo. En móvil: escala */
     .sheet{
-      width:210mm;                 /* A4 real */
+      width:210mm;
       min-height:297mm;
       background:var(--card);
       box-shadow:var(--shadow);
       border-radius:10px;
       padding:14mm 14mm 14mm;
       position:relative;
-      transform-origin: top center; /* para el “fit” en celular */
+      transform-origin: top center;
     }
 
     /* “Tabla” estilo Excel */
     .box{
       border:2px solid var(--line);
       width:100%;
+      background:#fff;
     }
     .hline{ border-top:2px solid var(--line); }
     .vline{ border-left:2px solid var(--line); }
@@ -149,17 +149,21 @@
       grid-template-columns: 2fr 1fr;
       min-height:105px;
     }
+
     .leftHead{
       display:flex;
       align-items:center;
       gap:14px;
       padding:10px 12px;
+      min-width:0;
     }
+
     .logo{
       width:92px; height:92px;
       object-fit:contain;
       flex:0 0 auto;
     }
+
     .servicesText{
       flex:1;
       text-align:center;
@@ -169,7 +173,9 @@
       letter-spacing:.15px;
       text-transform:uppercase;
       padding:0 4px;
+      min-width:0;
     }
+
     .rightHead{
       padding:10px 12px;
       display:flex;
@@ -212,6 +218,7 @@
       align-items:center;
     }
     .client label{ font-weight:800; }
+
     .lineInput{
       border:0;
       border-bottom:1px solid rgba(0,0,0,.55);
@@ -221,8 +228,6 @@
       background:transparent;
       width:100%;
     }
-    /* placeholder en pantalla, invisible al imprimir */
-    .lineInput::placeholder{ color:rgba(21,34,51,.45); }
 
     /* Detalle + Precio */
     .detailHeader{
@@ -243,22 +248,30 @@
       grid-template-columns: 1fr 180px;
       min-height:360px;
     }
-    .items .left{ padding:10px 10px 12px; }
+    .items .left{
+      padding:10px 10px 12px;
+    }
     .items .right{
       padding:10px 10px 12px;
       border-left:2px solid var(--line);
     }
 
+    /* ITEM: ahora multilínea (textarea auto-grow) */
     .itemRow{
       display:grid;
       grid-template-columns: 34px 1fr;
       gap:8px;
-      align-items:end;
+      align-items:start;
       margin:8px 0;
       font-size:12.5px;
     }
-    .n{ font-weight:900; text-align:right; padding-right:6px; }
-    .itemText{
+    .n{
+      font-weight:900;
+      text-align:right;
+      padding-right:6px;
+      padding-top:6px; /* alinear con primera línea del texto */
+    }
+    textarea.itemText{
       border:0;
       border-bottom:1px dotted rgba(0,0,0,.6);
       outline:none;
@@ -266,17 +279,27 @@
       font-size:12.5px;
       background:transparent;
       width:100%;
+      resize:none;
+      overflow:hidden;
+      line-height:1.25;
+      min-height:28px;
+      white-space:pre-wrap;
+      word-break:break-word;
     }
 
     .priceRow{
       display:grid;
       grid-template-columns: 16px 1fr;
       gap:8px;
-      align-items:end;
+      align-items:start;
       margin:8px 0;
       font-size:12.5px;
     }
-    .peso{ font-weight:900; text-align:center; }
+    .peso{
+      font-weight:900;
+      text-align:center;
+      padding-top:6px;
+    }
     .itemPrice{
       border:0;
       border-bottom:1px dotted rgba(0,0,0,.6);
@@ -288,30 +311,35 @@
       width:100%;
     }
 
-    /* ===== Pie (alineación mejor: texto a la izq + firma a la derecha, todo centrado verticalmente) ===== */
+    /* Pie: texto + firma + total */
     .footer{
       border-top:2px solid var(--line);
       display:grid;
       grid-template-columns: 1fr 180px;
       page-break-inside: avoid;
       break-inside: avoid;
-      min-height:120px;
+      align-items:stretch;
     }
-
     .footer .leftFoot{
-      padding:8px 10px;
+      padding:10px 10px;
       display:grid;
-      grid-template-columns: 1fr 240px; /* texto + firma */
+      grid-template-columns: 1fr 260px; /* texto + firma */
       gap:10px;
-      align-items:center;              /* centra verticalmente ambas columnas */
+      min-height:120px;
+      align-items:center;
     }
-
-    .leftText{
+    .footText{
       display:flex;
       flex-direction:column;
       gap:6px;
-      justify-content:center;
-      min-height:100%;
+      justify-content:center; /* centrado vertical */
+    }
+    .footer .rightFoot{
+      border-left:2px solid var(--line);
+      padding:10px 10px;
+      display:flex;
+      align-items:center;     /* centrado vertical */
+      justify-content:center; /* centrado horizontal */
     }
 
     .footLine{
@@ -320,6 +348,7 @@
       line-height:1.25;
     }
 
+    /* Firma */
     .signWrap{
       display:flex;
       flex-direction:column;
@@ -328,11 +357,11 @@
       gap:6px;
     }
     .signWrap img{
-      width:200px;
+      width:220px;
+      max-width:100%;
       height:auto;
       object-fit:contain;
       display:block;
-      max-width:100%;
     }
     .signName{
       text-align:center;
@@ -341,40 +370,29 @@
       line-height:1.2;
     }
 
-    .footer .rightFoot{
-      border-left:2px solid var(--line);
-      padding:8px 10px;
-      display:flex;
-      align-items:center;     /* centro vertical */
-      justify-content:center; /* centro horizontal */
-    }
-
-    /* TOTAL: centrado, sin línea, y un solo $ */
-    .totalBox{
-      border-top:0;
-      padding-top:0;
-      display:flex;
-      justify-content:center;
-      align-items:baseline;
-      gap:10px;
+    /* Total (un solo $) */
+    .grandTotal{
       font-weight:900;
+      font-size:16px;
+      text-align:center;
       width:100%;
     }
-    .totalBox .lbl{font-size:14px}
-    .totalBox .amt{font-size:16px}
 
-    /* ===== Responsive UI (celular) ===== */
-    @media (max-width: 820px){
-      .topbar .inner{
-        padding:12px 12px;
-        align-items:flex-start;
-        flex-direction:column;
-        gap:10px;
+    /* ===== Responsive (celular): escalar la hoja para que se vea “bien” ===== */
+    @media (max-width: 860px){
+      .pageWrap{ padding:0 10px; }
+      .controls{ padding:0 10px; }
+
+      /* escalado proporcional */
+      .sheet{
+        width:210mm; /* mantenemos A4 real, pero escalamos visualmente */
+        transform: scale(var(--scale, 1));
       }
-      .brand small{max-width:100%;}
-      .actions{width:100%; justify-content:space-between;}
-      .controls{padding:0 12px;}
-      .pageWrap{padding:0 8px;}
+
+      /* topbar más compacta */
+      .topbar .inner{ padding:12px 12px; }
+      .actions .btn{ padding:10px 14px; }
+      .brand img{ width:30px; height:30px; }
     }
 
     /* ===== Impresión ===== */
@@ -388,12 +406,12 @@
         width:auto;
         min-height:auto;
         padding:0;
-        transform:none !important; /* muy importante: no escalar en impresión */
+        transform:none !important;
       }
-      /* placeholders invisibles al imprimir (así queda “blanco” si no cargan nada) */
-      input::placeholder{ color:transparent !important; }
-      /* opcional */
       @page{ size:A4; margin:10mm; }
+
+      /* que placeholders NO impriman “gris” (dejamos en blanco) */
+      input::placeholder, textarea::placeholder{ color:transparent !important; }
     }
   </style>
 </head>
@@ -411,7 +429,7 @@
       </div>
       <div class="actions">
         <button class="btn secondary" type="button" onclick="history.back()">Volver</button>
-        <button class="btn primary" type="button" onclick="downloadPDF()">Descargar PDF</button>
+        <button class="btn primary" type="button" onclick="descargarPDF()">Descargar PDF</button>
         <button class="btn danger" type="button" onclick="salir()">Salir</button>
       </div>
     </div>
@@ -431,7 +449,8 @@
   <!-- Hoja -->
   <div class="pageWrap">
     <div class="sheet" id="sheet">
-      <div class="box" id="printArea">
+
+      <div class="box" id="boxToPdf">
         <!-- Encabezado -->
         <div class="headRow">
           <div class="leftHead">
@@ -456,14 +475,14 @@
         <div class="hline ivaLine">I.V.A. RESPONSABLE INSCRIPTO</div>
         <div class="hline title">PROFORMA</div>
 
-        <!-- Cliente -->
+        <!-- Cliente (sin placeholders: quedan blancos si no cargan nada) -->
         <div class="hline client">
           <label>Señor(es):</label>
-          <input class="lineInput" id="inpSenores" placeholder="">
+          <input class="lineInput" id="inpSenores" value="">
         </div>
         <div class="client" style="border-top:0">
           <label>Domicilio:</label>
-          <input class="lineInput" id="inpDomicilio" placeholder="">
+          <input class="lineInput" id="inpDomicilio" value="">
         </div>
 
         <!-- Detalle -->
@@ -480,7 +499,7 @@
         <!-- Pie -->
         <div class="footer">
           <div class="leftFoot">
-            <div class="leftText">
+            <div class="footText">
               <div class="footLine" id="lineMonto">Son pesos: —</div>
               <div class="footLine" id="lineIva">El monto NO contiene IVA</div>
               <div class="footLine">La validez de la oferta es de 10 días</div>
@@ -496,19 +515,18 @@
           </div>
 
           <div class="rightFoot">
-            <div class="totalBox">
-              <span class="lbl">$</span>
-              <span class="amt" id="grandTotal">0,00</span>
-            </div>
+            <div class="grandTotal" id="grandTotal">$ 0,00</div>
           </div>
         </div>
-
       </div>
+      <!-- /box -->
+
     </div>
   </div>
 
-  <!-- html2pdf (para descargar PDF directo) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- jsPDF + html2canvas (para generar A4 real) -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <script>
     // ===== Helpers =====
@@ -532,36 +550,12 @@
       document.getElementById('fechaLine').textContent = `FECHA : ${dd}/${mm}/${yyyy}`;
     }
 
-    // ===== Fit A4 a pantalla (celular) sin romper impresión =====
-    function fitSheetToViewport(){
-      const sheet = document.getElementById('sheet');
-      if(!sheet) return;
-
-      // reset primero
-      sheet.style.transform = '';
-      sheet.style.marginBottom = '';
-
-      const vw = window.innerWidth || document.documentElement.clientWidth;
-      if(vw <= 820){
-        // ancho disponible real (restamos padding de pageWrap)
-        const available = vw - 16; // pageWrap padding aprox
-        const sheetPx = sheet.getBoundingClientRect().width; // ya sin transform
-        const scale = Math.min(1, available / sheetPx);
-
-        sheet.style.transform = `scale(${scale})`;
-        sheet.style.transformOrigin = 'top center';
-
-        // Reservar alto “real” escalado para que no se superponga
-        const h = sheet.scrollHeight * scale;
-        sheet.style.marginBottom = `${Math.max(0, (h - sheet.scrollHeight))}px`;
-      }
+    // Auto-grow textarea
+    function autoGrow(el){
+      if(!el) return;
+      el.style.height = 'auto';
+      el.style.height = (el.scrollHeight) + 'px';
     }
-
-    window.addEventListener('resize', () => {
-      // pequeño debounce
-      clearTimeout(window.__fitT);
-      window.__fitT = setTimeout(fitSheetToViewport, 80);
-    });
 
     // ===== Items =====
     let items = []; // { text:'', price:0 }
@@ -577,7 +571,7 @@
         row.className = 'itemRow';
         row.innerHTML = `
           <div class="n">${idx+1}-</div>
-          <input class="itemText" value="${escapeHtml(it.text || '')}" placeholder="Detalle del item..." data-idx="${idx}">
+          <textarea class="itemText" rows="1" data-idx="${idx}"></textarea>
         `;
         left.appendChild(row);
 
@@ -585,18 +579,33 @@
         prow.className = 'priceRow';
         prow.innerHTML = `
           <div class="peso">$</div>
-          <input class="itemPrice" value="${it.price ? fmtARS.format(it.price) : ''}" placeholder="0,00" data-idx="${idx}">
+          <input class="itemPrice"
+                 type="text"
+                 inputmode="decimal"
+                 pattern="[0-9.,]*"
+                 data-idx="${idx}">
         `;
         right.appendChild(prow);
+
+        const ta = row.querySelector('textarea.itemText');
+        ta.value = it.text || '';
+        autoGrow(ta);
+
+        const ip = prow.querySelector('input.itemPrice');
+        ip.value = it.price ? fmtARS.format(it.price) : '';
       });
 
-      left.querySelectorAll('.itemText').forEach(inp=>{
-        inp.addEventListener('input', (e)=>{
+      // Bind events (texto)
+      left.querySelectorAll('textarea.itemText').forEach(ta=>{
+        ta.addEventListener('input', (e)=>{
           const i = Number(e.target.dataset.idx);
           items[i].text = e.target.value;
+          autoGrow(e.target);
+          // no recalculamos por texto
         });
       });
 
+      // Bind events (precio)
       right.querySelectorAll('.itemPrice').forEach(inp=>{
         inp.addEventListener('blur', (e)=>{
           const i = Number(e.target.dataset.idx);
@@ -608,18 +617,16 @@
       });
 
       recalc();
-      fitSheetToViewport();
     }
 
     function addItem(){
       items.push({ text:'', price:0 });
       renderItems();
-      const last = document.querySelector('#itemsLeft .itemRow:last-child .itemText');
-      if(last) last.focus();
+      // ✅ NO hacemos foco automático (más cómodo para cargar varios items)
     }
 
     function removeLast(){
-      if(items.length <= 1) return; // mínimo 1 línea
+      if(items.length <= 1) return;
       items.pop();
       renderItems();
     }
@@ -627,8 +634,7 @@
     // ===== Total + pie =====
     function recalc(){
       const total = items.reduce((acc, it)=> acc + (Number(it.price)||0), 0);
-      // SOLO número (sin $) para evitar doble signo
-      document.getElementById('grandTotal').textContent = fmtARS.format(total);
+      document.getElementById('grandTotal').textContent = '$ ' + fmtARS.format(total);
       renderFooterText(total);
     }
 
@@ -656,13 +662,14 @@
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
 
+    // Conversión básica a letras (es-AR) para enteros
     function numeroALetras(n){
       if(n === 0) return 'cero';
 
-      const unidades = ['', 'uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve'];
+      const unidades = ['', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'];
       const especiales = ['diez','once','doce','trece','catorce','quince','dieciséis','diecisiete','dieciocho','diecinueve'];
-      const decenas = ['', '', 'veinte','treinta','cuarenta','cincuenta','sesenta','setenta','ochenta','noventa'];
-      const centenas = ['', 'ciento','doscientos','trescientos','cuatrocientos','quinientos','seiscientos','setecientos','ochocientos','novecientos'];
+      const decenas = ['', '', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+      const centenas = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos','seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
 
       function menosDeCien(x){
         if(x < 10) return unidades[x];
@@ -681,11 +688,10 @@
         if(x === 100) return 'cien';
         const c = Math.floor(x/100);
         const r = x % 100;
-        const cTxt = c ? শত(centenas[c]) : '';
+        const cTxt = c ? centenas[c] : '';
         const rTxt = r ? menosDeCien(r) : '';
         return [cTxt, rTxt].filter(Boolean).join(' ');
       }
-      function শত(s){ return s; } // wrapper por si querés tocar luego
 
       let txt = '';
       let resto = n;
@@ -716,49 +722,63 @@
       return txt.trim();
     }
 
-    function escapeHtml(s){
-      return String(s)
-        .replaceAll('&','&amp;')
-        .replaceAll('<','&lt;')
-        .replaceAll('>','&gt;')
-        .replaceAll('"','&quot;')
-        .replaceAll("'","&#039;");
+    // ===== Escala móvil para vista (no afecta PDF) =====
+    function applyMobileScale(){
+      const sheet = document.getElementById('sheet');
+      if(!sheet) return;
+
+      const vw = Math.min(window.innerWidth, document.documentElement.clientWidth);
+      // si es “móvil/ancho chico”, escalamos para que entre sin “arruinar” la hoja
+      if(vw <= 860){
+        const padding = 20;
+        const available = vw - padding;
+        // 210mm en CSS es ancho real de A4 en pantalla; usamos el offsetWidth real del elemento:
+        const actualW = sheet.offsetWidth;
+        const scale = Math.max(0.35, Math.min(1, available / actualW));
+        sheet.style.setProperty('--scale', scale.toFixed(4));
+      }else{
+        sheet.style.setProperty('--scale', '1');
+      }
     }
 
-    // ===== Descargar PDF (A4) =====
-    async function downloadPDF(){
-      const area = document.getElementById('printArea');
-      const sheet = document.getElementById('sheet');
+    window.addEventListener('resize', applyMobileScale);
 
-      // Guardar transform actual (por el fit en celular) y quitarlo para exportar a A4 “real”
-      const prevTransform = sheet.style.transform;
-      const prevOrigin = sheet.style.transformOrigin;
-      sheet.style.transform = 'none';
-      sheet.style.transformOrigin = 'top left';
+    // ===== PDF A4 real (descarga directa) =====
+    async function descargarPDF(){
+      const el = document.getElementById('boxToPdf');
+      if(!el) return;
 
-      // Nombre con fecha
+      // subimos calidad para que se lea bien en WhatsApp
+      const canvas = await html2canvas(el, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.92);
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation:'p', unit:'mm', format:'a4' });
+
+      const pageW = 210;
+      const pageH = 297;
+
+      // calculamos tamaño manteniendo proporción
+      const imgW = pageW;
+      const imgH = canvas.height * (imgW / canvas.width);
+
+      // centrado vertical si sobra
+      const y = Math.max(0, (pageH - imgH) / 2);
+
+      pdf.addImage(imgData, 'JPEG', 0, y, imgW, imgH, undefined, 'FAST');
+
       const d = new Date();
-      const y = d.getFullYear();
-      const m = String(d.getMonth()+1).padStart(2,'0');
-      const da = String(d.getDate()).padStart(2,'0');
-      const filename = `Presupuesto_ServiciosSantaMaria_${y}${m}${da}.pdf`;
+      const dd = String(d.getDate()).padStart(2,'0');
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const yyyy = d.getFullYear();
+      const fileName = `Presupuesto_ServiciosSantaMaria_${yyyy}${mm}${dd}.pdf`;
 
-      const opt = {
-        margin:       [10, 10, 10, 10], // mm aprox en px lo maneja lib; igual respeta bastante
-        filename,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-
-      try{
-        await html2pdf().set(opt).from(area).save();
-      }finally{
-        // restaurar fit pantalla
-        sheet.style.transform = prevTransform;
-        sheet.style.transformOrigin = prevOrigin || 'top center';
-        fitSheetToViewport();
-      }
+      pdf.save(fileName);
     }
 
     // ===== Salir =====
@@ -769,10 +789,12 @@
     // ===== Init =====
     (function init(){
       setToday();
-      items = [{ text:'', price:0 }]; // 1 línea inicial
+
+      // 1 línea inicial
+      items = [{ text:'', price:0 }];
       renderItems();
-      renderFooterText(0);
-      fitSheetToViewport();
+
+      applyMobileScale();
     })();
   </script>
 </body>
