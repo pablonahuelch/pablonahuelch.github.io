@@ -226,12 +226,12 @@
     .detailHeader > div{ padding:8px 10px; }
     .detailHeader > div:last-child{ border-left:2px solid var(--line); }
 
-    .items{
-      display:grid;
-      grid-template-columns: 1fr 180px;
-      min-height:360px;
-      border-bottom:0; /* asegura la línea completa antes del pie */
-    }
+.items{
+  display:grid;
+  grid-template-columns: 1fr 180px;
+  min-height:360px;
+  border-bottom:2px solid var(--line); /* <-- línea completa antes del pie */
+}
     .items .left{
       padding:10px 10px 12px;
     }
@@ -300,12 +300,12 @@
     }
 
     /* ===== Pie (líneas + firma a la derecha dentro del pie izquierdo) ===== */
-    .footer{
-      display:grid;
-      border-top:2px solid var(--line);
-      page-break-inside: avoid;
-      break-inside: avoid;
-    }
+.footer{
+  display:grid;
+  grid-template-columns: 1fr 180px; /* <-- vuelve el total a su cuadro derecho */
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
 
     /* Pie izquierdo ahora es grilla: texto | firma (así la firma “crece” con el texto) */
     .leftFoot{
@@ -545,10 +545,10 @@
     }
 
     // Auto-grow textarea
-    function autoGrow(el){
-      el.style.height = 'auto';
-      el.style.height = (el.scrollHeight) + 'px';
-    }
+function autoGrow(el){
+  el.style.height = '0px';
+  el.style.height = (el.scrollHeight) + 'px';
+}
 
     // Sincroniza alturas izquierda/derecha para que el importe acompañe los renglones
     function syncRowHeights(){
@@ -577,7 +577,7 @@
         row.className = 'itemRow';
         row.innerHTML = `
           <div class="n">${idx+1}-</div>
-          <textarea class="itemText" placeholder="" data-idx="${idx}">${escapeHtml(it.text || '')}</textarea>
+          <textarea class="itemText" rows="1" placeholder="" data-idx="${idx}">${escapeHtml(it.text || '')}</textarea>
         `;
         left.appendChild(row);
 
