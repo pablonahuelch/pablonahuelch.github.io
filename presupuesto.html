@@ -54,9 +54,7 @@
     .brand img{
       width:34px;height:34px; border-radius:10px;
       object-fit:cover; background:#fff;
-    }
-    .brand .txt{
-      min-width:0;
+      flex:0 0 auto;
     }
     .brand small{
       display:block;
@@ -66,6 +64,7 @@
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
+      max-width:60vw;
     }
     .actions{
       display:flex; gap:10px; align-items:center; flex-wrap:wrap;
@@ -77,8 +76,6 @@
       font-weight:800;
       cursor:pointer;
       box-shadow:0 8px 18px rgba(0,0,0,.15);
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
     }
     .btn.secondary{background:#ffffff; color:#0b213a}
     .btn.primary{background:linear-gradient(180deg,var(--brand),var(--brand2)); color:#fff}
@@ -113,7 +110,7 @@
       cursor:pointer;
     }
 
-    /* ===== Hoja ===== */
+    /* ===== Hoja A4 (vista) ===== */
     .pageWrap{
       max-width:1200px;
       margin:16px auto 40px;
@@ -122,16 +119,14 @@
       justify-content:center;
     }
 
-    /* En pantalla: “A4” fijo. En móvil: escala */
     .sheet{
       width:210mm;
       min-height:297mm;
       background:var(--card);
       box-shadow:var(--shadow);
       border-radius:10px;
-      padding:14mm 14mm 14mm;
+      padding:14mm 14mm 14mm; /* margen visual correcto */
       position:relative;
-      transform-origin: top center;
     }
 
     /* “Tabla” estilo Excel */
@@ -140,6 +135,8 @@
       width:100%;
       background:#fff;
     }
+
+    .cell{ padding:8px 10px; }
     .hline{ border-top:2px solid var(--line); }
     .vline{ border-left:2px solid var(--line); }
 
@@ -187,6 +184,7 @@
       line-height:1.55;
       white-space:nowrap;
     }
+
     .metaLine{ display:block; }
 
     /* Lineas bajo encabezado */
@@ -228,8 +226,10 @@
       background:transparent;
       width:100%;
     }
+    /* si está vacío: que se vea “blanco” (sin texto gris) */
+    .lineInput::placeholder{ color:transparent; }
 
-    /* Detalle + Precio */
+    /* Detalle + Precio (encabezado) */
     .detailHeader{
       display:grid;
       grid-template-columns: 1fr 180px;
@@ -240,66 +240,70 @@
       font-size:12px;
       padding:0;
     }
-    .detailHeader > div{ padding:8px 10px; }
-    .detailHeader > div:last-child{ border-left:2px solid var(--line); }
-
-    .items{
-      display:grid;
-      grid-template-columns: 1fr 180px;
-      min-height:360px;
+    .detailHeader > div{
+      padding:8px 10px;
     }
-    .items .left{
-      padding:10px 10px 12px;
-    }
-    .items .right{
-      padding:10px 10px 12px;
+    .detailHeader > div:last-child{
       border-left:2px solid var(--line);
     }
 
-    /* ITEM: ahora multilínea (textarea auto-grow) */
+    /* ===== Items (NUEVO: una sola grilla para que altura coincida) ===== */
+    .itemsBody{
+      display:block;
+      min-height:360px;
+    }
+
     .itemRow{
       display:grid;
-      grid-template-columns: 34px 1fr;
-      gap:8px;
-      align-items:start;
-      margin:8px 0;
-      font-size:12.5px;
+      grid-template-columns: 34px 1fr 180px;
+      align-items:stretch; /* clave: misma altura */
+      border-bottom:0;
     }
-    .n{
+
+    .numCell{
+      padding:8px 10px;
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
       font-weight:900;
-      text-align:right;
-      padding-right:6px;
-      padding-top:6px; /* alinear con primera línea del texto */
     }
-    textarea.itemText{
+
+    .detailCell{
+      padding:6px 10px;
+      display:flex;
+      align-items:center;
+    }
+
+    /* textarea auto-height */
+    .itemText{
+      width:100%;
       border:0;
       border-bottom:1px dotted rgba(0,0,0,.6);
       outline:none;
       padding:6px 4px;
       font-size:12.5px;
       background:transparent;
-      width:100%;
       resize:none;
       overflow:hidden;
       line-height:1.25;
-      min-height:28px;
-      white-space:pre-wrap;
-      word-break:break-word;
     }
 
-    .priceRow{
-      display:grid;
-      grid-template-columns: 16px 1fr;
+    .priceCell{
+      border-left:2px solid var(--line);
+      padding:6px 10px;
+      display:flex;
+      align-items:center;          /* queda centrado vertical respecto al texto */
+      justify-content:flex-start;
       gap:8px;
-      align-items:start;
-      margin:8px 0;
-      font-size:12.5px;
     }
+
     .peso{
       font-weight:900;
+      width:16px;
       text-align:center;
-      padding-top:6px;
+      flex:0 0 16px;
     }
+
     .itemPrice{
       border:0;
       border-bottom:1px dotted rgba(0,0,0,.6);
@@ -311,54 +315,60 @@
       width:100%;
     }
 
-    /* Pie: texto + firma + total */
+    /* Pie */
     .footer{
       border-top:2px solid var(--line);
       display:grid;
       grid-template-columns: 1fr 180px;
       page-break-inside: avoid;
       break-inside: avoid;
-      align-items:stretch;
     }
     .footer .leftFoot{
-      padding:10px 10px;
-      display:grid;
-      grid-template-columns: 1fr 260px; /* texto + firma */
-      gap:10px;
-      min-height:120px;
-      align-items:center;
-    }
-    .footText{
+      padding:8px 10px;
       display:flex;
       flex-direction:column;
       gap:6px;
-      justify-content:center; /* centrado vertical */
+      min-height:120px;
     }
     .footer .rightFoot{
       border-left:2px solid var(--line);
-      padding:10px 10px;
+      padding:8px 10px;
       display:flex;
-      align-items:center;     /* centrado vertical */
-      justify-content:center; /* centrado horizontal */
+      flex-direction:column;
+      justify-content:center;   /* total centrado vertical */
+      align-items:center;       /* total centrado horizontal */
+      gap:10px;
     }
-
     .footLine{
       font-size:11.5px;
       font-weight:800;
       line-height:1.25;
     }
 
+    /* Total centrado */
+    .totalBox{
+      display:flex;
+      align-items:baseline;
+      justify-content:center;
+      gap:10px;
+      font-weight:900;
+      width:100%;
+    }
+    .totalBox .lbl{font-size:14px}
+    .totalBox .amt{font-size:16px}
+
     /* Firma */
     .signWrap{
+      margin-top:auto;
       display:flex;
       flex-direction:column;
       align-items:center;
-      justify-content:center;
+      justify-content:flex-end;
       gap:6px;
+      padding-top:8px;
     }
     .signWrap img{
-      width:220px;
-      max-width:100%;
+      width:180px;
       height:auto;
       object-fit:contain;
       display:block;
@@ -370,32 +380,17 @@
       line-height:1.2;
     }
 
-    /* Total (un solo $) */
-    .grandTotal{
-      font-weight:900;
-      font-size:16px;
-      text-align:center;
-      width:100%;
+    /* ===== Responsive (solo UI, NO achica A4) ===== */
+    @media (max-width: 720px){
+      .topbar .inner{align-items:flex-start}
+      .actions{gap:8px}
+      .btn{padding:10px 14px}
+      .brand small{max-width:46vw}
+      .pageWrap{padding:0 10px}
+      .sheet{padding:10mm 10mm 10mm}
     }
 
-    /* ===== Responsive (celular): escalar la hoja para que se vea “bien” ===== */
-    @media (max-width: 860px){
-      .pageWrap{ padding:0 10px; }
-      .controls{ padding:0 10px; }
-
-      /* escalado proporcional */
-      .sheet{
-        width:210mm; /* mantenemos A4 real, pero escalamos visualmente */
-        transform: scale(var(--scale, 1));
-      }
-
-      /* topbar más compacta */
-      .topbar .inner{ padding:12px 12px; }
-      .actions .btn{ padding:10px 14px; }
-      .brand img{ width:30px; height:30px; }
-    }
-
-    /* ===== Impresión ===== */
+    /* ===== Impresión / PDF ===== */
     @media print{
       body{background:#fff}
       .topbar, .controls{display:none !important}
@@ -406,12 +401,9 @@
         width:auto;
         min-height:auto;
         padding:0;
-        transform:none !important;
       }
-      @page{ size:A4; margin:10mm; }
-
-      /* que placeholders NO impriman “gris” (dejamos en blanco) */
-      input::placeholder, textarea::placeholder{ color:transparent !important; }
+      /* margen REAL de la hoja A4 */
+      @page{ size:A4; margin:12mm; }
     }
   </style>
 </head>
@@ -422,7 +414,7 @@
     <div class="inner">
       <div class="brand">
         <img src="Logo.png" alt="Logo">
-        <div class="txt">
+        <div>
           Servicios Santa Maria • Presupuesto
           <small>Tip: “Descargar PDF” → listo para compartir por WhatsApp.</small>
         </div>
@@ -448,9 +440,9 @@
 
   <!-- Hoja -->
   <div class="pageWrap">
-    <div class="sheet" id="sheet">
+    <div class="sheet">
 
-      <div class="box" id="boxToPdf">
+      <div class="box">
         <!-- Encabezado -->
         <div class="headRow">
           <div class="leftHead">
@@ -475,14 +467,14 @@
         <div class="hline ivaLine">I.V.A. RESPONSABLE INSCRIPTO</div>
         <div class="hline title">PROFORMA</div>
 
-        <!-- Cliente (sin placeholders: quedan blancos si no cargan nada) -->
+        <!-- Cliente -->
         <div class="hline client">
           <label>Señor(es):</label>
-          <input class="lineInput" id="inpSenores" value="">
+          <input class="lineInput" id="inpSenores" placeholder="">
         </div>
         <div class="client" style="border-top:0">
           <label>Domicilio:</label>
-          <input class="lineInput" id="inpDomicilio" value="">
+          <input class="lineInput" id="inpDomicilio" placeholder="">
         </div>
 
         <!-- Detalle -->
@@ -491,19 +483,15 @@
           <div>Precio TOTAL</div>
         </div>
 
-        <div class="items">
-          <div class="left" id="itemsLeft"></div>
-          <div class="right" id="itemsRight"></div>
-        </div>
+        <!-- Items (una sola grilla para que precio y número sigan el alto del texto) -->
+        <div class="itemsBody" id="itemsBody"></div>
 
         <!-- Pie -->
         <div class="footer">
           <div class="leftFoot">
-            <div class="footText">
-              <div class="footLine" id="lineMonto">Son pesos: —</div>
-              <div class="footLine" id="lineIva">El monto NO contiene IVA</div>
-              <div class="footLine">La validez de la oferta es de 10 días</div>
-            </div>
+            <div class="footLine" id="lineMonto">Son pesos: —</div>
+            <div class="footLine" id="lineIva">El monto NO contiene IVA</div>
+            <div class="footLine">La validez de la oferta es de 10 días</div>
 
             <div class="signWrap">
               <img src="firma.png" alt="Firma">
@@ -515,18 +503,18 @@
           </div>
 
           <div class="rightFoot">
-            <div class="grandTotal" id="grandTotal">$ 0,00</div>
+            <div class="totalBox">
+              <span class="lbl">$</span>
+              <span class="amt" id="grandTotal">0,00</span>
+            </div>
           </div>
         </div>
+
       </div>
       <!-- /box -->
 
     </div>
   </div>
-
-  <!-- jsPDF + html2canvas (para generar A4 real) -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
   <script>
     // ===== Helpers =====
@@ -550,8 +538,8 @@
       document.getElementById('fechaLine').textContent = `FECHA : ${dd}/${mm}/${yyyy}`;
     }
 
-    // Auto-grow textarea
-    function autoGrow(el){
+    // textarea auto-height
+    function autoSizeTextArea(el){
       if(!el) return;
       el.style.height = 'auto';
       el.style.height = (el.scrollHeight) + 'px';
@@ -561,52 +549,39 @@
     let items = []; // { text:'', price:0 }
 
     function renderItems(){
-      const left = document.getElementById('itemsLeft');
-      const right = document.getElementById('itemsRight');
-      left.innerHTML = '';
-      right.innerHTML = '';
+      const body = document.getElementById('itemsBody');
+      body.innerHTML = '';
 
       items.forEach((it, idx) => {
         const row = document.createElement('div');
         row.className = 'itemRow';
+
         row.innerHTML = `
-          <div class="n">${idx+1}-</div>
-          <textarea class="itemText" rows="1" data-idx="${idx}"></textarea>
+          <div class="numCell">${idx+1}-</div>
+          <div class="detailCell">
+            <textarea class="itemText" rows="1" data-idx="${idx}" placeholder="Detalle del item...">${escapeHtml(it.text || '')}</textarea>
+          </div>
+          <div class="priceCell">
+            <div class="peso">$</div>
+            <input class="itemPrice" data-idx="${idx}" inputmode="decimal" autocomplete="off"
+              placeholder="0,00" value="${it.price ? fmtARS.format(it.price) : ''}">
+          </div>
         `;
-        left.appendChild(row);
 
-        const prow = document.createElement('div');
-        prow.className = 'priceRow';
-        prow.innerHTML = `
-          <div class="peso">$</div>
-          <input class="itemPrice"
-                 type="text"
-                 inputmode="decimal"
-                 pattern="[0-9.,]*"
-                 data-idx="${idx}">
-        `;
-        right.appendChild(prow);
-
-        const ta = row.querySelector('textarea.itemText');
-        ta.value = it.text || '';
-        autoGrow(ta);
-
-        const ip = prow.querySelector('input.itemPrice');
-        ip.value = it.price ? fmtARS.format(it.price) : '';
+        body.appendChild(row);
       });
 
-      // Bind events (texto)
-      left.querySelectorAll('textarea.itemText').forEach(ta=>{
-        ta.addEventListener('input', (e)=>{
+      // Bind events
+      body.querySelectorAll('.itemText').forEach(tx=>{
+        autoSizeTextArea(tx);
+        tx.addEventListener('input', (e)=>{
           const i = Number(e.target.dataset.idx);
           items[i].text = e.target.value;
-          autoGrow(e.target);
-          // no recalculamos por texto
+          autoSizeTextArea(e.target);
         });
       });
 
-      // Bind events (precio)
-      right.querySelectorAll('.itemPrice').forEach(inp=>{
+      body.querySelectorAll('.itemPrice').forEach(inp=>{
         inp.addEventListener('blur', (e)=>{
           const i = Number(e.target.dataset.idx);
           const n = parseMoney(e.target.value);
@@ -622,7 +597,7 @@
     function addItem(){
       items.push({ text:'', price:0 });
       renderItems();
-      // ✅ NO hacemos foco automático (más cómodo para cargar varios items)
+      // NO hacemos foco (como pediste)
     }
 
     function removeLast(){
@@ -634,7 +609,8 @@
     // ===== Total + pie =====
     function recalc(){
       const total = items.reduce((acc, it)=> acc + (Number(it.price)||0), 0);
-      document.getElementById('grandTotal').textContent = '$ ' + fmtARS.format(total);
+      // acá el grandTotal solo el número, el "$" está aparte
+      document.getElementById('grandTotal').textContent = fmtARS.format(total);
       renderFooterText(total);
     }
 
@@ -669,7 +645,9 @@
       const unidades = ['', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'];
       const especiales = ['diez','once','doce','trece','catorce','quince','dieciséis','diecisiete','dieciocho','diecinueve'];
       const decenas = ['', '', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
-      const centenas = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos','seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
+      const centenas = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos',
+        'seiscientos', 'setecientos', 'ochocientos', 'novecientos'
+      ];
 
       function menosDeCien(x){
         if(x < 10) return unidades[x];
@@ -714,71 +692,25 @@
         txt += (txt ? ' ' : '') + (cnt === 1 ? 'mil' : `${numeroALetras(cnt)} mil`);
       }
 
-      if(resto > 0){
-        txt += (txt ? ' ' : '') + menosDeMil(resto);
-      }
+      if(resto > 0) txt += (txt ? ' ' : '') + menosDeMil(resto);
 
       txt = txt.replace(/\buno\b/g, 'un');
       return txt.trim();
     }
 
-    // ===== Escala móvil para vista (no afecta PDF) =====
-    function applyMobileScale(){
-      const sheet = document.getElementById('sheet');
-      if(!sheet) return;
-
-      const vw = Math.min(window.innerWidth, document.documentElement.clientWidth);
-      // si es “móvil/ancho chico”, escalamos para que entre sin “arruinar” la hoja
-      if(vw <= 860){
-        const padding = 20;
-        const available = vw - padding;
-        // 210mm en CSS es ancho real de A4 en pantalla; usamos el offsetWidth real del elemento:
-        const actualW = sheet.offsetWidth;
-        const scale = Math.max(0.35, Math.min(1, available / actualW));
-        sheet.style.setProperty('--scale', scale.toFixed(4));
-      }else{
-        sheet.style.setProperty('--scale', '1');
-      }
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#039;");
     }
 
-    window.addEventListener('resize', applyMobileScale);
-
-    // ===== PDF A4 real (descarga directa) =====
-    async function descargarPDF(){
-      const el = document.getElementById('boxToPdf');
-      if(!el) return;
-
-      // subimos calidad para que se lea bien en WhatsApp
-      const canvas = await html2canvas(el, {
-        scale: 2,
-        backgroundColor: '#ffffff',
-        useCORS: true
-      });
-
-      const imgData = canvas.toDataURL('image/jpeg', 0.92);
-
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ orientation:'p', unit:'mm', format:'a4' });
-
-      const pageW = 210;
-      const pageH = 297;
-
-      // calculamos tamaño manteniendo proporción
-      const imgW = pageW;
-      const imgH = canvas.height * (imgW / canvas.width);
-
-      // centrado vertical si sobra
-      const y = Math.max(0, (pageH - imgH) / 2);
-
-      pdf.addImage(imgData, 'JPEG', 0, y, imgW, imgH, undefined, 'FAST');
-
-      const d = new Date();
-      const dd = String(d.getDate()).padStart(2,'0');
-      const mm = String(d.getMonth()+1).padStart(2,'0');
-      const yyyy = d.getFullYear();
-      const fileName = `Presupuesto_ServiciosSantaMaria_${yyyy}${mm}${dd}.pdf`;
-
-      pdf.save(fileName);
+    // ===== Descargar PDF (usa el motor de impresión, con @page A4 y márgenes) =====
+    function descargarPDF(){
+      // en móviles no podemos forzar “guardar como PDF” automático, pero esto respeta A4 + márgenes
+      window.print();
     }
 
     // ===== Salir =====
@@ -789,12 +721,8 @@
     // ===== Init =====
     (function init(){
       setToday();
-
-      // 1 línea inicial
       items = [{ text:'', price:0 }];
       renderItems();
-
-      applyMobileScale();
     })();
   </script>
 </body>
