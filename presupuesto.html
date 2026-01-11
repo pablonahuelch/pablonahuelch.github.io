@@ -230,7 +230,7 @@
       display:grid;
       grid-template-columns: 1fr 180px;
       min-height:360px;
-      border-bottom:2px solid var(--line); /* asegura la línea completa antes del pie */
+      border-bottom:0; /* asegura la línea completa antes del pie */
     }
     .items .left{
       padding:10px 10px 12px;
@@ -265,11 +265,11 @@
       border:0;
       border-bottom:1px dotted rgba(0,0,0,.6);
       outline:none;
-      padding:6px 4px;
+      padding:3px 4px;
       font-size:12.5px;
       line-height:1.25;
       background:transparent;
-      min-height:30px;
+      min-height:20px;
     }
 
     .priceRow{
@@ -302,7 +302,7 @@
     /* ===== Pie (líneas + firma a la derecha dentro del pie izquierdo) ===== */
     .footer{
       display:grid;
-      grid-template-columns: 1fr 180px;
+      border-top:2px solid var(--line);
       page-break-inside: avoid;
       break-inside: avoid;
     }
@@ -351,7 +351,7 @@
     .signImg img{
       width:auto;
       height:100%;
-      max-height:9999px;           /* que crezca si el texto crece */
+      height:42px;           /* que crezca si el texto crece */
       max-width:100%;
       object-fit:contain;
       display:block;
