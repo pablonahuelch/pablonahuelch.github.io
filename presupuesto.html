@@ -49,22 +49,16 @@
       display:flex; align-items:center; gap:10px;
       font-weight:800;
       letter-spacing:.2px;
-      min-width:0;
     }
     .brand img{
       width:34px;height:34px; border-radius:10px;
       object-fit:cover; background:#fff;
-      flex:0 0 auto;
     }
     .brand small{
       display:block;
       font-weight:500;
       opacity:.85;
       margin-top:2px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width:60vw;
     }
     .actions{
       display:flex; gap:10px; align-items:center; flex-wrap:wrap;
@@ -110,7 +104,7 @@
       cursor:pointer;
     }
 
-    /* ===== Hoja A4 (vista) ===== */
+    /* ===== Hoja ===== */
     .pageWrap{
       max-width:1200px;
       margin:16px auto 40px;
@@ -125,18 +119,15 @@
       background:var(--card);
       box-shadow:var(--shadow);
       border-radius:10px;
-      padding:14mm 14mm 14mm; /* margen visual correcto */
+      padding:14mm 14mm 14mm;
       position:relative;
     }
 
-    /* “Tabla” estilo Excel */
+    /* Tabla estilo Excel */
     .box{
       border:2px solid var(--line);
       width:100%;
-      background:#fff;
     }
-
-    .cell{ padding:8px 10px; }
     .hline{ border-top:2px solid var(--line); }
     .vline{ border-left:2px solid var(--line); }
 
@@ -146,21 +137,17 @@
       grid-template-columns: 2fr 1fr;
       min-height:105px;
     }
-
     .leftHead{
       display:flex;
       align-items:center;
       gap:14px;
       padding:10px 12px;
-      min-width:0;
     }
-
     .logo{
       width:92px; height:92px;
       object-fit:contain;
       flex:0 0 auto;
     }
-
     .servicesText{
       flex:1;
       text-align:center;
@@ -170,9 +157,7 @@
       letter-spacing:.15px;
       text-transform:uppercase;
       padding:0 4px;
-      min-width:0;
     }
-
     .rightHead{
       padding:10px 12px;
       display:flex;
@@ -184,10 +169,8 @@
       line-height:1.55;
       white-space:nowrap;
     }
-
     .metaLine{ display:block; }
 
-    /* Lineas bajo encabezado */
     .addrLine{
       font-weight:800;
       text-align:center;
@@ -217,6 +200,7 @@
     }
     .client label{ font-weight:800; }
 
+    /* IMPORTANTE: sin placeholder, para que no se “imprima” gris si está vacío */
     .lineInput{
       border:0;
       border-bottom:1px solid rgba(0,0,0,.55);
@@ -225,11 +209,10 @@
       font-size:12.5px;
       background:transparent;
       width:100%;
+      color:#000;
     }
-    /* si está vacío: que se vea “blanco” (sin texto gris) */
-    .lineInput::placeholder{ color:transparent; }
 
-    /* Detalle + Precio (encabezado) */
+    /* Detalle + Precio */
     .detailHeader{
       display:grid;
       grid-template-columns: 1fr 180px;
@@ -240,70 +223,70 @@
       font-size:12px;
       padding:0;
     }
-    .detailHeader > div{
-      padding:8px 10px;
-    }
-    .detailHeader > div:last-child{
-      border-left:2px solid var(--line);
-    }
+    .detailHeader > div{ padding:8px 10px; }
+    .detailHeader > div:last-child{ border-left:2px solid var(--line); }
 
-    /* ===== Items (NUEVO: una sola grilla para que altura coincida) ===== */
-    .itemsBody{
-      display:block;
+    .items{
+      display:grid;
+      grid-template-columns: 1fr 180px;
       min-height:360px;
+      border-bottom:2px solid var(--line); /* asegura la línea completa antes del pie */
+    }
+    .items .left{
+      padding:10px 10px 12px;
+    }
+    .items .right{
+      padding:10px 10px 12px;
+      border-left:2px solid var(--line);
     }
 
     .itemRow{
       display:grid;
-      grid-template-columns: 34px 1fr 180px;
-      align-items:stretch; /* clave: misma altura */
-      border-bottom:0;
+      grid-template-columns: 34px 1fr;
+      gap:8px;
+      align-items:stretch;         /* clave: estira el textarea */
+      margin:8px 0;
+      font-size:12.5px;
     }
-
-    .numCell{
-      padding:8px 10px;
-      display:flex;
-      align-items:center;
-      justify-content:flex-end;
+    .n{
       font-weight:900;
-    }
-
-    .detailCell{
-      padding:6px 10px;
+      text-align:right;
+      padding-right:6px;
       display:flex;
-      align-items:center;
+      align-items:center;          /* número centrado vertical */
+      justify-content:flex-end;
     }
 
-    /* textarea auto-height */
+    /* Textarea auto-crece */
     .itemText{
       width:100%;
+      resize:none;
+      overflow:hidden;
       border:0;
       border-bottom:1px dotted rgba(0,0,0,.6);
       outline:none;
       padding:6px 4px;
       font-size:12.5px;
-      background:transparent;
-      resize:none;
-      overflow:hidden;
       line-height:1.25;
+      background:transparent;
+      min-height:30px;
     }
 
-    .priceCell{
-      border-left:2px solid var(--line);
-      padding:6px 10px;
-      display:flex;
-      align-items:center;          /* queda centrado vertical respecto al texto */
-      justify-content:flex-start;
+    .priceRow{
+      display:grid;
+      grid-template-columns: 16px 1fr;
       gap:8px;
+      align-items:stretch;         /* se adapta a la altura del item */
+      margin:8px 0;
+      font-size:12.5px;
     }
-
     .peso{
       font-weight:900;
-      width:16px;
       text-align:center;
-      flex:0 0 16px;
+      display:flex;
+      align-items:center;          /* $ centrado vertical */
+      justify-content:center;
     }
-
     .itemPrice{
       border:0;
       border-bottom:1px dotted rgba(0,0,0,.6);
@@ -313,63 +296,63 @@
       text-align:right;
       background:transparent;
       width:100%;
+      height:100%;
     }
 
-    /* Pie */
+    /* ===== Pie (líneas + firma a la derecha dentro del pie izquierdo) ===== */
     .footer{
-      border-top:2px solid var(--line);
       display:grid;
       grid-template-columns: 1fr 180px;
       page-break-inside: avoid;
       break-inside: avoid;
     }
-    .footer .leftFoot{
+
+    /* Pie izquierdo ahora es grilla: texto | firma (así la firma “crece” con el texto) */
+    .leftFoot{
       padding:8px 10px;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:10px;
+      align-items:stretch;
+      min-height:120px;
+    }
+
+    .footText{
       display:flex;
       flex-direction:column;
       gap:6px;
-      min-height:120px;
+      justify-content:flex-start;
+      min-width:0;
     }
-    .footer .rightFoot{
-      border-left:2px solid var(--line);
-      padding:8px 10px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;   /* total centrado vertical */
-      align-items:center;       /* total centrado horizontal */
-      gap:10px;
-    }
+
     .footLine{
       font-size:11.5px;
       font-weight:800;
       line-height:1.25;
     }
 
-    /* Total centrado */
-    .totalBox{
-      display:flex;
-      align-items:baseline;
-      justify-content:center;
-      gap:10px;
-      font-weight:900;
-      width:100%;
-    }
-    .totalBox .lbl{font-size:14px}
-    .totalBox .amt{font-size:16px}
-
-    /* Firma */
     .signWrap{
-      margin-top:auto;
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:flex-end;
-      gap:6px;
-      padding-top:8px;
+      height:100%;
+      min-width:0;
     }
-    .signWrap img{
-      width:180px;
-      height:auto;
+    .signImg{
+      flex:1;                      /* ocupa el mismo “alto disponible” que crezca con el texto */
+      width:100%;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      min-height:0;
+      padding-bottom:2px;
+    }
+    .signImg img{
+      width:auto;
+      height:100%;
+      max-height:9999px;           /* que crezca si el texto crece */
+      max-width:100%;
       object-fit:contain;
       display:block;
     }
@@ -380,17 +363,36 @@
       line-height:1.2;
     }
 
-    /* ===== Responsive (solo UI, NO achica A4) ===== */
-    @media (max-width: 720px){
+    .rightFoot{
+      border-left:2px solid var(--line);
+      padding:8px 10px;
+      display:flex;
+      align-items:center;          /* total centrado vertical */
+      justify-content:center;      /* total centrado horizontal */
+    }
+    .totalBox{
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+      font-weight:900;
+    }
+    .totalBox .lbl{font-size:12px}
+    .totalBox .amt{font-size:16px}
+
+    /* ===== Responsive (solo UI, NO toca medidas de impresión) ===== */
+    @media (max-width: 980px){
+      .pageWrap{padding:0 10px}
+      .sheet{
+        width:100%;
+        max-width:210mm;
+        padding:10mm;
+      }
       .topbar .inner{align-items:flex-start}
       .actions{gap:8px}
       .btn{padding:10px 14px}
-      .brand small{max-width:46vw}
-      .pageWrap{padding:0 10px}
-      .sheet{padding:10mm 10mm 10mm}
     }
 
-    /* ===== Impresión / PDF ===== */
+    /* ===== Impresión (A4 real + márgenes) ===== */
     @media print{
       body{background:#fff}
       .topbar, .controls{display:none !important}
@@ -400,9 +402,9 @@
         border-radius:0;
         width:auto;
         min-height:auto;
-        padding:0;
+        padding:0 !important;  /* el margen lo maneja @page */
       }
-      /* margen REAL de la hoja A4 */
+      /* A4 y márgenes (esto es lo que te respeta el “aire” alrededor) */
       @page{ size:A4; margin:12mm; }
     }
   </style>
@@ -467,14 +469,14 @@
         <div class="hline ivaLine">I.V.A. RESPONSABLE INSCRIPTO</div>
         <div class="hline title">PROFORMA</div>
 
-        <!-- Cliente -->
+        <!-- Cliente (sin placeholders) -->
         <div class="hline client">
           <label>Señor(es):</label>
-          <input class="lineInput" id="inpSenores" placeholder="">
+          <input class="lineInput" id="inpSenores" value="">
         </div>
         <div class="client" style="border-top:0">
           <label>Domicilio:</label>
-          <input class="lineInput" id="inpDomicilio" placeholder="">
+          <input class="lineInput" id="inpDomicilio" value="">
         </div>
 
         <!-- Detalle -->
@@ -483,18 +485,24 @@
           <div>Precio TOTAL</div>
         </div>
 
-        <!-- Items (una sola grilla para que precio y número sigan el alto del texto) -->
-        <div class="itemsBody" id="itemsBody"></div>
+        <div class="items">
+          <div class="left" id="itemsLeft"></div>
+          <div class="right" id="itemsRight"></div>
+        </div>
 
         <!-- Pie -->
         <div class="footer">
           <div class="leftFoot">
-            <div class="footLine" id="lineMonto">Son pesos: —</div>
-            <div class="footLine" id="lineIva">El monto NO contiene IVA</div>
-            <div class="footLine">La validez de la oferta es de 10 días</div>
+            <div class="footText">
+              <div class="footLine" id="lineMonto">Son pesos: —</div>
+              <div class="footLine" id="lineIva">El monto NO contiene IVA</div>
+              <div class="footLine">La validez de la oferta es de 10 días</div>
+            </div>
 
             <div class="signWrap">
-              <img src="firma.png" alt="Firma">
+              <div class="signImg">
+                <img src="firma.png" alt="Firma">
+              </div>
               <div class="signName">
                 CHAILE TRANSITO ROQUE<br>
                 Matricula Profesional 1757
@@ -538,66 +546,84 @@
       document.getElementById('fechaLine').textContent = `FECHA : ${dd}/${mm}/${yyyy}`;
     }
 
-    // textarea auto-height
-    function autoSizeTextArea(el){
-      if(!el) return;
+    // Auto-grow textarea
+    function autoGrow(el){
       el.style.height = 'auto';
       el.style.height = (el.scrollHeight) + 'px';
+    }
+
+    // Sincroniza alturas izquierda/derecha para que el importe acompañe los renglones
+    function syncRowHeights(){
+      const leftRows = document.querySelectorAll('#itemsLeft .itemRow');
+      const rightRows = document.querySelectorAll('#itemsRight .priceRow');
+      const n = Math.min(leftRows.length, rightRows.length);
+
+      for(let i=0;i<n;i++){
+        const h = leftRows[i].offsetHeight;
+        rightRows[i].style.height = h + 'px';
+      }
     }
 
     // ===== Items =====
     let items = []; // { text:'', price:0 }
 
     function renderItems(){
-      const body = document.getElementById('itemsBody');
-      body.innerHTML = '';
+      const left = document.getElementById('itemsLeft');
+      const right = document.getElementById('itemsRight');
+      left.innerHTML = '';
+      right.innerHTML = '';
 
       items.forEach((it, idx) => {
+        // Left
         const row = document.createElement('div');
         row.className = 'itemRow';
-
         row.innerHTML = `
-          <div class="numCell">${idx+1}-</div>
-          <div class="detailCell">
-            <textarea class="itemText" rows="1" data-idx="${idx}" placeholder="Detalle del item...">${escapeHtml(it.text || '')}</textarea>
-          </div>
-          <div class="priceCell">
-            <div class="peso">$</div>
-            <input class="itemPrice" data-idx="${idx}" inputmode="decimal" autocomplete="off"
-              placeholder="0,00" value="${it.price ? fmtARS.format(it.price) : ''}">
-          </div>
+          <div class="n">${idx+1}-</div>
+          <textarea class="itemText" placeholder="" data-idx="${idx}">${escapeHtml(it.text || '')}</textarea>
         `;
+        left.appendChild(row);
 
-        body.appendChild(row);
+        // Right
+        const prow = document.createElement('div');
+        prow.className = 'priceRow';
+        prow.innerHTML = `
+          <div class="peso">$</div>
+          <input class="itemPrice" inputmode="decimal" value="${it.price ? fmtARS.format(it.price) : ''}" placeholder="" data-idx="${idx}">
+        `;
+        right.appendChild(prow);
       });
 
-      // Bind events
-      body.querySelectorAll('.itemText').forEach(tx=>{
-        autoSizeTextArea(tx);
+      // Bind textareas
+      left.querySelectorAll('.itemText').forEach(tx=>{
+        autoGrow(tx);
         tx.addEventListener('input', (e)=>{
           const i = Number(e.target.dataset.idx);
           items[i].text = e.target.value;
-          autoSizeTextArea(e.target);
+          autoGrow(e.target);
+          syncRowHeights();
         });
       });
 
-      body.querySelectorAll('.itemPrice').forEach(inp=>{
+      // Bind prices
+      right.querySelectorAll('.itemPrice').forEach(inp=>{
         inp.addEventListener('blur', (e)=>{
           const i = Number(e.target.dataset.idx);
           const n = parseMoney(e.target.value);
           items[i].price = n;
           e.target.value = n ? fmtARS.format(n) : '';
           recalc();
+          syncRowHeights();
         });
       });
 
       recalc();
+      syncRowHeights();
     }
 
     function addItem(){
       items.push({ text:'', price:0 });
       renderItems();
-      // NO hacemos foco (como pediste)
+      // NO hacemos focus automático (como pediste)
     }
 
     function removeLast(){
@@ -609,7 +635,6 @@
     // ===== Total + pie =====
     function recalc(){
       const total = items.reduce((acc, it)=> acc + (Number(it.price)||0), 0);
-      // acá el grandTotal solo el número, el "$" está aparte
       document.getElementById('grandTotal').textContent = fmtARS.format(total);
       renderFooterText(total);
     }
@@ -645,9 +670,7 @@
       const unidades = ['', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'];
       const especiales = ['diez','once','doce','trece','catorce','quince','dieciséis','diecisiete','dieciocho','diecinueve'];
       const decenas = ['', '', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
-      const centenas = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos',
-        'seiscientos', 'setecientos', 'ochocientos', 'novecientos'
-      ];
+      const centenas = ['', 'ciento', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos'];
 
       function menosDeCien(x){
         if(x < 10) return unidades[x];
@@ -692,7 +715,9 @@
         txt += (txt ? ' ' : '') + (cnt === 1 ? 'mil' : `${numeroALetras(cnt)} mil`);
       }
 
-      if(resto > 0) txt += (txt ? ' ' : '') + menosDeMil(resto);
+      if(resto > 0){
+        txt += (txt ? ' ' : '') + menosDeMil(resto);
+      }
 
       txt = txt.replace(/\buno\b/g, 'un');
       return txt.trim();
@@ -707,9 +732,10 @@
         .replaceAll("'","&#039;");
     }
 
-    // ===== Descargar PDF (usa el motor de impresión, con @page A4 y márgenes) =====
+    // ===== Botón Descargar PDF =====
     function descargarPDF(){
-      // en móviles no podemos forzar “guardar como PDF” automático, pero esto respeta A4 + márgenes
+      // En desktop abre el diálogo de impresión (Guardar como PDF).
+      // En Android normalmente abre el “Guardar como PDF”.
       window.print();
     }
 
@@ -721,8 +747,12 @@
     // ===== Init =====
     (function init(){
       setToday();
-      items = [{ text:'', price:0 }];
+      items = [{ text:'', price:0 }]; // 1 línea inicial
       renderItems();
+
+      // cuando cambia IVA, re-render pie
+      document.getElementById('chkIva').addEventListener('change', ()=> renderFooterText());
+      window.addEventListener('resize', ()=> syncRowHeights());
     })();
   </script>
 </body>
