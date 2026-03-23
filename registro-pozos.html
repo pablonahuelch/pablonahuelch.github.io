@@ -6,361 +6,403 @@
   <title>Registro de Pozos</title>
   <style>
     :root{
-      --bg1:#081326;
-      --bg2:#0d2347;
-      --panel:rgba(255,255,255,.09);
-      --panel-2:rgba(255,255,255,.06);
-      --line:rgba(255,255,255,.14);
+      --bg1:#061a34;
+      --bg2:#0a0f12;
+      --panel:#0d1830;
+      --panel2:#12203d;
+      --line:rgba(255,255,255,.10);
       --text:#ffffff;
-      --muted:rgba(255,255,255,.75);
-      --title:#76f4ff;
-      --title2:#9bddff;
-      --ok:#72f7ff;
-      --ok2:#9cd8ff;
-      --warn:#ffb9b9;
-      --shadow:0 14px 40px rgba(0,0,0,.28);
-      --radius:20px;
+      --muted:#b9c7de;
+      --blue:#1694f3;
+      --blue2:#0f7fd0;
+      --cyan:#76f4ff;
+      --yellow:#ffcc00;
+      --yellowText:#181300;
+      --danger:#ff8d8d;
+      --ok:#8cffbf;
+      --shadow:0 14px 36px rgba(0,0,0,.28);
+      --radius:22px;
     }
 
-    *{
-      box-sizing:border-box;
-      font-family:Arial, sans-serif;
-    }
-
-    html,body{
-      margin:0;
-      padding:0;
-      min-height:100%;
-      background:linear-gradient(135deg,var(--bg1),var(--bg2));
-      color:var(--text);
-    }
-
+    *{box-sizing:border-box;font-family:Arial,sans-serif}
+    html,body{margin:0;padding:0}
     body{
-      padding:24px;
+      min-height:100vh;
+      background:linear-gradient(90deg,var(--bg1),var(--bg2));
+      color:var(--text);
+      padding:28px;
     }
 
-    .contenedor{
-      max-width:1280px;
+    .container{
+      max-width:1250px;
       margin:0 auto;
     }
 
-    .header{
+    .hero{
       margin-bottom:24px;
     }
 
-    .header h1{
-      margin:0 0 6px 0;
+    .hero h1{
+      margin:0 0 10px 0;
       font-size:3rem;
-      color:var(--title);
-      letter-spacing:.3px;
+      font-weight:800;
+      line-height:1.1;
     }
 
-    .header p{
+    .hero p{
       margin:0;
+      font-size:1.1rem;
       color:var(--muted);
-      font-size:1.12rem;
     }
 
-    .layout{
+    .cards{
       display:grid;
-      grid-template-columns: 1fr 1.2fr;
-      gap:22px;
-      align-items:start;
+      grid-template-columns:1fr 1fr;
+      gap:20px;
+      margin-bottom:28px;
+    }
+
+    .card{
+      background:rgba(8,20,45,.92);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:24px;
+      padding:28px;
+      box-shadow:var(--shadow);
+    }
+
+    .chip{
+      display:inline-block;
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:.95rem;
+      margin-bottom:16px;
+      background:rgba(22,148,243,.18);
+      color:#cceaff;
+      border:1px solid rgba(22,148,243,.18);
+    }
+
+    .card h2{
+      margin:0 0 18px 0;
+      font-size:2rem;
+      line-height:1.15;
+    }
+
+    .card p{
+      margin:0 0 22px 0;
+      color:var(--muted);
+      font-size:1.05rem;
+      line-height:1.5;
+      max-width:90%;
+    }
+
+    .btn{
+      border:none;
+      border-radius:16px;
+      padding:14px 24px;
+      font-size:1rem;
+      font-weight:700;
+      cursor:pointer;
+      transition:.18s ease;
+    }
+
+    .btn:hover{transform:translateY(-1px)}
+
+    .btn-blue{
+      background:linear-gradient(180deg,var(--blue),var(--blue2));
+      color:#fff;
+    }
+
+    .btn-yellow{
+      background:var(--yellow);
+      color:var(--yellowText);
+    }
+
+    .btn-gray{
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .btn-red{
+      background:rgba(255,90,90,.13);
+      color:#ffd6d6;
+      border:1px solid rgba(255,130,130,.16);
     }
 
     .panel{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      padding:22px;
+      display:none;
+      background:rgba(8,20,45,.96);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:24px;
+      overflow:hidden;
       box-shadow:var(--shadow);
-      backdrop-filter: blur(8px);
+      margin-bottom:22px;
     }
 
-    .panel h2{
-      margin:0 0 16px 0;
-      color:var(--title2);
+    .panel.active{display:block}
+
+    .panel-header{
+      background:linear-gradient(180deg,#168ce3,#1177c6);
+      padding:18px 22px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+
+    .panel-header h3{
+      margin:0;
       font-size:1.9rem;
     }
 
-    .panel h3{
-      margin:0 0 14px 0;
-      color:#b7ebff;
-      font-size:1.25rem;
-      padding-bottom:10px;
-      border-bottom:1px solid rgba(255,255,255,.1);
+    .panel-body{
+      padding:20px 18px 24px 18px;
+    }
+
+    .inner{
+      background:#0d1830;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:20px;
+      padding:18px;
+      margin-bottom:16px;
+    }
+
+    .inner h4{
+      margin:0 0 8px 0;
+      font-size:1.8rem;
+      font-weight:800;
+    }
+
+    .inner .sub{
+      margin:0 0 18px 0;
+      color:var(--muted);
+      font-size:1rem;
     }
 
     .grid{
       display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:14px 16px;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
     }
 
-    .campo{
+    .field{
       display:flex;
       flex-direction:column;
       gap:7px;
     }
 
-    .campo.full{
+    .field.full{
       grid-column:1 / -1;
     }
 
     label{
       font-size:1rem;
-      font-weight:bold;
-      color:rgba(255,255,255,.95);
+      font-weight:700;
+      color:#eaf3ff;
     }
 
-    input, select, textarea{
+    input, textarea, select{
       width:100%;
-      padding:14px 15px;
-      border-radius:14px;
-      border:1px solid rgba(118,244,255,.35);
-      background:rgba(4,18,40,.45);
+      padding:14px 16px;
+      border-radius:15px;
+      border:1px solid rgba(118,244,255,.25);
+      background:#182641;
       color:white;
       outline:none;
       font-size:1rem;
     }
 
     input[readonly]{
-      opacity:.82;
-      background:rgba(255,255,255,.08);
+      opacity:.9;
+      background:#202c44;
       cursor:not-allowed;
+    }
+
+    textarea{
+      resize:vertical;
+      min-height:100px;
     }
 
     select option{
       color:#111;
     }
 
-    textarea{
-      min-height:100px;
-      resize:vertical;
-    }
-
-    .acciones{
+    .actions{
       display:flex;
-      gap:12px;
+      gap:10px;
       flex-wrap:wrap;
       margin-top:18px;
     }
 
-    button{
-      border:none;
-      border-radius:14px;
-      padding:13px 20px;
-      font-size:1rem;
-      font-weight:bold;
-      cursor:pointer;
-      transition:.18s ease;
-    }
+    .hidden{display:none !important}
 
-    button:hover{
-      transform:translateY(-1px);
-    }
-
-    .btn-principal{
-      background:linear-gradient(90deg,var(--ok),var(--ok2));
-      color:#082437;
-      box-shadow:0 8px 22px rgba(114,247,255,.22);
-    }
-
-    .btn-secundario{
-      background:rgba(255,255,255,.10);
-      color:#fff;
-      border:1px solid rgba(255,255,255,.14);
-    }
-
-    .btn-alerta{
-      background:rgba(255,140,140,.18);
-      color:#ffdada;
-      border:1px solid rgba(255,170,170,.22);
-    }
-
-    .seccion-interna{
-      margin-top:18px;
-      padding:18px;
-      border-radius:16px;
-      background:var(--panel-2);
-      border:1px solid rgba(255,255,255,.08);
-    }
-
-    .oculto{
-      display:none !important;
-    }
-
-    .mensaje{
-      margin-top:14px;
+    .msg{
+      margin-top:12px;
       min-height:22px;
-      font-weight:bold;
+      font-weight:700;
     }
 
-    .mensaje.ok{ color:#8dffbf; }
-    .mensaje.error{ color:#ffb1b1; }
+    .msg.ok{color:var(--ok)}
+    .msg.error{color:var(--danger)}
 
-    .lista{
+    .list{
       display:flex;
       flex-direction:column;
       gap:12px;
-      margin-top:14px;
+      margin-top:10px;
     }
 
     .item{
-      background:rgba(255,255,255,.06);
+      background:#15233d;
       border:1px solid rgba(255,255,255,.08);
-      border-radius:15px;
+      border-radius:16px;
       padding:14px 16px;
     }
 
-    .item h4{
+    .item h5{
       margin:0 0 6px 0;
-      color:#d9f7ff;
-      font-size:1.08rem;
+      font-size:1.1rem;
+      color:#dff5ff;
     }
 
     .item p{
       margin:4px 0;
-      color:rgba(255,255,255,.84);
+      color:var(--muted);
     }
 
     .item small{
-      color:rgba(255,255,255,.7);
+      color:#9eb4d0;
+      display:block;
+      margin-top:6px;
     }
 
-    .fila-titulo{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom:10px;
-    }
-
-    .badge{
-      display:inline-block;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:.9rem;
-      background:rgba(114,247,255,.13);
-      border:1px solid rgba(114,247,255,.18);
-      color:#bffbff;
-    }
-
-    .subacciones{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
+    .table-wrap{
+      overflow:auto;
       margin-top:12px;
     }
 
-    .subacciones button{
-      padding:10px 14px;
-      font-size:.95rem;
-      border-radius:12px;
-    }
-
-    .tabla-simple{
+    table{
       width:100%;
       border-collapse:collapse;
-      margin-top:12px;
-      overflow:hidden;
-      border-radius:14px;
+      min-width:680px;
     }
 
-    .tabla-simple th,
-    .tabla-simple td{
-      padding:12px;
+    th, td{
       text-align:left;
+      padding:12px;
       border-bottom:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.03);
-      font-size:.97rem;
+      background:#15233d;
     }
 
-    .tabla-simple th{
-      color:#bdefff;
-      background:rgba(255,255,255,.05);
+    th{
+      color:#dff3ff;
+      background:#1b2a47;
     }
 
-    .vacio{
-      color:rgba(255,255,255,.7);
-      padding:10px 0;
+    .empty{
+      color:#9eb4d0;
+      padding:10px 0 4px 0;
     }
 
-    @media (max-width: 1050px){
-      .layout{
-        grid-template-columns:1fr;
-      }
-    }
-
-    @media (max-width: 760px){
-      .grid{
-        grid-template-columns:1fr;
-      }
-
-      .header h1{
-        font-size:2.2rem;
-      }
-
-      body{
-        padding:16px;
-      }
+    @media (max-width: 980px){
+      .cards{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
+      .hero h1{font-size:2.2rem}
+      body{padding:16px}
     }
   </style>
 </head>
 <body>
-  <div class="contenedor">
-    <div class="header">
-      <h1>Registro de Pozos</h1>
-      <p>Clientes, pozos e histórico con subformularios dependientes</p>
+  <div class="container">
+    <div class="hero">
+      <h1>SERVICIOS SANTA MARIA – Registro de Pozos</h1>
+      <p>Portal simple para registrar clientes, pozos e históricos de manera progresiva e intuitiva.</p>
     </div>
 
-    <div class="layout">
-      <!-- PANEL IZQUIERDO -->
-      <section class="panel">
-        <h2>Gestión</h2>
+    <div class="cards">
+      <section class="card">
+        <div class="chip">Alta</div>
+        <h2>Registrar cliente</h2>
+        <p>
+          Desde este bloque podés dar de alta un cliente nuevo. El sistema asigna el ID automáticamente
+          y guarda la base para luego registrar pozos y sus históricos.
+        </p>
+        <button class="btn btn-blue" id="btnAbrirAltaCliente">▼ Desplegar alta cliente</button>
+      </section>
 
-        <!-- BLOQUE 1 -->
-        <div class="seccion-interna">
-          <h3>1. Registrar cliente nuevo</h3>
+      <section class="card">
+        <div class="chip">Consulta y gestión</div>
+        <h2>Consultar clientes y gestionar pozos</h2>
+        <p>
+          Desde este bloque podés buscar un cliente ya cargado, ver sus pozos, registrar uno nuevo,
+          agregar históricos o editar registros existentes.
+        </p>
+        <button class="btn btn-yellow" id="btnAbrirGestion">▼ Desplegar gestión</button>
+      </section>
+    </div>
+
+    <!-- PANEL ALTA CLIENTE -->
+    <section class="panel" id="panelAltaCliente">
+      <div class="panel-header">
+        <h3>Alta de cliente</h3>
+        <button class="btn btn-gray" id="btnCerrarAltaCliente">Cerrar</button>
+      </div>
+
+      <div class="panel-body">
+        <div class="inner">
+          <h4>Registrar nuevo cliente</h4>
+          <p class="sub">Complete solo los datos necesarios. El ID se genera automáticamente.</p>
+
           <form id="formCliente">
             <div class="grid">
-              <div class="campo">
+              <div class="field">
                 <label for="idClienteAuto">ID Cliente</label>
-                <input type="text" id="idClienteAuto" readonly />
+                <input type="text" id="idClienteAuto" readonly>
               </div>
 
-              <div class="campo">
+              <div class="field">
                 <label for="razonSocial">Razón Social</label>
-                <input type="text" id="razonSocial" placeholder="Ej: Empresa SRL" required />
+                <input type="text" id="razonSocial" placeholder="Ej: Empresa SRL">
               </div>
 
-              <div class="campo">
+              <div class="field">
                 <label for="telefono">Teléfono</label>
-                <input type="text" id="telefono" placeholder="Ej: 3834..." />
+                <input type="text" id="telefono" placeholder="Ej: 3834...">
               </div>
 
-              <div class="campo full">
+              <div class="field full">
                 <label for="descripcionCliente">Descripción</label>
-                <textarea id="descripcionCliente" placeholder="Detalle del cliente"></textarea>
+                <textarea id="descripcionCliente" placeholder="Detalle general del cliente"></textarea>
               </div>
             </div>
 
-            <div class="acciones">
-              <button type="submit" class="btn-principal">Guardar cliente</button>
-              <button type="button" class="btn-secundario" id="btnLimpiarCliente">Limpiar</button>
+            <div class="actions">
+              <button type="submit" class="btn btn-blue">Guardar cliente</button>
+              <button type="button" class="btn btn-gray" id="btnLimpiarCliente">Limpiar</button>
             </div>
 
-            <div id="mensajeCliente" class="mensaje"></div>
+            <div class="msg" id="msgCliente"></div>
           </form>
         </div>
+      </div>
+    </section>
 
-        <!-- BLOQUE 2 -->
-        <div class="seccion-interna">
-          <h3>2. Consultar clientes cargados</h3>
+    <!-- PANEL GESTION -->
+    <section class="panel" id="panelGestion">
+      <div class="panel-header">
+        <h3>Gestión de clientes, pozos e históricos</h3>
+        <button class="btn btn-gray" id="btnCerrarGestion">Cerrar</button>
+      </div>
+
+      <div class="panel-body">
+        <!-- PASO 1 -->
+        <div class="inner">
+          <h4>1. Seleccionar cliente</h4>
+          <p class="sub">Primero elegí un cliente ya cargado para trabajar sobre sus pozos.</p>
 
           <div class="grid">
-            <div class="campo full">
+            <div class="field full">
               <label for="selectorCliente">Cliente</label>
               <select id="selectorCliente">
                 <option value="">Seleccionar cliente...</option>
@@ -368,691 +410,332 @@
             </div>
           </div>
 
-          <div class="acciones">
-            <button type="button" class="btn-principal" id="btnVerCliente">Ver cliente</button>
-            <button type="button" class="btn-secundario" id="btnActualizarVista">Actualizar vista</button>
+          <div class="actions">
+            <button class="btn btn-blue" id="btnVerCliente" type="button">Ver cliente</button>
+            <button class="btn btn-gray" id="btnActualizarClientes" type="button">Actualizar</button>
           </div>
+        </div>
 
-          <div id="detalleClienteBox" class="seccion-interna oculto">
-            <div class="fila-titulo">
-              <h3 style="margin:0;padding:0;border:none;">Cliente seleccionado</h3>
-              <span class="badge" id="badgeClienteId">ID Cliente: -</span>
-            </div>
+        <!-- DETALLE CLIENTE -->
+        <div class="inner hidden" id="bloqueClienteSeleccionado">
+          <h4>Cliente seleccionado</h4>
+          <p class="sub">Desde aquí puede avanzar con las acciones disponibles para este cliente.</p>
 
-            <div id="detalleClienteContenido"></div>
+          <div id="detalleCliente"></div>
 
-            <div class="subacciones">
-              <button type="button" class="btn-principal" id="btnAbrirNuevoPozo">Registrar nuevo pozo</button>
-              <button type="button" class="btn-secundario" id="btnOcultarSubformularios">Ocultar subformularios</button>
-            </div>
+          <div class="actions">
+            <button class="btn btn-blue" id="btnMostrarNuevoPozo" type="button">Registrar nuevo pozo</button>
+            <button class="btn btn-gray" id="btnMostrarPozos" type="button">Ver pozos del cliente</button>
+            <button class="btn btn-red" id="btnCerrarClienteSeleccionado" type="button">Cerrar bloque</button>
           </div>
+        </div>
 
-          <!-- SUBFORMULARIO NUEVO POZO -->
-          <div id="subformPozo" class="seccion-interna oculto">
-            <h3>Registrar nuevo pozo</h3>
-            <form id="formPozo">
-              <div class="grid">
-                <div class="campo">
-                  <label for="idClientePozo">ID Cliente</label>
-                  <input type="text" id="idClientePozo" readonly />
-                </div>
+        <!-- NUEVO POZO -->
+        <div class="inner hidden" id="bloqueNuevoPozo">
+          <h4>Registrar nuevo pozo</h4>
+          <p class="sub">El pozo quedará vinculado al cliente seleccionado. El ID del pozo se genera automáticamente.</p>
 
-                <div class="campo">
-                  <label for="idPozoAuto">ID Pozo</label>
-                  <input type="text" id="idPozoAuto" readonly />
-                </div>
-
-                <div class="campo">
-                  <label for="diametroPerforacion">Diámetro Perforación</label>
-                  <input type="text" id="diametroPerforacion" placeholder="Ej: 8 pulgadas" />
-                </div>
-
-                <div class="campo">
-                  <label for="diametroCaneria">Diámetro Cañería</label>
-                  <input type="text" id="diametroCaneria" placeholder="Ej: 6 pulgadas" />
-                </div>
-
-                <div class="campo">
-                  <label for="tipoTablero">Tipo Tablero</label>
-                  <input type="text" id="tipoTablero" placeholder="Ej: Trifásico" />
-                </div>
-
-                <div class="campo">
-                  <label for="nivelEstatico">Nivel Estático</label>
-                  <input type="text" id="nivelEstatico" placeholder="Ej: 12 m" />
-                </div>
-
-                <div class="campo">
-                  <label for="nivelDinamico">Nivel Dinámico</label>
-                  <input type="text" id="nivelDinamico" placeholder="Ej: 18 m" />
-                </div>
-
-                <div class="campo">
-                  <label for="potenciaMarca">Potencia / Marca</label>
-                  <input type="text" id="potenciaMarca" placeholder="Ej: 5 HP Marca X" />
-                </div>
-
-                <div class="campo">
-                  <label for="caudal">Caudal</label>
-                  <input type="text" id="caudal" placeholder="Ej: 2500 l/h" />
-                </div>
-
-                <div class="campo">
-                  <label for="coordenadas">Coordenadas</label>
-                  <input type="text" id="coordenadas" placeholder="Ej: -26.123, -66.456" />
-                </div>
-
-                <div class="campo full">
-                  <label for="observacionesPozo">Observaciones</label>
-                  <textarea id="observacionesPozo" placeholder="Observaciones del pozo"></textarea>
-                </div>
-              </div>
-
-              <div class="acciones">
-                <button type="submit" class="btn-principal">Guardar pozo</button>
-                <button type="button" class="btn-secundario" id="btnCancelarPozo">Cancelar</button>
-              </div>
-
-              <div id="mensajePozo" class="mensaje"></div>
-            </form>
-          </div>
-
-          <!-- SELECCIONAR POZO -->
-          <div id="subformHistoricoSelector" class="seccion-interna oculto">
-            <h3>Acciones sobre pozos e histórico</h3>
-
+          <form id="formPozo">
             <div class="grid">
-              <div class="campo full">
-                <label for="selectorPozo">Pozo del cliente</label>
-                <select id="selectorPozo">
-                  <option value="">Seleccionar pozo...</option>
-                </select>
+              <div class="field">
+                <label for="idClientePozo">ID Cliente</label>
+                <input type="text" id="idClientePozo" readonly>
+              </div>
+
+              <div class="field">
+                <label for="idPozoAuto">ID Pozo</label>
+                <input type="text" id="idPozoAuto" readonly>
+              </div>
+
+              <div class="field">
+                <label for="diametroPerforacion">Diámetro Perforación</label>
+                <input type="text" id="diametroPerforacion" placeholder="Ej: 8 pulgadas">
+              </div>
+
+              <div class="field">
+                <label for="diametroCaneria">Diámetro Cañería</label>
+                <input type="text" id="diametroCaneria" placeholder="Ej: 6 pulgadas">
+              </div>
+
+              <div class="field">
+                <label for="tipoTablero">Tipo Tablero</label>
+                <input type="text" id="tipoTablero" placeholder="Ej: Trifásico">
+              </div>
+
+              <div class="field">
+                <label for="nivelEstatico">Nivel Estático</label>
+                <input type="text" id="nivelEstatico" placeholder="Ej: 12 m">
+              </div>
+
+              <div class="field">
+                <label for="nivelDinamico">Nivel Dinámico</label>
+                <input type="text" id="nivelDinamico" placeholder="Ej: 18 m">
+              </div>
+
+              <div class="field">
+                <label for="potenciaMarca">Potencia / Marca</label>
+                <input type="text" id="potenciaMarca" placeholder="Ej: 5 HP Marca X">
+              </div>
+
+              <div class="field">
+                <label for="caudal">Caudal</label>
+                <input type="text" id="caudal" placeholder="Ej: 2500 l/h">
+              </div>
+
+              <div class="field">
+                <label for="coordenadas">Coordenadas</label>
+                <input type="text" id="coordenadas" placeholder="Ej: -26.123, -66.456">
+              </div>
+
+              <div class="field full">
+                <label for="observacionesPozo">Observaciones</label>
+                <textarea id="observacionesPozo" placeholder="Observaciones del pozo"></textarea>
               </div>
             </div>
 
-            <div class="acciones">
-              <button type="button" class="btn-principal" id="btnVerPozo">Ver pozo</button>
-              <button type="button" class="btn-secundario" id="btnAbrirHistoricoNuevo">Agregar histórico</button>
+            <div class="actions">
+              <button class="btn btn-blue" type="submit">Guardar pozo</button>
+              <button class="btn btn-gray" type="button" id="btnCerrarNuevoPozo">Cerrar</button>
+            </div>
+
+            <div class="msg" id="msgPozo"></div>
+          </form>
+        </div>
+
+        <!-- POZOS CLIENTE -->
+        <div class="inner hidden" id="bloquePozosCliente">
+          <h4>Pozos del cliente</h4>
+          <p class="sub">Seleccione un pozo para consultar sus históricos o cargar uno nuevo.</p>
+
+          <div id="listaPozos"></div>
+
+          <div class="grid" style="margin-top:16px;">
+            <div class="field full">
+              <label for="selectorPozo">Pozo</label>
+              <select id="selectorPozo">
+                <option value="">Seleccionar pozo...</option>
+              </select>
             </div>
           </div>
 
-          <!-- DETALLE POZO -->
-          <div id="detallePozoBox" class="seccion-interna oculto">
-            <div class="fila-titulo">
-              <h3 style="margin:0;padding:0;border:none;">Detalle del pozo</h3>
-              <span class="badge" id="badgePozoId">ID Pozo: -</span>
-            </div>
-
-            <div id="detallePozoContenido"></div>
+          <div class="actions">
+            <button class="btn btn-blue" type="button" id="btnVerPozo">Ver pozo</button>
+            <button class="btn btn-gray" type="button" id="btnCerrarPozosCliente">Cerrar</button>
           </div>
+        </div>
 
-          <!-- NUEVO HISTORICO -->
-          <div id="subformNuevoHistorico" class="seccion-interna oculto">
-            <h3>Agregar nuevo histórico</h3>
-            <form id="formHistorico">
-              <div class="grid">
-                <div class="campo">
-                  <label for="idPozoHistorico">ID Pozo</label>
-                  <input type="text" id="idPozoHistorico" readonly />
-                </div>
+        <!-- DETALLE POZO -->
+        <div class="inner hidden" id="bloqueDetallePozo">
+          <h4>Detalle del pozo</h4>
+          <p class="sub">Desde este bloque puede trabajar el histórico del pozo seleccionado.</p>
 
-                <div class="campo">
-                  <label for="idHistoricoAuto">ID Histórico</label>
-                  <input type="text" id="idHistoricoAuto" readonly />
-                </div>
+          <div id="detallePozo"></div>
 
-                <div class="campo">
-                  <label for="fechaHoraHistorico">Fecha y hora</label>
-                  <input type="datetime-local" id="fechaHoraHistorico" />
-                </div>
-
-                <div class="campo full">
-                  <label for="observacionesHistorico">Observaciones</label>
-                  <textarea id="observacionesHistorico" placeholder="Detalle del histórico"></textarea>
-                </div>
-              </div>
-
-              <div class="acciones">
-                <button type="submit" class="btn-principal">Guardar histórico</button>
-                <button type="button" class="btn-secundario" id="btnCancelarHistorico">Cancelar</button>
-              </div>
-
-              <div id="mensajeHistorico" class="mensaje"></div>
-            </form>
+          <div class="actions">
+            <button class="btn btn-blue" type="button" id="btnMostrarNuevoHistorico">Agregar histórico</button>
+            <button class="btn btn-gray" type="button" id="btnMostrarEditarHistorico">Editar histórico</button>
+            <button class="btn btn-red" type="button" id="btnCerrarDetallePozo">Cerrar</button>
           </div>
+        </div>
 
-          <!-- EDITAR HISTORICO -->
-          <div id="subformEditarHistorico" class="seccion-interna oculto">
-            <h3>Editar histórico existente</h3>
+        <!-- NUEVO HISTORICO -->
+        <div class="inner hidden" id="bloqueNuevoHistorico">
+          <h4>Agregar histórico</h4>
+          <p class="sub">El histórico se vincula automáticamente al pozo seleccionado.</p>
 
+          <form id="formHistorico">
             <div class="grid">
-              <div class="campo full">
-                <label for="selectorHistorico">Histórico</label>
-                <select id="selectorHistorico">
-                  <option value="">Seleccionar histórico...</option>
-                </select>
+              <div class="field">
+                <label for="idPozoHistorico">ID Pozo</label>
+                <input type="text" id="idPozoHistorico" readonly>
+              </div>
+
+              <div class="field">
+                <label for="idHistoricoAuto">ID Histórico</label>
+                <input type="text" id="idHistoricoAuto" readonly>
+              </div>
+
+              <div class="field">
+                <label for="fechaHoraHistorico">Fecha y hora</label>
+                <input type="datetime-local" id="fechaHoraHistorico">
+              </div>
+
+              <div class="field full">
+                <label for="observacionesHistorico">Observaciones</label>
+                <textarea id="observacionesHistorico" placeholder="Detalle del histórico"></textarea>
               </div>
             </div>
 
-            <form id="formEditarHistorico">
-              <div class="grid">
-                <div class="campo">
-                  <label for="editIdPozo">ID Pozo</label>
-                  <input type="text" id="editIdPozo" readonly />
-                </div>
+            <div class="actions">
+              <button class="btn btn-blue" type="submit">Guardar histórico</button>
+              <button class="btn btn-gray" type="button" id="btnCerrarNuevoHistorico">Cerrar</button>
+            </div>
 
-                <div class="campo">
-                  <label for="editIdHistorico">ID Histórico</label>
-                  <input type="text" id="editIdHistorico" readonly />
-                </div>
+            <div class="msg" id="msgHistorico"></div>
+          </form>
+        </div>
 
-                <div class="campo">
-                  <label for="editFechaHora">Fecha y hora</label>
-                  <input type="datetime-local" id="editFechaHora" />
-                </div>
+        <!-- EDITAR HISTORICO -->
+        <div class="inner hidden" id="bloqueEditarHistorico">
+          <h4>Editar histórico existente</h4>
+          <p class="sub">Seleccione un registro histórico del pozo para modificarlo.</p>
 
-                <div class="campo full">
-                  <label for="editObservaciones">Observaciones</label>
-                  <textarea id="editObservaciones"></textarea>
-                </div>
+          <div class="grid">
+            <div class="field full">
+              <label for="selectorHistorico">Histórico</label>
+              <select id="selectorHistorico">
+                <option value="">Seleccionar histórico...</option>
+              </select>
+            </div>
+          </div>
+
+          <form id="formEditarHistorico">
+            <div class="grid">
+              <div class="field">
+                <label for="editIdPozo">ID Pozo</label>
+                <input type="text" id="editIdPozo" readonly>
               </div>
 
-              <div class="acciones">
-                <button type="submit" class="btn-principal">Guardar cambios</button>
-                <button type="button" class="btn-secundario" id="btnCancelarEditarHistorico">Cancelar</button>
+              <div class="field">
+                <label for="editIdHistorico">ID Histórico</label>
+                <input type="text" id="editIdHistorico" readonly>
               </div>
 
-              <div id="mensajeEditarHistorico" class="mensaje"></div>
-            </form>
-          </div>
-        </div>
-      </section>
+              <div class="field">
+                <label for="editFechaHora">Fecha y hora</label>
+                <input type="datetime-local" id="editFechaHora">
+              </div>
 
-      <!-- PANEL DERECHO -->
-      <section class="panel">
-        <h2>Vista general</h2>
+              <div class="field full">
+                <label for="editObservaciones">Observaciones</label>
+                <textarea id="editObservaciones"></textarea>
+              </div>
+            </div>
 
-        <div class="seccion-interna">
-          <div class="fila-titulo">
-            <h3 style="margin:0;padding:0;border:none;">Resumen</h3>
-            <span class="badge" id="badgeResumen">Sin selección</span>
-          </div>
-          <div id="resumenGeneral">
-            <p class="vacio">Seleccione un cliente para ver sus pozos e históricos.</p>
-          </div>
-        </div>
+            <div class="actions">
+              <button class="btn btn-blue" type="submit">Guardar cambios</button>
+              <button class="btn btn-gray" type="button" id="btnCerrarEditarHistorico">Cerrar</button>
+            </div>
 
-        <div class="seccion-interna">
-          <h3>Todos los pozos del cliente</h3>
-          <div id="listaPozosCliente">
-            <p class="vacio">Todavía no hay datos para mostrar.</p>
-          </div>
+            <div class="msg" id="msgEditarHistorico"></div>
+          </form>
         </div>
 
-        <div class="seccion-interna">
-          <h3>Históricos del pozo seleccionado</h3>
-          <div id="listaHistoricosPozo">
-            <p class="vacio">Seleccione un pozo para ver su histórico.</p>
-          </div>
+        <!-- TABLA HISTORICOS -->
+        <div class="inner hidden" id="bloqueTablaHistoricos">
+          <h4>Históricos del pozo</h4>
+          <p class="sub">Listado completo de históricos asociados al pozo seleccionado.</p>
+          <div id="tablaHistoricos"></div>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   </div>
 
   <script>
-    /********************************************************
-     * DATOS MOCK TEMPORALES
-     * Luego esto se reemplaza por n8n + Excel
-     ********************************************************/
     const db = {
       clientes: [],
       pozos: [],
       historicos: []
     };
 
-    /********************************************************
-     * HELPERS
-     ********************************************************/
-    function siguienteId(lista, campo) {
-      if (!lista.length) return 1;
-      const max = Math.max(...lista.map(x => Number(x[campo]) || 0));
-      return max + 1;
-    }
-
-    function ahoraDatetimeLocal() {
-      const d = new Date();
-      const pad = n => String(n).padStart(2, '0');
-      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-    }
-
-    function qs(id) {
-      return document.getElementById(id);
-    }
-
-    function limpiarMensaje(id) {
-      qs(id).textContent = "";
-      qs(id).className = "mensaje";
-    }
-
-    function mostrarMensaje(id, texto, tipo = "ok") {
-      qs(id).textContent = texto;
-      qs(id).className = `mensaje ${tipo}`;
-    }
-
-    function ocultar(ids) {
-      ids.forEach(id => qs(id).classList.add("oculto"));
-    }
-
-    function mostrar(id) {
-      qs(id).classList.remove("oculto");
-    }
-
-    function textoSeguro(valor) {
-      return valor ? valor : "-";
-    }
-
-    /********************************************************
-     * ESTADO
-     ********************************************************/
     let clienteSeleccionadoId = null;
     let pozoSeleccionadoId = null;
 
-    /********************************************************
-     * INICIALIZACION
-     ********************************************************/
-    function iniciarFormularioCliente() {
-      qs("idClienteAuto").value = siguienteId(db.clientes, "ID_Cliente");
+    function el(id){ return document.getElementById(id); }
+
+    function nextId(lista, campo){
+      if(!lista.length) return 1;
+      return Math.max(...lista.map(x => Number(x[campo]) || 0)) + 1;
     }
 
-    function refrescarSelectorClientes() {
-      const select = qs("selectorCliente");
-      select.innerHTML = `<option value="">Seleccionar cliente...</option>`;
+    function nowLocal(){
+      const d = new Date();
+      const pad = n => String(n).padStart(2,"0");
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
 
+    function setMsg(id, txt = "", type = ""){
+      const n = el(id);
+      n.textContent = txt;
+      n.className = "msg" + (type ? " " + type : "");
+    }
+
+    function show(id){ el(id).classList.remove("hidden"); }
+    function hide(id){ el(id).classList.add("hidden"); }
+    function togglePanel(id, open = true){
+      if(open) el(id).classList.add("active");
+      else el(id).classList.remove("active");
+    }
+
+    function resetClienteId(){
+      el("idClienteAuto").value = nextId(db.clientes, "ID_Cliente");
+    }
+
+    function refreshClientes(){
+      const s = el("selectorCliente");
+      s.innerHTML = `<option value="">Seleccionar cliente...</option>`;
       db.clientes
-        .sort((a, b) => Number(a.ID_Cliente) - Number(b.ID_Cliente))
-        .forEach(cliente => {
+        .sort((a,b) => Number(a.ID_Cliente) - Number(b.ID_Cliente))
+        .forEach(c => {
           const op = document.createElement("option");
-          op.value = cliente.ID_Cliente;
-          op.textContent = `${cliente.ID_Cliente} - ${cliente.Razon_Social}`;
-          select.appendChild(op);
+          op.value = c.ID_Cliente;
+          op.textContent = `${c.ID_Cliente} - ${c.Razon_Social}`;
+          s.appendChild(op);
         });
     }
 
-    function refrescarSelectorPozos(idCliente) {
-      const select = qs("selectorPozo");
-      select.innerHTML = `<option value="">Seleccionar pozo...</option>`;
+    function refreshPozos(idCliente){
+      const pozos = db.pozos.filter(p => String(p.ID_Cliente) === String(idCliente));
+      const s = el("selectorPozo");
+      s.innerHTML = `<option value="">Seleccionar pozo...</option>`;
+      pozos.forEach(p => {
+        const op = document.createElement("option");
+        op.value = p.ID_Pozo;
+        op.textContent = `Pozo ${p.ID_Pozo}`;
+        s.appendChild(op);
+      });
 
-      db.pozos
-        .filter(p => String(p.ID_Cliente) === String(idCliente))
-        .sort((a, b) => Number(a.ID_Pozo) - Number(b.ID_Pozo))
-        .forEach(pozo => {
-          const op = document.createElement("option");
-          op.value = pozo.ID_Pozo;
-          op.textContent = `Pozo ${pozo.ID_Pozo} - ${textoSeguro(pozo.Tipo_Tablero)} - ${textoSeguro(pozo.Caudal)}`;
-          select.appendChild(op);
-        });
-    }
-
-    function refrescarSelectorHistoricos(idPozo) {
-      const select = qs("selectorHistorico");
-      select.innerHTML = `<option value="">Seleccionar histórico...</option>`;
-
-      db.historicos
-        .filter(h => String(h.ID_Pozo) === String(idPozo))
-        .sort((a, b) => Number(a.ID_Historico) - Number(b.ID_Historico))
-        .forEach(hist => {
-          const op = document.createElement("option");
-          op.value = hist.ID_Historico;
-          op.textContent = `Histórico ${hist.ID_Historico} - ${hist.Fecha_Hora}`;
-          select.appendChild(op);
-        });
-    }
-
-    /********************************************************
-     * CLIENTE
-     ********************************************************/
-    qs("formCliente").addEventListener("submit", function(e){
-      e.preventDefault();
-      limpiarMensaje("mensajeCliente");
-
-      const nuevo = {
-        ID_Cliente: siguienteId(db.clientes, "ID_Cliente"),
-        Razon_Social: qs("razonSocial").value.trim(),
-        Telefono: qs("telefono").value.trim(),
-        Descripcion: qs("descripcionCliente").value.trim()
-      };
-
-      if (!nuevo.Razon_Social) {
-        mostrarMensaje("mensajeCliente", "Ingrese la razón social.", "error");
+      const box = el("listaPozos");
+      if(!pozos.length){
+        box.innerHTML = `<p class="empty">Este cliente todavía no tiene pozos cargados.</p>`;
         return;
       }
 
-      db.clientes.push(nuevo);
-
-      qs("razonSocial").value = "";
-      qs("telefono").value = "";
-      qs("descripcionCliente").value = "";
-
-      iniciarFormularioCliente();
-      refrescarSelectorClientes();
-      mostrarMensaje("mensajeCliente", `Cliente ${nuevo.ID_Cliente} guardado correctamente.`, "ok");
-    });
-
-    qs("btnLimpiarCliente").addEventListener("click", () => {
-      qs("razonSocial").value = "";
-      qs("telefono").value = "";
-      qs("descripcionCliente").value = "";
-      limpiarMensaje("mensajeCliente");
-    });
-
-    qs("btnVerCliente").addEventListener("click", verClienteSeleccionado);
-    qs("btnActualizarVista").addEventListener("click", actualizarVistaGeneral);
-
-    function verClienteSeleccionado() {
-      const id = qs("selectorCliente").value;
-      if (!id) {
-        alert("Seleccione un cliente.");
-        return;
-      }
-
-      clienteSeleccionadoId = id;
-      pozoSeleccionadoId = null;
-
-      const cliente = db.clientes.find(c => String(c.ID_Cliente) === String(id));
-      if (!cliente) return;
-
-      qs("badgeClienteId").textContent = `ID Cliente: ${cliente.ID_Cliente}`;
-      qs("detalleClienteContenido").innerHTML = `
-        <p><strong>Razón Social:</strong> ${textoSeguro(cliente.Razon_Social)}</p>
-        <p><strong>Teléfono:</strong> ${textoSeguro(cliente.Telefono)}</p>
-        <p><strong>Descripción:</strong> ${textoSeguro(cliente.Descripcion)}</p>
-      `;
-
-      mostrar("detalleClienteBox");
-      mostrar("subformHistoricoSelector");
-      ocultar(["subformPozo","detallePozoBox","subformNuevoHistorico","subformEditarHistorico"]);
-
-      qs("idClientePozo").value = cliente.ID_Cliente;
-      qs("idPozoAuto").value = siguienteId(db.pozos, "ID_Pozo");
-
-      refrescarSelectorPozos(cliente.ID_Cliente);
-      actualizarVistaGeneral();
-    }
-
-    /********************************************************
-     * NUEVO POZO
-     ********************************************************/
-    qs("btnAbrirNuevoPozo").addEventListener("click", () => {
-      if (!clienteSeleccionadoId) {
-        alert("Seleccione un cliente primero.");
-        return;
-      }
-
-      qs("idClientePozo").value = clienteSeleccionadoId;
-      qs("idPozoAuto").value = siguienteId(db.pozos, "ID_Pozo");
-
-      qs("formPozo").reset();
-      qs("idClientePozo").value = clienteSeleccionadoId;
-      qs("idPozoAuto").value = siguienteId(db.pozos, "ID_Pozo");
-
-      limpiarMensaje("mensajePozo");
-      mostrar("subformPozo");
-      ocultar(["subformNuevoHistorico","subformEditarHistorico"]);
-    });
-
-    qs("btnCancelarPozo").addEventListener("click", () => {
-      qs("formPozo").reset();
-      qs("idClientePozo").value = clienteSeleccionadoId || "";
-      qs("idPozoAuto").value = siguienteId(db.pozos, "ID_Pozo");
-      limpiarMensaje("mensajePozo");
-      ocultar(["subformPozo"]);
-    });
-
-    qs("formPozo").addEventListener("submit", function(e){
-      e.preventDefault();
-      limpiarMensaje("mensajePozo");
-
-      if (!clienteSeleccionadoId) {
-        mostrarMensaje("mensajePozo", "Seleccione un cliente antes de registrar un pozo.", "error");
-        return;
-      }
-
-      const nuevoPozo = {
-        ID_Cliente: Number(clienteSeleccionadoId),
-        ID_Pozo: siguienteId(db.pozos, "ID_Pozo"),
-        Diametro_Perforacion: qs("diametroPerforacion").value.trim(),
-        Diametro_Cañeria: qs("diametroCaneria").value.trim(),
-        Tipo_Tablero: qs("tipoTablero").value.trim(),
-        Nivel_Estatico: qs("nivelEstatico").value.trim(),
-        Nivel_Dinamico: qs("nivelDinamico").value.trim(),
-        Potencia_Marca: qs("potenciaMarca").value.trim(),
-        Caudal: qs("caudal").value.trim(),
-        Coordenadas: qs("coordenadas").value.trim(),
-        Observaciones: qs("observacionesPozo").value.trim()
-      };
-
-      db.pozos.push(nuevoPozo);
-
-      qs("formPozo").reset();
-      qs("idClientePozo").value = clienteSeleccionadoId;
-      qs("idPozoAuto").value = siguienteId(db.pozos, "ID_Pozo");
-
-      refrescarSelectorPozos(clienteSeleccionadoId);
-      actualizarVistaGeneral();
-      mostrarMensaje("mensajePozo", `Pozo ${nuevoPozo.ID_Pozo} registrado correctamente.`, "ok");
-    });
-
-    /********************************************************
-     * DETALLE POZO
-     ********************************************************/
-    qs("btnVerPozo").addEventListener("click", () => {
-      const idPozo = qs("selectorPozo").value;
-      if (!idPozo) {
-        alert("Seleccione un pozo.");
-        return;
-      }
-
-      pozoSeleccionadoId = idPozo;
-      const pozo = db.pozos.find(p => String(p.ID_Pozo) === String(idPozo));
-      if (!pozo) return;
-
-      qs("badgePozoId").textContent = `ID Pozo: ${pozo.ID_Pozo}`;
-      qs("detallePozoContenido").innerHTML = `
-        <p><strong>ID Cliente:</strong> ${textoSeguro(pozo.ID_Cliente)}</p>
-        <p><strong>Diámetro Perforación:</strong> ${textoSeguro(pozo.Diametro_Perforacion)}</p>
-        <p><strong>Diámetro Cañería:</strong> ${textoSeguro(pozo.Diametro_Cañeria)}</p>
-        <p><strong>Tipo Tablero:</strong> ${textoSeguro(pozo.Tipo_Tablero)}</p>
-        <p><strong>Nivel Estático:</strong> ${textoSeguro(pozo.Nivel_Estatico)}</p>
-        <p><strong>Nivel Dinámico:</strong> ${textoSeguro(pozo.Nivel_Dinamico)}</p>
-        <p><strong>Potencia / Marca:</strong> ${textoSeguro(pozo.Potencia_Marca)}</p>
-        <p><strong>Caudal:</strong> ${textoSeguro(pozo.Caudal)}</p>
-        <p><strong>Coordenadas:</strong> ${textoSeguro(pozo.Coordenadas)}</p>
-        <p><strong>Observaciones:</strong> ${textoSeguro(pozo.Observaciones)}</p>
-
-        <div class="subacciones">
-          <button type="button" class="btn-principal" onclick="abrirNuevoHistoricoDesdeDetalle()">Agregar histórico</button>
-          <button type="button" class="btn-secundario" onclick="abrirEditarHistoricoDesdeDetalle()">Editar histórico</button>
-        </div>
-      `;
-
-      mostrar("detallePozoBox");
-      refrescarSelectorHistoricos(idPozo);
-      actualizarVistaGeneral();
-    });
-
-    qs("btnAbrirHistoricoNuevo").addEventListener("click", abrirNuevoHistoricoDesdeDetalle);
-
-    function abrirNuevoHistoricoDesdeDetalle() {
-      const idPozo = pozoSeleccionadoId || qs("selectorPozo").value;
-      if (!idPozo) {
-        alert("Seleccione un pozo primero.");
-        return;
-      }
-
-      qs("formHistorico").reset();
-      qs("idPozoHistorico").value = idPozo;
-      qs("idHistoricoAuto").value = siguienteId(db.historicos, "ID_Historico");
-      qs("fechaHoraHistorico").value = ahoraDatetimeLocal();
-
-      limpiarMensaje("mensajeHistorico");
-      mostrar("subformNuevoHistorico");
-      mostrar("subformEditarHistorico");
-      refrescarSelectorHistoricos(idPozo);
-
-      qs("editIdPozo").value = idPozo;
-    }
-
-    /********************************************************
-     * NUEVO HISTORICO
-     ********************************************************/
-    qs("formHistorico").addEventListener("submit", function(e){
-      e.preventDefault();
-      limpiarMensaje("mensajeHistorico");
-
-      const idPozo = qs("idPozoHistorico").value;
-      if (!idPozo) {
-        mostrarMensaje("mensajeHistorico", "Seleccione un pozo.", "error");
-        return;
-      }
-
-      const nuevoHistorico = {
-        ID_Pozo: Number(idPozo),
-        ID_Historico: siguienteId(db.historicos, "ID_Historico"),
-        Fecha_Hora: qs("fechaHoraHistorico").value || ahoraDatetimeLocal(),
-        Observaciones: qs("observacionesHistorico").value.trim()
-      };
-
-      db.historicos.push(nuevoHistorico);
-
-      qs("formHistorico").reset();
-      qs("idPozoHistorico").value = idPozo;
-      qs("idHistoricoAuto").value = siguienteId(db.historicos, "ID_Historico");
-      qs("fechaHoraHistorico").value = ahoraDatetimeLocal();
-
-      refrescarSelectorHistoricos(idPozo);
-      actualizarVistaGeneral();
-      mostrarMensaje("mensajeHistorico", `Histórico ${nuevoHistorico.ID_Historico} guardado correctamente.`, "ok");
-    });
-
-    qs("btnCancelarHistorico").addEventListener("click", () => {
-      qs("formHistorico").reset();
-      limpiarMensaje("mensajeHistorico");
-      ocultar(["subformNuevoHistorico"]);
-    });
-
-    /********************************************************
-     * EDITAR HISTORICO
-     ********************************************************/
-    qs("selectorHistorico").addEventListener("change", () => {
-      const idHistorico = qs("selectorHistorico").value;
-      if (!idHistorico) return;
-
-      const hist = db.historicos.find(h => String(h.ID_Historico) === String(idHistorico));
-      if (!hist) return;
-
-      qs("editIdPozo").value = hist.ID_Pozo;
-      qs("editIdHistorico").value = hist.ID_Historico;
-      qs("editFechaHora").value = hist.Fecha_Hora || "";
-      qs("editObservaciones").value = hist.Observaciones || "";
-    });
-
-    function abrirEditarHistoricoDesdeDetalle() {
-      const idPozo = pozoSeleccionadoId || qs("selectorPozo").value;
-      if (!idPozo) {
-        alert("Seleccione un pozo primero.");
-        return;
-      }
-
-      mostrar("subformEditarHistorico");
-      refrescarSelectorHistoricos(idPozo);
-      qs("editIdPozo").value = idPozo;
-      limpiarMensaje("mensajeEditarHistorico");
-    }
-
-    qs("formEditarHistorico").addEventListener("submit", function(e){
-      e.preventDefault();
-      limpiarMensaje("mensajeEditarHistorico");
-
-      const idHistorico = qs("editIdHistorico").value;
-      if (!idHistorico) {
-        mostrarMensaje("mensajeEditarHistorico", "Seleccione un histórico para editar.", "error");
-        return;
-      }
-
-      const hist = db.historicos.find(h => String(h.ID_Historico) === String(idHistorico));
-      if (!hist) {
-        mostrarMensaje("mensajeEditarHistorico", "No se encontró el histórico.", "error");
-        return;
-      }
-
-      hist.Fecha_Hora = qs("editFechaHora").value;
-      hist.Observaciones = qs("editObservaciones").value.trim();
-
-      actualizarVistaGeneral();
-      refrescarSelectorHistoricos(hist.ID_Pozo);
-      mostrarMensaje("mensajeEditarHistorico", `Histórico ${hist.ID_Historico} actualizado correctamente.`, "ok");
-    });
-
-    qs("btnCancelarEditarHistorico").addEventListener("click", () => {
-      qs("formEditarHistorico").reset();
-      limpiarMensaje("mensajeEditarHistorico");
-      ocultar(["subformEditarHistorico"]);
-    });
-
-    /********************************************************
-     * VISTA GENERAL
-     ********************************************************/
-    function actualizarVistaGeneral() {
-      const resumen = qs("resumenGeneral");
-      const listaPozos = qs("listaPozosCliente");
-      const listaHistoricos = qs("listaHistoricosPozo");
-      const badge = qs("badgeResumen");
-
-      if (!clienteSeleccionadoId) {
-        badge.textContent = "Sin selección";
-        resumen.innerHTML = `<p class="vacio">Seleccione un cliente para ver sus pozos e históricos.</p>`;
-        listaPozos.innerHTML = `<p class="vacio">Todavía no hay datos para mostrar.</p>`;
-        listaHistoricos.innerHTML = `<p class="vacio">Seleccione un pozo para ver su histórico.</p>`;
-        return;
-      }
-
-      const cliente = db.clientes.find(c => String(c.ID_Cliente) === String(clienteSeleccionadoId));
-      const pozosCliente = db.pozos.filter(p => String(p.ID_Cliente) === String(clienteSeleccionadoId));
-      const historicosPozo = pozoSeleccionadoId
-        ? db.historicos.filter(h => String(h.ID_Pozo) === String(pozoSeleccionadoId))
-        : [];
-
-      badge.textContent = `Cliente ${clienteSeleccionadoId}`;
-
-      resumen.innerHTML = `
-        <p><strong>Cliente:</strong> ${textoSeguro(cliente?.Razon_Social)}</p>
-        <p><strong>Teléfono:</strong> ${textoSeguro(cliente?.Telefono)}</p>
-        <p><strong>Cantidad de pozos:</strong> ${pozosCliente.length}</p>
-        <p><strong>Pozo seleccionado:</strong> ${pozoSeleccionadoId ? pozoSeleccionadoId : "-"}</p>
-        <p><strong>Registros históricos del pozo:</strong> ${historicosPozo.length}</p>
-      `;
-
-      if (!pozosCliente.length) {
-        listaPozos.innerHTML = `<p class="vacio">Este cliente aún no tiene pozos cargados.</p>`;
-      } else {
-        listaPozos.innerHTML = pozosCliente.map(pozo => `
+      box.innerHTML = `<div class="list">${
+        pozos.map(p => `
           <div class="item">
-            <h4>Pozo ${pozo.ID_Pozo}</h4>
-            <p><strong>Tipo Tablero:</strong> ${textoSeguro(pozo.Tipo_Tablero)}</p>
-            <p><strong>Caudal:</strong> ${textoSeguro(pozo.Caudal)}</p>
-            <p><strong>Coordenadas:</strong> ${textoSeguro(pozo.Coordenadas)}</p>
-            <small>Diámetro perforación: ${textoSeguro(pozo.Diametro_Perforacion)} | Diámetro cañería: ${textoSeguro(pozo.Diametro_Cañeria)}</small>
+            <h5>Pozo ${p.ID_Pozo}</h5>
+            <p><strong>Tipo Tablero:</strong> ${p.Tipo_Tablero || "-"}</p>
+            <p><strong>Caudal:</strong> ${p.Caudal || "-"}</p>
+            <small>Coordenadas: ${p.Coordenadas || "-"} | Nivel Estático: ${p.Nivel_Estatico || "-"} | Nivel Dinámico: ${p.Nivel_Dinamico || "-"}</small>
           </div>
-        `).join("");
+        `).join("")
+      }</div>`;
+    }
+
+    function refreshHistoricos(idPozo){
+      const historicos = db.historicos
+        .filter(h => String(h.ID_Pozo) === String(idPozo))
+        .sort((a,b) => Number(a.ID_Historico) - Number(b.ID_Historico));
+
+      const s = el("selectorHistorico");
+      s.innerHTML = `<option value="">Seleccionar histórico...</option>`;
+      historicos.forEach(h => {
+        const op = document.createElement("option");
+        op.value = h.ID_Historico;
+        op.textContent = `Histórico ${h.ID_Historico} - ${h.Fecha_Hora || ""}`;
+        s.appendChild(op);
+      });
+
+      const box = el("tablaHistoricos");
+      if(!historicos.length){
+        box.innerHTML = `<p class="empty">Este pozo todavía no tiene históricos cargados.</p>`;
+        return;
       }
 
-      if (!pozoSeleccionadoId) {
-        listaHistoricos.innerHTML = `<p class="vacio">Seleccione un pozo para ver su histórico.</p>`;
-      } else if (!historicosPozo.length) {
-        listaHistoricos.innerHTML = `<p class="vacio">Este pozo aún no tiene históricos cargados.</p>`;
-      } else {
-        listaHistoricos.innerHTML = `
-          <table class="tabla-simple">
+      box.innerHTML = `
+        <div class="table-wrap">
+          <table>
             <thead>
               <tr>
                 <th>ID Histórico</th>
@@ -1061,41 +744,339 @@
               </tr>
             </thead>
             <tbody>
-              ${historicosPozo
-                .sort((a,b) => Number(a.ID_Historico) - Number(b.ID_Historico))
-                .map(h => `
-                  <tr>
-                    <td>${h.ID_Historico}</td>
-                    <td>${textoSeguro(h.Fecha_Hora)}</td>
-                    <td>${textoSeguro(h.Observaciones)}</td>
-                  </tr>
-                `).join("")}
+              ${historicos.map(h => `
+                <tr>
+                  <td>${h.ID_Historico}</td>
+                  <td>${h.Fecha_Hora || "-"}</td>
+                  <td>${h.Observaciones || "-"}</td>
+                </tr>
+              `).join("")}
             </tbody>
           </table>
-        `;
-      }
+        </div>
+      `;
     }
 
-    qs("btnOcultarSubformularios").addEventListener("click", () => {
-      ocultar([
-        "subformPozo",
-        "detallePozoBox",
-        "subformNuevoHistorico",
-        "subformEditarHistorico"
-      ]);
+    function cerrarSubbloquesCliente(){
+      hide("bloqueNuevoPozo");
+      hide("bloquePozosCliente");
+      hide("bloqueDetallePozo");
+      hide("bloqueNuevoHistorico");
+      hide("bloqueEditarHistorico");
+      hide("bloqueTablaHistoricos");
+    }
+
+    el("btnAbrirAltaCliente").addEventListener("click", () => {
+      togglePanel("panelAltaCliente", true);
+      window.scrollTo({ top: el("panelAltaCliente").offsetTop - 20, behavior: "smooth" });
     });
 
-    /********************************************************
-     * CARGA INICIAL
-     ********************************************************/
-    iniciarFormularioCliente();
-    refrescarSelectorClientes();
-    actualizarVistaGeneral();
+    el("btnCerrarAltaCliente").addEventListener("click", () => {
+      togglePanel("panelAltaCliente", false);
+    });
 
-    /********************************************************
-     * DEMO OPCIONAL
-     ********************************************************/
-    (function demoInicial(){
+    el("btnAbrirGestion").addEventListener("click", () => {
+      togglePanel("panelGestion", true);
+      refreshClientes();
+      window.scrollTo({ top: el("panelGestion").offsetTop - 20, behavior: "smooth" });
+    });
+
+    el("btnCerrarGestion").addEventListener("click", () => {
+      togglePanel("panelGestion", false);
+    });
+
+    el("formCliente").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const razon = el("razonSocial").value.trim();
+      const tel = el("telefono").value.trim();
+      const desc = el("descripcionCliente").value.trim();
+
+      if(!razon){
+        setMsg("msgCliente","Ingrese la razón social.","error");
+        return;
+      }
+
+      const nuevo = {
+        ID_Cliente: nextId(db.clientes, "ID_Cliente"),
+        Razon_Social: razon,
+        Telefono: tel,
+        Descripcion: desc
+      };
+
+      db.clientes.push(nuevo);
+
+      el("razonSocial").value = "";
+      el("telefono").value = "";
+      el("descripcionCliente").value = "";
+
+      resetClienteId();
+      refreshClientes();
+      setMsg("msgCliente", `Cliente ${nuevo.ID_Cliente} guardado correctamente.`, "ok");
+    });
+
+    el("btnLimpiarCliente").addEventListener("click", () => {
+      el("razonSocial").value = "";
+      el("telefono").value = "";
+      el("descripcionCliente").value = "";
+      setMsg("msgCliente");
+    });
+
+    el("btnActualizarClientes").addEventListener("click", refreshClientes);
+
+    el("btnVerCliente").addEventListener("click", () => {
+      const id = el("selectorCliente").value;
+      if(!id){
+        alert("Seleccione un cliente.");
+        return;
+      }
+
+      clienteSeleccionadoId = id;
+      pozoSeleccionadoId = null;
+
+      const cliente = db.clientes.find(c => String(c.ID_Cliente) === String(id));
+      if(!cliente) return;
+
+      el("detalleCliente").innerHTML = `
+        <div class="list">
+          <div class="item">
+            <h5>Cliente ${cliente.ID_Cliente} - ${cliente.Razon_Social}</h5>
+            <p><strong>Teléfono:</strong> ${cliente.Telefono || "-"}</p>
+            <p><strong>Descripción:</strong> ${cliente.Descripcion || "-"}</p>
+          </div>
+        </div>
+      `;
+
+      show("bloqueClienteSeleccionado");
+      cerrarSubbloquesCliente();
+    });
+
+    el("btnCerrarClienteSeleccionado").addEventListener("click", () => {
+      hide("bloqueClienteSeleccionado");
+      cerrarSubbloquesCliente();
+      clienteSeleccionadoId = null;
+      pozoSeleccionadoId = null;
+    });
+
+    el("btnMostrarNuevoPozo").addEventListener("click", () => {
+      if(!clienteSeleccionadoId){
+        alert("Seleccione un cliente primero.");
+        return;
+      }
+
+      cerrarSubbloquesCliente();
+      show("bloqueNuevoPozo");
+
+      el("formPozo").reset();
+      el("idClientePozo").value = clienteSeleccionadoId;
+      el("idPozoAuto").value = nextId(db.pozos, "ID_Pozo");
+      setMsg("msgPozo");
+    });
+
+    el("btnCerrarNuevoPozo").addEventListener("click", () => {
+      hide("bloqueNuevoPozo");
+    });
+
+    el("formPozo").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      if(!clienteSeleccionadoId){
+        setMsg("msgPozo","Seleccione un cliente.","error");
+        return;
+      }
+
+      const pozo = {
+        ID_Cliente: Number(clienteSeleccionadoId),
+        ID_Pozo: nextId(db.pozos, "ID_Pozo"),
+        Diametro_Perforacion: el("diametroPerforacion").value.trim(),
+        Diametro_Cañeria: el("diametroCaneria").value.trim(),
+        Tipo_Tablero: el("tipoTablero").value.trim(),
+        Nivel_Estatico: el("nivelEstatico").value.trim(),
+        Nivel_Dinamico: el("nivelDinamico").value.trim(),
+        Potencia_Marca: el("potenciaMarca").value.trim(),
+        Caudal: el("caudal").value.trim(),
+        Coordenadas: el("coordenadas").value.trim(),
+        Observaciones: el("observacionesPozo").value.trim()
+      };
+
+      db.pozos.push(pozo);
+
+      el("formPozo").reset();
+      el("idClientePozo").value = clienteSeleccionadoId;
+      el("idPozoAuto").value = nextId(db.pozos, "ID_Pozo");
+
+      refreshPozos(clienteSeleccionadoId);
+      setMsg("msgPozo", `Pozo ${pozo.ID_Pozo} guardado correctamente.`, "ok");
+    });
+
+    el("btnMostrarPozos").addEventListener("click", () => {
+      if(!clienteSeleccionadoId){
+        alert("Seleccione un cliente primero.");
+        return;
+      }
+
+      cerrarSubbloquesCliente();
+      refreshPozos(clienteSeleccionadoId);
+      show("bloquePozosCliente");
+    });
+
+    el("btnCerrarPozosCliente").addEventListener("click", () => {
+      hide("bloquePozosCliente");
+      hide("bloqueDetallePozo");
+      hide("bloqueNuevoHistorico");
+      hide("bloqueEditarHistorico");
+      hide("bloqueTablaHistoricos");
+      pozoSeleccionadoId = null;
+    });
+
+    el("btnVerPozo").addEventListener("click", () => {
+      const idPozo = el("selectorPozo").value;
+      if(!idPozo){
+        alert("Seleccione un pozo.");
+        return;
+      }
+
+      pozoSeleccionadoId = idPozo;
+      const pozo = db.pozos.find(p => String(p.ID_Pozo) === String(idPozo));
+      if(!pozo) return;
+
+      el("detallePozo").innerHTML = `
+        <div class="list">
+          <div class="item">
+            <h5>Pozo ${pozo.ID_Pozo}</h5>
+            <p><strong>Diámetro Perforación:</strong> ${pozo.Diametro_Perforacion || "-"}</p>
+            <p><strong>Diámetro Cañería:</strong> ${pozo.Diametro_Cañeria || "-"}</p>
+            <p><strong>Tipo Tablero:</strong> ${pozo.Tipo_Tablero || "-"}</p>
+            <p><strong>Nivel Estático:</strong> ${pozo.Nivel_Estatico || "-"}</p>
+            <p><strong>Nivel Dinámico:</strong> ${pozo.Nivel_Dinamico || "-"}</p>
+            <p><strong>Potencia / Marca:</strong> ${pozo.Potencia_Marca || "-"}</p>
+            <p><strong>Caudal:</strong> ${pozo.Caudal || "-"}</p>
+            <p><strong>Coordenadas:</strong> ${pozo.Coordenadas || "-"}</p>
+            <p><strong>Observaciones:</strong> ${pozo.Observaciones || "-"}</p>
+          </div>
+        </div>
+      `;
+
+      refreshHistoricos(idPozo);
+      show("bloqueDetallePozo");
+      show("bloqueTablaHistoricos");
+      hide("bloqueNuevoHistorico");
+      hide("bloqueEditarHistorico");
+    });
+
+    el("btnCerrarDetallePozo").addEventListener("click", () => {
+      hide("bloqueDetallePozo");
+      hide("bloqueNuevoHistorico");
+      hide("bloqueEditarHistorico");
+      hide("bloqueTablaHistoricos");
+      pozoSeleccionadoId = null;
+    });
+
+    el("btnMostrarNuevoHistorico").addEventListener("click", () => {
+      if(!pozoSeleccionadoId){
+        alert("Seleccione un pozo.");
+        return;
+      }
+
+      hide("bloqueEditarHistorico");
+      show("bloqueNuevoHistorico");
+
+      el("formHistorico").reset();
+      el("idPozoHistorico").value = pozoSeleccionadoId;
+      el("idHistoricoAuto").value = nextId(db.historicos, "ID_Historico");
+      el("fechaHoraHistorico").value = nowLocal();
+      setMsg("msgHistorico");
+    });
+
+    el("btnCerrarNuevoHistorico").addEventListener("click", () => {
+      hide("bloqueNuevoHistorico");
+    });
+
+    el("formHistorico").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      if(!pozoSeleccionadoId){
+        setMsg("msgHistorico","Seleccione un pozo.","error");
+        return;
+      }
+
+      const hist = {
+        ID_Pozo: Number(pozoSeleccionadoId),
+        ID_Historico: nextId(db.historicos, "ID_Historico"),
+        Fecha_Hora: el("fechaHoraHistorico").value || nowLocal(),
+        Observaciones: el("observacionesHistorico").value.trim()
+      };
+
+      db.historicos.push(hist);
+
+      refreshHistoricos(pozoSeleccionadoId);
+
+      el("idPozoHistorico").value = pozoSeleccionadoId;
+      el("idHistoricoAuto").value = nextId(db.historicos, "ID_Historico");
+      el("fechaHoraHistorico").value = nowLocal();
+      el("observacionesHistorico").value = "";
+
+      show("bloqueTablaHistoricos");
+      setMsg("msgHistorico", `Histórico ${hist.ID_Historico} guardado correctamente.`, "ok");
+    });
+
+    el("btnMostrarEditarHistorico").addEventListener("click", () => {
+      if(!pozoSeleccionadoId){
+        alert("Seleccione un pozo.");
+        return;
+      }
+
+      hide("bloqueNuevoHistorico");
+      refreshHistoricos(pozoSeleccionadoId);
+      el("editIdPozo").value = pozoSeleccionadoId;
+      el("editIdHistorico").value = "";
+      el("editFechaHora").value = "";
+      el("editObservaciones").value = "";
+      setMsg("msgEditarHistorico");
+      show("bloqueEditarHistorico");
+      show("bloqueTablaHistoricos");
+    });
+
+    el("btnCerrarEditarHistorico").addEventListener("click", () => {
+      hide("bloqueEditarHistorico");
+    });
+
+    el("selectorHistorico").addEventListener("change", () => {
+      const idHistorico = el("selectorHistorico").value;
+      if(!idHistorico) return;
+
+      const hist = db.historicos.find(h => String(h.ID_Historico) === String(idHistorico));
+      if(!hist) return;
+
+      el("editIdPozo").value = hist.ID_Pozo;
+      el("editIdHistorico").value = hist.ID_Historico;
+      el("editFechaHora").value = hist.Fecha_Hora || "";
+      el("editObservaciones").value = hist.Observaciones || "";
+    });
+
+    el("formEditarHistorico").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const idHistorico = el("editIdHistorico").value;
+      if(!idHistorico){
+        setMsg("msgEditarHistorico","Seleccione un histórico.","error");
+        return;
+      }
+
+      const hist = db.historicos.find(h => String(h.ID_Historico) === String(idHistorico));
+      if(!hist){
+        setMsg("msgEditarHistorico","No se encontró el histórico.","error");
+        return;
+      }
+
+      hist.Fecha_Hora = el("editFechaHora").value;
+      hist.Observaciones = el("editObservaciones").value.trim();
+
+      refreshHistoricos(hist.ID_Pozo);
+      setMsg("msgEditarHistorico", `Histórico ${hist.ID_Historico} actualizado correctamente.`, "ok");
+    });
+
+    function boot(){
       db.clientes.push({
         ID_Cliente: 1,
         Razon_Social: "Cliente Demo SRL",
@@ -1120,14 +1101,15 @@
       db.historicos.push({
         ID_Pozo: 1,
         ID_Historico: 1,
-        Fecha_Hora: ahoraDatetimeLocal(),
+        Fecha_Hora: nowLocal(),
         Observaciones: "Alta inicial de ejemplo"
       });
 
-      iniciarFormularioCliente();
-      refrescarSelectorClientes();
-      actualizarVistaGeneral();
-    })();
+      resetClienteId();
+      refreshClientes();
+    }
+
+    boot();
   </script>
 </body>
 </html>
