@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de Pozos</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #0b1220, #1a2b4b);
+      color: #fff;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .contenedor {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .encabezado {
+      margin-bottom: 24px;
+    }
+
+    .encabezado h1 {
+      margin: 0 0 8px 0;
+      font-size: 2rem;
+      color: #7df9ff;
+    }
+
+    .encabezado p {
+      margin: 0;
+      color: rgba(255,255,255,0.8);
+    }
+
+    form {
+      display: grid;
+      gap: 20px;
+    }
+
+    .bloque {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 18px;
+      padding: 20px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.20);
+    }
+
+    .bloque h2 {
+      margin-top: 0;
+      margin-bottom: 18px;
+      font-size: 1.25rem;
+      color: #9be7ff;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      padding-bottom: 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .campo {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .campo.ancho-completo {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      margin-bottom: 7px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: rgba(255,255,255,0.95);
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(125,249,255,0.35);
+      background: rgba(0,0,0,0.18);
+      color: white;
+      outline: none;
+      font-size: 0.98rem;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(255,255,255,0.55);
+    }
+
+    .acciones {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 22px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .btn-guardar {
+      background: linear-gradient(90deg, #72f7ff, #92dbff);
+      color: #032533;
+      box-shadow: 0 8px 20px rgba(114,247,255,0.25);
+    }
+
+    .btn-limpiar {
+      background: rgba(255,255,255,0.10);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .mensaje {
+      margin-top: 8px;
+      min-height: 24px;
+      font-weight: bold;
+    }
+
+    .mensaje.ok {
+      color: #7CFFB2;
+    }
+
+    .mensaje.error {
+      color: #FF9E9E;
+    }
+
+    @media (max-width: 800px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <div class="encabezado">
+      <h1>Registro de Pozos</h1>
+      <p>Carga unificada de Cliente, Pozo e Histórico</p>
+    </div>
+
+    <form id="formRegistroPozos">
+      <!-- CLIENTE -->
+      <section class="bloque">
+        <h2>Datos del Cliente</h2>
+        <div class="grid">
+          <div class="campo">
+            <label for="idCliente">ID Cliente</label>
+            <input type="number" id="idCliente" name="idCliente" placeholder="Ej: 1" required />
+          </div>
+
+          <div class="campo">
+            <label for="razonSocial">Razón Social</label>
+            <input type="text" id="razonSocial" name="razonSocial" placeholder="Ej: Empresa SRL" required />
+          </div>
+
+          <div class="campo">
+            <label for="telefono">Teléfono</label>
+            <input type="text" id="telefono" name="telefono" placeholder="Ej: 3834..." />
+          </div>
+
+          <div class="campo ancho-completo">
+            <label for="descripcionCliente">Descripción</label>
+            <textarea id="descripcionCliente" name="descripcionCliente" placeholder="Detalle del cliente"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- POZO -->
+      <section class="bloque">
+        <h2>Datos del Pozo</h2>
+        <div class="grid">
+          <div class="campo">
+            <label for="idPozo">ID Pozo</label>
+            <input type="number" id="idPozo" name="idPozo" placeholder="Ej: 1" required />
+          </div>
+
+          <div class="campo">
+            <label for="diametroPerforacion">Diámetro Perforación</label>
+            <input type="text" id="diametroPerforacion" name="diametroPerforacion" placeholder="Ej: 8 pulgadas" />
+          </div>
+
+          <div class="campo">
+            <label for="diametroCaneria">Diámetro Cañería</label>
+            <input type="text" id="diametroCaneria" name="diametroCaneria" placeholder="Ej: 6 pulgadas" />
+          </div>
+
+          <div class="campo">
+            <label for="tipoTablero">Tipo Tablero</label>
+            <input type="text" id="tipoTablero" name="tipoTablero" placeholder="Ej: Trifásico" />
+          </div>
+
+          <div class="campo">
+            <label for="nivelEstatico">Nivel Estático</label>
+            <input type="text" id="nivelEstatico" name="nivelEstatico" placeholder="Ej: 12 m" />
+          </div>
+
+          <div class="campo">
+            <label for="nivelDinamico">Nivel Dinámico</label>
+            <input type="text" id="nivelDinamico" name="nivelDinamico" placeholder="Ej: 18 m" />
+          </div>
+
+          <div class="campo">
+            <label for="potenciaMarca">Potencia / Marca</label>
+            <input type="text" id="potenciaMarca" name="potenciaMarca" placeholder="Ej: 5 HP Motor X" />
+          </div>
+
+          <div class="campo">
+            <label for="caudal">Caudal</label>
+            <input type="text" id="caudal" name="caudal" placeholder="Ej: 2500 l/h" />
+          </div>
+
+          <div class="campo">
+            <label for="coordenadas">Coordenadas</label>
+            <input type="text" id="coordenadas" name="coordenadas" placeholder="Ej: -26.123, -66.456" />
+          </div>
+
+          <div class="campo ancho-completo">
+            <label for="observacionesPozo">Observaciones</label>
+            <textarea id="observacionesPozo" name="observacionesPozo" placeholder="Observaciones del pozo"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- HISTORICO -->
+      <section class="bloque">
+        <h2>Histórico Inicial</h2>
+        <div class="grid">
+          <div class="campo">
+            <label for="idHistorico">ID Histórico</label>
+            <input type="number" id="idHistorico" name="idHistorico" placeholder="Ej: 1" required />
+          </div>
+
+          <div class="campo">
+            <label for="fechaHora">Fecha y Hora</label>
+            <input type="datetime-local" id="fechaHora" name="fechaHora" required />
+          </div>
+
+          <div class="campo ancho-completo">
+            <label for="observacionesHistorico">Observaciones</label>
+            <textarea id="observacionesHistorico" name="observacionesHistorico" placeholder="Observación del histórico"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <div class="acciones">
+        <button type="button" class="btn-limpiar" onclick="limpiarFormulario()">Limpiar</button>
+        <button type="submit" class="btn-guardar">Guardar Registro</button>
+      </div>
+
+      <div id="mensaje" class="mensaje"></div>
+    </form>
+  </div>
+
+  <script>
+    const WEBHOOK_URL = "PEGAR_AQUI_TU_WEBHOOK_DE_N8N";
+
+    const form = document.getElementById("formRegistroPozos");
+    const mensaje = document.getElementById("mensaje");
+
+    function limpiarFormulario() {
+      form.reset();
+      mensaje.textContent = "";
+      mensaje.className = "mensaje";
+    }
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      mensaje.textContent = "Enviando datos...";
+      mensaje.className = "mensaje";
+
+      const payload = {
+        cliente: {
+          ID_Cliente: document.getElementById("idCliente").value.trim(),
+          Razon_Social: document.getElementById("razonSocial").value.trim(),
+          Telefono: document.getElementById("telefono").value.trim(),
+          Descripcion: document.getElementById("descripcionCliente").value.trim()
+        },
+        pozo: {
+          ID_Cliente: document.getElementById("idCliente").value.trim(),
+          ID_Pozo: document.getElementById("idPozo").value.trim(),
+          Diametro_Perforacion: document.getElementById("diametroPerforacion").value.trim(),
+          Diametro_Cañeria: document.getElementById("diametroCaneria").value.trim(),
+          Tipo_Tablero: document.getElementById("tipoTablero").value.trim(),
+          Nivel_Estatico: document.getElementById("nivelEstatico").value.trim(),
+          Nivel_Dinamico: document.getElementById("nivelDinamico").value.trim(),
+          Potencia_Marca: document.getElementById("potenciaMarca").value.trim(),
+          Caudal: document.getElementById("caudal").value.trim(),
+          Coordenadas: document.getElementById("coordenadas").value.trim(),
+          Observaciones: document.getElementById("observacionesPozo").value.trim()
+        },
+        historico: {
+          ID_Pozo: document.getElementById("idPozo").value.trim(),
+          ID_Historico: document.getElementById("idHistorico").value.trim(),
+          Fecha_Hora: document.getElementById("fechaHora").value,
+          Observaciones: document.getElementById("observacionesHistorico").value.trim()
+        }
+      };
+
+      try {
+        const response = await fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          throw new Error(data.message || "Error al enviar los datos");
+        }
+
+        mensaje.textContent = data.mensaje || "Registro guardado correctamente.";
+        mensaje.className = "mensaje ok";
+        form.reset();
+
+      } catch (error) {
+        mensaje.textContent = error.message || "No se pudo guardar el registro.";
+        mensaje.className = "mensaje error";
+      }
+    });
+  </script>
+</body>
+</html>
