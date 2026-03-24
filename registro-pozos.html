@@ -1,460 +1,269 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro de Clientes</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de Clientes, Pozos e Historial</title>
   <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background: #f5f7fb;
+      margin: 0;
+      background: #f4f6f9;
       color: #222;
     }
 
-    h1 {
-      margin-bottom: 20px;
-      font-size: 28px;
+    .contenedor {
+      width: 95%;
+      max-width: 1400px;
+      margin: 20px auto;
     }
 
-    .contenedor {
+    .fila-superior {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
     }
 
     .bloque {
       background: #fff;
-      border: 1px solid #d9e2f1;
-      border-radius: 10px;
-      padding: 18px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 2px solid #222;
+      border-radius: 8px;
+      overflow: hidden;
+      min-height: 250px;
     }
 
     .bloque h2 {
-      margin-top: 0;
-      margin-bottom: 15px;
-      color: #1d4f91;
+      margin: 0;
+      padding: 12px;
+      text-align: center;
+      background: #f0f0f0;
+      border-bottom: 2px solid #222;
       font-size: 22px;
     }
 
-    .fila {
-      display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 10px;
-      margin-bottom: 12px;
-      align-items: center;
-    }
-
-    .fila input,
-    .fila textarea,
-    .fila select {
+    iframe {
       width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #bfcde0;
-      border-radius: 6px;
-      font-size: 14px;
-      box-sizing: border-box;
-    }
-
-    .fila textarea {
-      min-height: 80px;
-      resize: vertical;
-    }
-
-    .acciones {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    button {
-      padding: 10px 16px;
       border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    .btn-verificar { background: #0d6efd; color: white; }
-    .btn-guardar { background: #198754; color: white; }
-    .btn-actualizar { background: #fd7e14; color: white; }
-    .btn-limpiar { background: #6c757d; color: white; }
-    .btn-buscar { background: #1d4f91; color: white; }
-    .btn-seleccionar { background: #20c997; color: white; }
-
-    .mensaje {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 6px;
-      background: #eef4ff;
-      border: 1px solid #cfe0ff;
-      white-space: pre-wrap;
-      font-size: 14px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
+      display: block;
       background: white;
     }
 
-    th, td {
-      border: 1px solid #d9e2f1;
-      padding: 10px;
-      text-align: left;
+    #frameCliente,
+    #frameCrearCliente {
+      height: 360px;
+    }
+
+    #framePozoHistorial {
+      height: 780px;
+    }
+
+    .bloque-inferior {
+      background: #fff;
+      border: 2px solid #222;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .bloque-inferior h2 {
+      margin: 0;
+      padding: 12px;
+      text-align: center;
+      background: #f0f0f0;
+      border-bottom: 2px solid #222;
+      font-size: 22px;
+    }
+
+    .barra-estado {
+      margin-bottom: 14px;
+      padding: 12px 16px;
+      background: #e9f3ff;
+      border: 1px solid #b8d7ff;
+      border-radius: 8px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .pill {
+      background: #fff;
+      border: 1px solid #b8d7ff;
+      border-radius: 20px;
+      padding: 8px 12px;
       font-size: 14px;
-      vertical-align: top;
     }
 
-    th {
-      background: #eaf2ff;
+    .acciones {
+      margin-left: auto;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .oculto {
-      display: none;
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-weight: bold;
     }
 
-    @media (max-width: 700px) {
-      .fila {
+    .btn-sec {
+      background: #4b5563;
+      color: white;
+    }
+
+    .btn-pri {
+      background: #0d6efd;
+      color: white;
+    }
+
+    .btn-ok {
+      background: #198754;
+      color: white;
+    }
+
+    @media (max-width: 900px) {
+      .fila-superior {
         grid-template-columns: 1fr;
+      }
+
+      .acciones {
+        margin-left: 0;
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
-
-  <h1>Registro de Clientes</h1>
-
   <div class="contenedor">
-
-    <!-- BLOQUE 1 -->
-    <div class="bloque">
-      <h2>Bloque 1: Agregar / Editar Cliente</h2>
-
-      <div class="fila">
-        <label for="idCliente">ID Cliente</label>
-        <input type="text" id="idCliente" readonly>
-      </div>
-
-      <div class="fila">
-        <label for="razonSocial">Razón Social</label>
-        <input type="text" id="razonSocial" placeholder="Ingrese la razón social">
-      </div>
-
-      <div class="fila">
-        <label for="telefono">Teléfono</label>
-        <input type="text" id="telefono" placeholder="Ingrese teléfono">
-      </div>
-
-      <div class="fila">
-        <label for="descripcion">Descripción</label>
-        <textarea id="descripcion" placeholder="Ingrese descripción"></textarea>
-      </div>
+    <div class="barra-estado">
+      <div class="pill"><strong>Cliente seleccionado:</strong> <span id="lblCliente">Ninguno</span></div>
+      <div class="pill"><strong>Pozo seleccionado:</strong> <span id="lblPozo">Ninguno</span></div>
 
       <div class="acciones">
-        <button class="btn-verificar" onclick="verificarCliente()">Verificar</button>
-        <button class="btn-guardar" onclick="guardarCliente()">Guardar nuevo</button>
-        <button class="btn-actualizar" onclick="actualizarCliente()">Actualizar</button>
-        <button class="btn-limpiar" onclick="limpiarFormulario()">Limpiar</button>
+        <button class="btn-pri" onclick="abrirModoCrearPozo()">Crear pozo para cliente seleccionado</button>
+        <button class="btn-sec" onclick="limpiarSeleccion()">Limpiar selección</button>
       </div>
-
-      <div id="mensajeBloque1" class="mensaje">Listo para trabajar con clientes.</div>
     </div>
 
-    <!-- BLOQUE 2 -->
-    <div class="bloque">
-      <h2>Bloque 2: Consultar / Filtrar Clientes</h2>
-
-      <div class="fila">
-        <label for="buscarId">Buscar por ID</label>
-        <input type="text" id="buscarId" placeholder="Ingrese ID">
+    <div class="fila-superior">
+      <div class="bloque">
+        <h2>Selección de cliente</h2>
+        <iframe id="frameCliente" src="seleccion_cliente.html"></iframe>
       </div>
 
-      <div class="fila">
-        <label for="buscarNombre">Buscar por Nombre</label>
-        <input type="text" id="buscarNombre" list="listaClientes" placeholder="Ingrese nombre o parte del nombre">
-        <datalist id="listaClientes"></datalist>
+      <div class="bloque">
+        <h2>Creación de cliente</h2>
+        <iframe id="frameCrearCliente" src="crear_cliente.html"></iframe>
       </div>
-
-      <div class="acciones">
-        <button class="btn-buscar" onclick="buscarClientes()">Buscar</button>
-        <button class="btn-limpiar" onclick="limpiarBusqueda()">Limpiar búsqueda</button>
-      </div>
-
-      <div id="mensajeBloque2" class="mensaje">Sin búsquedas todavía.</div>
-
-      <table id="tablaClientes" class="oculto">
-        <thead>
-          <tr>
-            <th>ID_Cliente</th>
-            <th>Razon_Social</th>
-            <th>Telefono</th>
-            <th>Descripcion</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody id="tablaClientesBody"></tbody>
-      </table>
     </div>
 
+    <div class="bloque-inferior">
+      <h2>HTML selección / Edición</h2>
+      <iframe id="framePozoHistorial" src="pozo_historial.html"></iframe>
+    </div>
   </div>
 
   <script>
-    const URL_LISTAR_CLIENTES = "https://pablonahuel.app.n8n.cloud/webhook/listar-clientes";
-    const URL_GUARDAR_CLIENTE = "https://pablonahuel.app.n8n.cloud/webhook/guardar-cliente";
+    const estado = {
+      clienteId: "",
+      clienteNombre: "",
+      pozoId: "",
+      pozoDescripcion: ""
+    };
 
-    function setMensajeBloque1(texto) {
-      document.getElementById("mensajeBloque1").innerText = texto;
+    const lblCliente = document.getElementById("lblCliente");
+    const lblPozo = document.getElementById("lblPozo");
+    const framePozoHistorial = document.getElementById("framePozoHistorial");
+    const frameCliente = document.getElementById("frameCliente");
+    const frameCrearCliente = document.getElementById("frameCrearCliente");
+
+    function refrescarEstadoVisual() {
+      lblCliente.textContent = estado.clienteNombre || "Ninguno";
+      lblPozo.textContent = estado.pozoDescripcion || "Ninguno";
     }
 
-    function setMensajeBloque2(texto) {
-      document.getElementById("mensajeBloque2").innerText = texto;
+    function limpiarSeleccion() {
+      estado.clienteId = "";
+      estado.clienteNombre = "";
+      estado.pozoId = "";
+      estado.pozoDescripcion = "";
+      refrescarEstadoVisual();
+      framePozoHistorial.contentWindow.postMessage({
+        tipo: "cliente-limpiado"
+      }, "*");
     }
 
-    function limpiarFormulario() {
-      document.getElementById("idCliente").value = "";
-      document.getElementById("razonSocial").value = "";
-      document.getElementById("telefono").value = "";
-      document.getElementById("descripcion").value = "";
-      setMensajeBloque1("Formulario limpio.");
-    }
-
-    function limpiarBusqueda() {
-      document.getElementById("buscarId").value = "";
-      document.getElementById("buscarNombre").value = "";
-      document.getElementById("tablaClientesBody").innerHTML = "";
-      document.getElementById("tablaClientes").classList.add("oculto");
-      setMensajeBloque2("Búsqueda limpia.");
-    }
-
-    function cargarClienteEnFormulario(cliente) {
-      document.getElementById("idCliente").value = cliente.ID_Cliente || "";
-      document.getElementById("razonSocial").value = cliente.Razon_Social || "";
-      document.getElementById("telefono").value = cliente.Telefono || "";
-      document.getElementById("descripcion").value = cliente.Descripcion || "";
-      setMensajeBloque1("Cliente cargado en el bloque de edición.");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function normalizarClientes(data) {
-      if (Array.isArray(data)) return data;
-      if (data && typeof data === "object") return [data];
-      return [];
-    }
-
-async function obtenerClientesDesdeN8N() {
-  const res = await fetch(URL_LISTAR_CLIENTES, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: ""
-  });
-
-  if (!res.ok) {
-    throw new Error("No se pudo consultar la lista de clientes.");
-  }
-
-  const data = await res.json();
-  return normalizarClientes(data);
-}
-
-    async function cargarListaClientes() {
-      try {
-        const clientes = await obtenerClientesDesdeN8N();
-        const lista = document.getElementById("listaClientes");
-        lista.innerHTML = "";
-
-        clientes.forEach(cliente => {
-          const option = document.createElement("option");
-          option.value = cliente.Razon_Social || "";
-          lista.appendChild(option);
-        });
-
-      } catch (error) {
-        console.error("Error al cargar lista de clientes:", error);
-      }
-    }
-
-    async function verificarCliente() {
-      const razonSocial = document.getElementById("razonSocial").value.trim().toLowerCase();
-
-      if (!razonSocial) {
-        setMensajeBloque1("Debe ingresar una Razón Social para verificar.");
+    function abrirModoCrearPozo() {
+      if (!estado.clienteId) {
+        alert("Primero seleccioná un cliente.");
         return;
       }
 
-      try {
-        const clientes = await obtenerClientesDesdeN8N();
+      estado.pozoId = "";
+      estado.pozoDescripcion = "";
+      refrescarEstadoVisual();
 
-        const encontrado = clientes.find(cliente =>
-          String(cliente.Razon_Social || "").trim().toLowerCase() === razonSocial
-        );
-
-        if (encontrado) {
-          cargarClienteEnFormulario(encontrado);
-          setMensajeBloque1(`⚠️ El cliente ya existe: ${encontrado.Razon_Social} (ID: ${encontrado.ID_Cliente})`);
-        } else {
-          document.getElementById("idCliente").value = "";
-          setMensajeBloque1("✅ Cliente no encontrado. Puede registrarlo como nuevo.");
-        }
-
-      } catch (error) {
-        console.error(error);
-        setMensajeBloque1("❌ Error al verificar cliente.");
-      }
+      framePozoHistorial.contentWindow.postMessage({
+        tipo: "abrir-crear-pozo",
+        clienteId: estado.clienteId,
+        clienteNombre: estado.clienteNombre
+      }, "*");
     }
 
-    async function guardarCliente() {
-      const razonSocial = document.getElementById("razonSocial").value.trim();
-      const telefono = document.getElementById("telefono").value.trim();
-      const descripcion = document.getElementById("descripcion").value.trim();
+    window.addEventListener("message", (event) => {
+      const data = event.data || {};
 
-      if (!razonSocial) {
-        setMensajeBloque1("Debe ingresar la Razón Social.");
-        return;
+      if (data.tipo === "cliente-seleccionado") {
+        estado.clienteId = data.clienteId || "";
+        estado.clienteNombre = data.clienteNombre || "";
+        estado.pozoId = "";
+        estado.pozoDescripcion = "";
+        refrescarEstadoVisual();
+
+        framePozoHistorial.contentWindow.postMessage({
+          tipo: "cliente-seleccionado",
+          clienteId: estado.clienteId,
+          clienteNombre: estado.clienteNombre
+        }, "*");
       }
 
-      try {
-const params = new URLSearchParams();
-params.append("Razon_Social", razonSocial);
-params.append("Telefono", telefono);
-params.append("Descripcion", descripcion);
-
-const res = await fetch(URL_GUARDAR_CLIENTE, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded"
-  },
-  body: params.toString()
-});
-
-        if (!res.ok) {
-          throw new Error("No se pudo guardar el cliente.");
-        }
-
-        const data = await res.json();
-
-        if (data.accion === "guardado") {
-          document.getElementById("idCliente").value = data.ID_Cliente || "";
-          setMensajeBloque1(`✅ Cliente guardado: ${data.Razon_Social} (ID: ${data.ID_Cliente})`);
-          await cargarListaClientes();
-          await buscarClientes();
-        } else if (data.accion === "existe") {
-          document.getElementById("idCliente").value = data.ID_Cliente || "";
-          setMensajeBloque1(`⚠️ El cliente ya existe: ${data.Razon_Social} (ID: ${data.ID_Cliente})`);
-        } else if (data.accion === "error") {
-          setMensajeBloque1(`❌ ${data.mensaje || "Error al guardar cliente."}`);
-        } else {
-          setMensajeBloque1("❌ Respuesta no esperada del servidor.");
-        }
-
-      } catch (error) {
-        console.error(error);
-        setMensajeBloque1("❌ Error al guardar cliente.");
-      }
-    }
-
-    async function actualizarCliente() {
-      const idCliente = document.getElementById("idCliente").value.trim();
-
-      if (!idCliente) {
-        setMensajeBloque1("Debe cargar primero un cliente para actualizar.");
-        return;
+      if (data.tipo === "cliente-creado") {
+        frameCliente.contentWindow.postMessage({ tipo: "recargar-clientes" }, "*");
+        alert("Cliente creado correctamente.");
       }
 
-      setMensajeBloque1("Actualización pendiente de conexión con n8n.");
-    }
-
-    async function buscarClientes() {
-      const buscarId = document.getElementById("buscarId").value.trim().toLowerCase();
-      const buscarNombre = document.getElementById("buscarNombre").value.trim().toLowerCase();
-
-      if (!buscarId && !buscarNombre) {
-        try {
-          const clientes = await obtenerClientesDesdeN8N();
-          renderTablaClientes(clientes);
-          return;
-        } catch (error) {
-          console.error(error);
-          setMensajeBloque2("Error al cargar clientes.");
-          return;
-        }
+      if (data.tipo === "pozo-seleccionado") {
+        estado.pozoId = data.pozoId || "";
+        estado.pozoDescripcion = data.pozoDescripcion || "";
+        refrescarEstadoVisual();
       }
 
-      try {
-        const clientes = await obtenerClientesDesdeN8N();
+      if (data.tipo === "pozo-creado") {
+        estado.pozoId = data.pozoId || "";
+        estado.pozoDescripcion = data.pozoDescripcion || "";
+        refrescarEstadoVisual();
 
-        const filtrados = clientes.filter(cliente => {
-          const id = String(cliente.ID_Cliente || "").toLowerCase();
-          const nombre = String(cliente.Razon_Social || "").toLowerCase();
-
-          const coincideId = buscarId ? id === buscarId : true;
-          const coincideNombre = buscarNombre ? nombre.includes(buscarNombre) : true;
-
-          return coincideId && coincideNombre;
-        });
-
-        renderTablaClientes(filtrados);
-
-      } catch (error) {
-        console.error(error);
-        setMensajeBloque2("Error al buscar clientes.");
-      }
-    }
-
-    function renderTablaClientes(clientes) {
-      const tabla = document.getElementById("tablaClientes");
-      const body = document.getElementById("tablaClientesBody");
-      body.innerHTML = "";
-
-      if (!clientes || clientes.length === 0) {
-        tabla.classList.add("oculto");
-        setMensajeBloque2("No se encontraron resultados.");
-        return;
+        framePozoHistorial.contentWindow.postMessage({
+          tipo: "cliente-seleccionado",
+          clienteId: estado.clienteId,
+          clienteNombre: estado.clienteNombre,
+          refrescar: true
+        }, "*");
       }
 
-      clientes.forEach(cliente => {
-        const tr = document.createElement("tr");
-
-        const boton = document.createElement("button");
-        boton.className = "btn-seleccionar";
-        boton.textContent = "Seleccionar";
-        boton.onclick = function () {
-          seleccionarCliente(cliente);
-        };
-
-        const tdAccion = document.createElement("td");
-        tdAccion.appendChild(boton);
-
-        tr.innerHTML = `
-          <td>${cliente.ID_Cliente || ""}</td>
-          <td>${cliente.Razon_Social || ""}</td>
-          <td>${cliente.Telefono || ""}</td>
-          <td>${cliente.Descripcion || ""}</td>
-        `;
-
-        tr.appendChild(tdAccion);
-        body.appendChild(tr);
-      });
-
-      tabla.classList.remove("oculto");
-      setMensajeBloque2(`Se encontraron ${clientes.length} resultado(s).`);
-    }
-
-    function seleccionarCliente(cliente) {
-      cargarClienteEnFormulario(cliente);
-    }
-
-    window.addEventListener("load", async () => {
-      await cargarListaClientes();
-      await buscarClientes();
+      if (data.tipo === "historico-guardado") {
+        alert("Histórico guardado correctamente.");
+        framePozoHistorial.contentWindow.postMessage({
+          tipo: "refrescar-historico",
+          pozoId: estado.pozoId
+        }, "*");
+      }
     });
-  </script>
 
+    refrescarEstadoVisual();
+  </script>
 </body>
 </html>
