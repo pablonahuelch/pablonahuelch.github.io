@@ -14,6 +14,7 @@
 
     h1 {
       margin-bottom: 20px;
+      font-size: 28px;
     }
 
     .contenedor {
@@ -34,6 +35,7 @@
       margin-top: 0;
       margin-bottom: 15px;
       color: #1d4f91;
+      font-size: 22px;
     }
 
     .fila {
@@ -48,7 +50,7 @@
     .fila textarea,
     .fila select {
       width: 100%;
-      padding: 8px 10px;
+      padding: 10px 12px;
       border: 1px solid #bfcde0;
       border-radius: 6px;
       font-size: 14px;
@@ -73,22 +75,24 @@
       border-radius: 6px;
       cursor: pointer;
       font-size: 14px;
+      font-weight: bold;
     }
 
     .btn-verificar { background: #0d6efd; color: white; }
-    .btn-guardar   { background: #198754; color: white; }
-    .btn-actualizar{ background: #fd7e14; color: white; }
-    .btn-limpiar   { background: #6c757d; color: white; }
-    .btn-buscar    { background: #1d4f91; color: white; }
+    .btn-guardar { background: #198754; color: white; }
+    .btn-actualizar { background: #fd7e14; color: white; }
+    .btn-limpiar { background: #6c757d; color: white; }
+    .btn-buscar { background: #1d4f91; color: white; }
     .btn-seleccionar { background: #20c997; color: white; }
 
     .mensaje {
       margin-top: 15px;
-      padding: 10px;
+      padding: 12px;
       border-radius: 6px;
       background: #eef4ff;
       border: 1px solid #cfe0ff;
       white-space: pre-wrap;
+      font-size: 14px;
     }
 
     table {
@@ -100,9 +104,10 @@
 
     th, td {
       border: 1px solid #d9e2f1;
-      padding: 8px;
+      padding: 10px;
       text-align: left;
       font-size: 14px;
+      vertical-align: top;
     }
 
     th {
@@ -111,6 +116,12 @@
 
     .oculto {
       display: none;
+    }
+
+    @media (max-width: 700px) {
+      .fila {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -151,7 +162,7 @@
         <button class="btn-limpiar" onclick="limpiarFormulario()">Limpiar</button>
       </div>
 
-      <div id="mensajeBloque1" class="mensaje">Sin acciones todavía.</div>
+      <div id="mensajeBloque1" class="mensaje">Listo para trabajar con clientes.</div>
     </div>
 
     <!-- BLOQUE 2 -->
@@ -166,7 +177,7 @@
       <div class="fila">
         <label for="buscarNombre">Buscar por Nombre</label>
         <input type="text" id="buscarNombre" list="listaClientes" placeholder="Ingrese nombre o parte del nombre">
-      <datalist id="listaClientes"></datalist>
+        <datalist id="listaClientes"></datalist>
       </div>
 
       <div class="acciones">
@@ -193,6 +204,9 @@
   </div>
 
   <script>
+    const URL_LISTAR_CLIENTES = "https://pablonahuel.app.n8n.cloud/webhook/listar-clientes";
+    const URL_GUARDAR_CLIENTE = "https://pablonahuel.app.n8n.cloud/webhook/guardar-cliente";
+
     function setMensajeBloque1(texto) {
       document.getElementById("mensajeBloque1").innerText = texto;
     }
@@ -223,17 +237,76 @@
       document.getElementById("telefono").value = cliente.Telefono || "";
       document.getElementById("descripcion").value = cliente.Descripcion || "";
       setMensajeBloque1("Cliente cargado en el bloque de edición.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function normalizarClientes(data) {
+      if (Array.isArray(data)) return data;
+      if (data && typeof data === "object") return [data];
+      return [];
+    }
+
+    async function obtenerClientesDesdeN8N() {
+      const res = await fetch(URL_LISTAR_CLIENTES, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({})
+      });
+
+      if (!res.ok) {
+        throw new Error("No se pudo consultar la lista de clientes.");
+      }
+
+      const data = await res.json();
+      return normalizarClientes(data);
+    }
+
+    async function cargarListaClientes() {
+      try {
+        const clientes = await obtenerClientesDesdeN8N();
+        const lista = document.getElementById("listaClientes");
+        lista.innerHTML = "";
+
+        clientes.forEach(cliente => {
+          const option = document.createElement("option");
+          option.value = cliente.Razon_Social || "";
+          lista.appendChild(option);
+        });
+
+      } catch (error) {
+        console.error("Error al cargar lista de clientes:", error);
+      }
     }
 
     async function verificarCliente() {
-      const razonSocial = document.getElementById("razonSocial").value.trim();
+      const razonSocial = document.getElementById("razonSocial").value.trim().toLowerCase();
 
       if (!razonSocial) {
         setMensajeBloque1("Debe ingresar una Razón Social para verificar.");
         return;
       }
 
-      setMensajeBloque1("Verificación pendiente de conexión con n8n.");
+      try {
+        const clientes = await obtenerClientesDesdeN8N();
+
+        const encontrado = clientes.find(cliente =>
+          String(cliente.Razon_Social || "").trim().toLowerCase() === razonSocial
+        );
+
+        if (encontrado) {
+          cargarClienteEnFormulario(encontrado);
+          setMensajeBloque1(`⚠️ El cliente ya existe: ${encontrado.Razon_Social} (ID: ${encontrado.ID_Cliente})`);
+        } else {
+          document.getElementById("idCliente").value = "";
+          setMensajeBloque1("✅ Cliente no encontrado. Puede registrarlo como nuevo.");
+        }
+
+      } catch (error) {
+        console.error(error);
+        setMensajeBloque1("❌ Error al verificar cliente.");
+      }
     }
 
     async function guardarCliente() {
@@ -246,7 +319,43 @@
         return;
       }
 
-      setMensajeBloque1("Guardado pendiente de conexión con n8n.");
+      try {
+        const res = await fetch(URL_GUARDAR_CLIENTE, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            Razon_Social: razonSocial,
+            Telefono: telefono,
+            Descripcion: descripcion
+          })
+        });
+
+        if (!res.ok) {
+          throw new Error("No se pudo guardar el cliente.");
+        }
+
+        const data = await res.json();
+
+        if (data.accion === "guardado") {
+          document.getElementById("idCliente").value = data.ID_Cliente || "";
+          setMensajeBloque1(`✅ Cliente guardado: ${data.Razon_Social} (ID: ${data.ID_Cliente})`);
+          await cargarListaClientes();
+          await buscarClientes();
+        } else if (data.accion === "existe") {
+          document.getElementById("idCliente").value = data.ID_Cliente || "";
+          setMensajeBloque1(`⚠️ El cliente ya existe: ${data.Razon_Social} (ID: ${data.ID_Cliente})`);
+        } else if (data.accion === "error") {
+          setMensajeBloque1(`❌ ${data.mensaje || "Error al guardar cliente."}`);
+        } else {
+          setMensajeBloque1("❌ Respuesta no esperada del servidor.");
+        }
+
+      } catch (error) {
+        console.error(error);
+        setMensajeBloque1("❌ Error al guardar cliente.");
+      }
     }
 
     async function actualizarCliente() {
@@ -260,44 +369,42 @@
       setMensajeBloque1("Actualización pendiente de conexión con n8n.");
     }
 
-async function buscarClientes() {
-  const buscarId = document.getElementById("buscarId").value.trim().toLowerCase();
-  const buscarNombre = document.getElementById("buscarNombre").value.trim().toLowerCase();
+    async function buscarClientes() {
+      const buscarId = document.getElementById("buscarId").value.trim().toLowerCase();
+      const buscarNombre = document.getElementById("buscarNombre").value.trim().toLowerCase();
 
-  if (!buscarId && !buscarNombre) {
-    setMensajeBloque2("Ingrese un ID o un nombre para buscar.");
-    return;
-  }
+      if (!buscarId && !buscarNombre) {
+        try {
+          const clientes = await obtenerClientesDesdeN8N();
+          renderTablaClientes(clientes);
+          return;
+        } catch (error) {
+          console.error(error);
+          setMensajeBloque2("Error al cargar clientes.");
+          return;
+        }
+      }
 
-  try {
-    const res = await fetch("https://pablonahuel.app.n8n.cloud/webhook/listar-clientes", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({})
-    });
+      try {
+        const clientes = await obtenerClientesDesdeN8N();
 
-    const data = await res.json();
-    const clientes = Array.isArray(data) ? data : [data];
+        const filtrados = clientes.filter(cliente => {
+          const id = String(cliente.ID_Cliente || "").toLowerCase();
+          const nombre = String(cliente.Razon_Social || "").toLowerCase();
 
-    const filtrados = clientes.filter(cliente => {
-      const id = String(cliente.ID_Cliente || "").toLowerCase();
-      const nombre = String(cliente.Razon_Social || "").toLowerCase();
+          const coincideId = buscarId ? id === buscarId : true;
+          const coincideNombre = buscarNombre ? nombre.includes(buscarNombre) : true;
 
-      const coincideId = buscarId ? id === buscarId : true;
-      const coincideNombre = buscarNombre ? nombre.includes(buscarNombre) : true;
+          return coincideId && coincideNombre;
+        });
 
-      return coincideId && coincideNombre;
-    });
+        renderTablaClientes(filtrados);
 
-    renderTablaClientes(filtrados);
-
-  } catch (error) {
-    console.error(error);
-    setMensajeBloque2("Error al buscar clientes.");
-  }
-}
+      } catch (error) {
+        console.error(error);
+        setMensajeBloque2("Error al buscar clientes.");
+      }
+    }
 
     function renderTablaClientes(clientes) {
       const tabla = document.getElementById("tablaClientes");
@@ -313,14 +420,24 @@ async function buscarClientes() {
       clientes.forEach(cliente => {
         const tr = document.createElement("tr");
 
+        const boton = document.createElement("button");
+        boton.className = "btn-seleccionar";
+        boton.textContent = "Seleccionar";
+        boton.onclick = function () {
+          seleccionarCliente(cliente);
+        };
+
+        const tdAccion = document.createElement("td");
+        tdAccion.appendChild(boton);
+
         tr.innerHTML = `
           <td>${cliente.ID_Cliente || ""}</td>
           <td>${cliente.Razon_Social || ""}</td>
           <td>${cliente.Telefono || ""}</td>
           <td>${cliente.Descripcion || ""}</td>
-          <td><button class="btn-seleccionar" onclick='seleccionarCliente(${JSON.stringify(cliente)})'>Seleccionar</button></td>
         `;
 
+        tr.appendChild(tdAccion);
         body.appendChild(tr);
       });
 
@@ -331,38 +448,11 @@ async function buscarClientes() {
     function seleccionarCliente(cliente) {
       cargarClienteEnFormulario(cliente);
     }
-async function cargarListaClientes() {
-  try {
-    const res = await fetch("https://pablonahuel.app.n8n.cloud/webhook/listar-clientes", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({})
+
+    window.addEventListener("load", async () => {
+      await cargarListaClientes();
+      await buscarClientes();
     });
-
-    const data = await res.json();
-
-    const lista = document.getElementById("listaClientes");
-    lista.innerHTML = "";
-
-    const clientes = Array.isArray(data) ? data : [data];
-
-    clientes.forEach(cliente => {
-      const option = document.createElement("option");
-      option.value = cliente.Razon_Social || "";
-      lista.appendChild(option);
-    });
-
-  } catch (error) {
-    console.error("Error al cargar lista de clientes:", error);
-  }
-}
-
-    window.addEventListener("load", () => {
-  cargarListaClientes();
-});
-    
   </script>
 
 </body>
