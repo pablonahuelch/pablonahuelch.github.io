@@ -566,27 +566,27 @@
       $("txtCoordenadas").textContent = coordenadasActuales || "Sin coordenadas";
     }
 
-    function inicializarMapa() {
-      if (!mapa) {
-        mapa = L.map("mapaPozo").setView([-26.9, -65.4], 6);
+function inicializarMapa() {
+  if (!mapa) {
+    mapa = L.map("mapaPozo").setView([-26.9, -65.4], 6);
 
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-  attribution: 'Tiles © Esri'
-}).addTo(mapa);
-        
-          attribution: "&copy; OpenStreetMap"
-        }).addTo(mapa);
-
-        mapa.on("click", function(e) {
-          if (!modoSeleccionManual) return;
-          const lat = e.latlng.lat.toFixed(6);
-          const lng = e.latlng.lng.toFixed(6);
-          coordenadasActuales = `${lat},${lng}`;
-          ponerMarcador(lat, lng);
-          actualizarTextoCoordenadas();
-        });
+    L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      {
+        attribution: "Tiles © Esri"
       }
-    }
+    ).addTo(mapa);
+
+    mapa.on("click", function(e) {
+      if (!modoSeleccionManual) return;
+      const lat = e.latlng.lat.toFixed(6);
+      const lng = e.latlng.lng.toFixed(6);
+      coordenadasActuales = `${lat},${lng}`;
+      ponerMarcador(lat, lng);
+      actualizarTextoCoordenadas();
+    });
+  }
+}
 
     function activarSeleccionManual() {
       modoSeleccionManual = true;
