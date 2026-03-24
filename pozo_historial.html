@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Selección / Edición de Pozo e Histórico</title>
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { margin: 0; padding: 16px; background: #fff; color: #222; }
+
+    .encabezado {
+      background: #eef5ff;
+      border: 1px solid #bfd8ff;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 16px;
+    }
+
+    .card {
+      border: 1px solid #d9d9d9;
+      border-radius: 8px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    button {
+      border: none;
+      border-radius: 6px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    .btn-pri { background: #0d6efd; color: white; }
+    .btn-ok { background: #198754; color: white; }
+    .btn-warn { background: #fd7e14; color: white; }
+    .btn-sec { background: #6c757d; color: white; }
+
+    .lista {
+      border: 1px solid #e3e3e3;
+      border-radius: 8px;
+      max-height: 500px;
+      overflow: auto;
+      background: #fafafa;
+    }
+
+    .item {
+      padding: 12px;
+      border-bottom: 1px solid #ececec;
+    }
+
+    .item:last-child {
+      border-bottom: none;
+    }
+
+    .item .titulo {
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .item .acciones {
+      margin-top: 8px;
+    }
+
+    .historico-item {
+      border: 1px solid #ececec;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+      background: #fcfcfc;
+    }
+
+    .oculto {
+      display: none;
+    }
+
+    .mensaje {
+      color: #555;
+      padding: 8px 0;
+    }
+
+    @media (max-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="encabezado">
+    <div><strong>Cliente actual:</strong> <span id="lblCliente">Ninguno seleccionado</span></div>
+    <div><strong>Pozo actual:</strong> <span id="lblPozo">Ninguno seleccionado</span></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Listado de pozos</h3>
+
+      <div id="zonaSinCliente" class="mensaje">
+        Seleccioná un cliente para ver sus pozos.
+      </div>
+
+      <div id="zonaPozos" class="oculto">
+        <label for="filtroPozo">Filtrar por descripción</label>
+        <input type="text" id="filtroPozo" placeholder="Buscar pozo..." />
+
+        <button class="btn-pri" onclick="cargarPozos()">Actualizar pozos</button>
+        <button class="btn-warn" onclick="mostrarCrearPozo()">Crear pozo</button>
+
+        <div id="listaPozos" class="lista" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div id="panelBienvenida">
+        <h3>Selección / Edición</h3>
+        <p>Acá se van mostrando los datos del cliente, pozos e histórico según lo seleccionado.</p>
+      </div>
+
+      <div id="panelCrearPozo" class="oculto">
+        <h3>Crear pozo</h3>
+
+        <label>Cliente</label>
+        <input type="text" id="crearPozoCliente" readonly />
+
+        <label for="descripcionPozo">Descripción</label>
+        <input type="text" id="descripcionPozo" placeholder="Ej: Pozo 1 - Campo Norte" />
+
+        <label for="diametroPozo">Diámetro perforación</label>
+        <input type="text" id="diametroPozo" placeholder="Opcional" />
+
+        <button class="btn-ok" onclick="guardarPozo()">Guardar pozo</button>
+        <button class="btn-sec" onclick="cerrarPaneles()">Cancelar</button>
+
+        <div id="estadoPozo" class="mensaje"></div>
+      </div>
+
+      <div id="panelDetallePozo" class="oculto">
+        <h3>Detalle de pozo</h3>
+
+        <label>Cliente</label>
+        <input type="text" id="detalleCliente" readonly />
+
+        <label>Pozo</label>
+        <input type="text" id="detallePozo" readonly />
+
+        <button class="btn-pri" onclick="cargarHistorico()">Ver / actualizar histórico</button>
+        <button class="btn-warn" onclick="mostrarAltaHistorico()">Agregar histórico</button>
+      </div>
+
+      <div id="panelHistorico" class="oculto" style="margin-top:16px;">
+        <h3>Histórico del pozo</h3>
+        <div id="listaHistorico"></div>
+      </div>
+
+      <div id="panelAltaHistorico" class="oculto" style="margin-top:16px;">
+        <h3>Agregar histórico</h3>
+
+        <label>Pozo seleccionado</label>
+        <input type="text" id="historicoPozoTxt" readonly />
+
+        <label for="fechaServicio">Fecha</label>
+        <input type="date" id="fechaServicio" />
+
+        <label for="detalleServicio">Detalle / servicio realizado</label>
+        <textarea id="detalleServicio" placeholder="Describí el trabajo realizado"></textarea>
+
+        <label for="observacionesServicio">Observaciones</label>
+        <textarea id="observacionesServicio" placeholder="Opcional"></textarea>
+
+        <button class="btn-ok" onclick="guardarHistorico()">Guardar histórico</button>
+        <button class="btn-sec" onclick="cerrarAltaHistorico()">Cancelar</button>
+
+        <div id="estadoHistorico" class="mensaje"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // REEMPLAZAR con tus webhooks n8n
+    const URL_LISTAR_POZOS = "TU_WEBHOOK_LISTAR_POZOS_POR_CLIENTE";
+    const URL_GUARDAR_POZO = "TU_WEBHOOK_GUARDAR_POZO";
+    const URL_LISTAR_HISTORICO = "TU_WEBHOOK_LISTAR_HISTORICO_POR_POZO";
+    const URL_GUARDAR_HISTORICO = "TU_WEBHOOK_GUARDAR_HISTORICO";
+
+    let clienteActual = { id: "", nombre: "" };
+    let pozoActual = { id: "", descripcion: "" };
+    let pozos = [];
+
+    const lblCliente = document.getElementById("lblCliente");
+    const lblPozo = document.getElementById("lblPozo");
+
+    function actualizarEncabezado() {
+      lblCliente.textContent = clienteActual.nombre || "Ninguno seleccionado";
+      lblPozo.textContent = pozoActual.descripcion || "Ninguno seleccionado";
+    }
+
+    function cerrarPaneles() {
+      document.getElementById("panelBienvenida").classList.add("oculto");
+      document.getElementById("panelCrearPozo").classList.add("oculto");
+      document.getElementById("panelDetallePozo").classList.add("oculto");
+      document.getElementById("panelHistorico").classList.add("oculto");
+      document.getElementById("panelAltaHistorico").classList.add("oculto");
+    }
+
+    function mostrarBienvenida() {
+      cerrarPaneles();
+      document.getElementById("panelBienvenida").classList.remove("oculto");
+    }
+
+    function mostrarCrearPozo() {
+      if (!clienteActual.id) {
+        alert("Primero seleccioná un cliente.");
+        return;
+      }
+
+      cerrarPaneles();
+      document.getElementById("panelCrearPozo").classList.remove("oculto");
+      document.getElementById("crearPozoCliente").value = clienteActual.nombre;
+      document.getElementById("descripcionPozo").value = "";
+      document.getElementById("diametroPozo").value = "";
+      document.getElementById("estadoPozo").textContent = "";
+    }
+
+    function mostrarDetallePozo() {
+      cerrarPaneles();
+      document.getElementById("panelDetallePozo").classList.remove("oculto");
+      document.getElementById("detalleCliente").value = clienteActual.nombre;
+      document.getElementById("detallePozo").value = pozoActual.descripcion;
+    }
+
+    function mostrarAltaHistorico() {
+      if (!pozoActual.id) {
+        alert("Primero seleccioná un pozo.");
+        return;
+      }
+
+      document.getElementById("panelAltaHistorico").classList.remove("oculto");
+      document.getElementById("historicoPozoTxt").value = pozoActual.descripcion;
+      document.getElementById("fechaServicio").value = "";
+      document.getElementById("detalleServicio").value = "";
+      document.getElementById("observacionesServicio").value = "";
+      document.getElementById("estadoHistorico").textContent = "";
+    }
+
+    function cerrarAltaHistorico() {
+      document.getElementById("panelAltaHistorico").classList.add("oculto");
+    }
+
+    async function cargarPozos() {
+      if (!clienteActual.id) return;
+
+      const lista = document.getElementById("listaPozos");
+      lista.innerHTML = `<div class="item">Cargando pozos...</div>`;
+
+      try {
+        const res = await fetch(`${URL_LISTAR_POZOS}?ID_Cliente=${encodeURIComponent(clienteActual.id)}`);
+        const data = await res.json();
+
+        pozos = Array.isArray(data) ? data : (data.items || []);
+        renderPozos();
+      } catch (error) {
+        lista.innerHTML = `<div class="item">Error al cargar pozos.</div>`;
+        console.error(error);
+      }
+    }
+
+    function renderPozos() {
+      const texto = document.getElementById("filtroPozo").value.trim().toLowerCase();
+      const lista = document.getElementById("listaPozos");
+
+      const filtrados = pozos.filter(p =>
+        String(p.Descripcion || "").toLowerCase().includes(texto)
+      );
+
+      if (!filtrados.length) {
+        lista.innerHTML = `
+          <div class="item">
+            No hay pozos cargados para este cliente.<br><br>
+            <button class="btn-warn" onclick="mostrarCrearPozo()">Crear pozo ahora</button>
+          </div>
+        `;
+        mostrarCrearPozo();
+        return;
+      }
+
+      lista.innerHTML = filtrados.map(p => `
+        <div class="item">
+          <div class="titulo">${escapeHtml(p.Descripcion || "Sin descripción")}</div>
+          <div>Diámetro: ${escapeHtml(p.Diametro_Perforacion || "-")}</div>
+          <div class="acciones">
+            <button class="btn-pri" onclick="seleccionarPozo('${p.ID_Pozo}', '${encodeURIComponent(p.Descripcion || "")}')">Seleccionar</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function seleccionarPozo(idPozo, descripcionCodificada) {
+      pozoActual.id = idPozo;
+      pozoActual.descripcion = decodeURIComponent(descripcionCodificada);
+      actualizarEncabezado();
+      mostrarDetallePozo();
+      cargarHistorico();
+
+      window.parent.postMessage({
+        tipo: "pozo-seleccionado",
+        pozoId: pozoActual.id,
+        pozoDescripcion: pozoActual.descripcion
+      }, "*");
+    }
+
+    async function guardarPozo() {
+      const descripcion = document.getElementById("descripcionPozo").value.trim();
+      const diametro = document.getElementById("diametroPozo").value.trim();
+      const estado = document.getElementById("estadoPozo");
+
+      if (!clienteActual.id) {
+        alert("No hay cliente seleccionado.");
+        return;
+      }
+
+      if (!descripcion) {
+        alert("La descripción del pozo es obligatoria.");
+        return;
+      }
+
+      estado.textContent = "Guardando pozo...";
+
+      try {
+        const res = await fetch(URL_GUARDAR_POZO, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ID_Cliente: clienteActual.id,
+            Descripcion: descripcion,
+            Diametro_Perforacion: diametro
+          })
+        });
+
+        const data = await res.json();
+
+        pozoActual.id = data.ID_Pozo || data.idPozo || "";
+        pozoActual.descripcion = descripcion;
+        actualizarEncabezado();
+
+        estado.textContent = "Pozo guardado correctamente.";
+
+        window.parent.postMessage({
+          tipo: "pozo-creado",
+          pozoId: pozoActual.id,
+          pozoDescripcion: pozoActual.descripcion
+        }, "*");
+
+        await cargarPozos();
+        mostrarDetallePozo();
+      } catch (error) {
+        estado.textContent = "Error al guardar pozo.";
+        console.error(error);
+      }
+    }
+
+    async function cargarHistorico() {
+      if (!pozoActual.id) return;
+
+      const lista = document.getElementById("listaHistorico");
+      document.getElementById("panelHistorico").classList.remove("oculto");
+      lista.innerHTML = "Cargando histórico...";
+
+      try {
+        const res = await fetch(`${URL_LISTAR_HISTORICO}?ID_Pozo=${encodeURIComponent(pozoActual.id)}`);
+        const data = await res.json();
+        const items = Array.isArray(data) ? data : (data.items || []);
+
+        if (!items.length) {
+          lista.innerHTML = `<div class="historico-item">No hay histórico cargado para este pozo.</div>`;
+          return;
+        }
+
+        lista.innerHTML = items.map(h => `
+          <div class="historico-item">
+            <div><strong>Fecha:</strong> ${escapeHtml(h.Fecha || "-")}</div>
+            <div><strong>Servicio:</strong> ${escapeHtml(h.Detalle || h.Servicio || "-")}</div>
+            <div><strong>Observaciones:</strong> ${escapeHtml(h.Observaciones || "-")}</div>
+          </div>
+        `).join("");
+      } catch (error) {
+        lista.innerHTML = "Error al cargar histórico.";
+        console.error(error);
+      }
+    }
+
+    async function guardarHistorico() {
+      const fecha = document.getElementById("fechaServicio").value;
+      const detalle = document.getElementById("detalleServicio").value.trim();
+      const observaciones = document.getElementById("observacionesServicio").value.trim();
+      const estado = document.getElementById("estadoHistorico");
+
+      if (!pozoActual.id) {
+        alert("No hay pozo seleccionado.");
+        return;
+      }
+
+      if (!fecha || !detalle) {
+        alert("La fecha y el detalle del servicio son obligatorios.");
+        return;
+      }
+
+      estado.textContent = "Guardando histórico...";
+
+      try {
+        await fetch(URL_GUARDAR_HISTORICO, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ID_Pozo: pozoActual.id,
+            Fecha: fecha,
+            Detalle: detalle,
+            Observaciones: observaciones
+          })
+        });
+
+        estado.textContent = "Histórico guardado correctamente.";
+        cerrarAltaHistorico();
+        await cargarHistorico();
+
+        window.parent.postMessage({
+          tipo: "historico-guardado"
+        }, "*");
+      } catch (error) {
+        estado.textContent = "Error al guardar histórico.";
+        console.error(error);
+      }
+    }
+
+    function escapeHtml(texto) {
+      return String(texto)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    document.getElementById("filtroPozo").addEventListener("input", renderPozos);
+
+    window.addEventListener("message", (event) => {
+      const data = event.data || {};
+
+      if (data.tipo === "cliente-seleccionado") {
+        clienteActual.id = data.clienteId || "";
+        clienteActual.nombre = data.clienteNombre || "";
+        pozoActual.id = "";
+        pozoActual.descripcion = "";
+        actualizarEncabezado();
+
+        document.getElementById("zonaSinCliente").classList.add("oculto");
+        document.getElementById("zonaPozos").classList.remove("oculto");
+
+        cerrarPaneles();
+        mostrarBienvenida();
+        cargarPozos();
+      }
+
+      if (data.tipo === "cliente-limpiado") {
+        clienteActual = { id: "", nombre: "" };
+        pozoActual = { id: "", descripcion: "" };
+        actualizarEncabezado();
+
+        document.getElementById("zonaSinCliente").classList.remove("oculto");
+        document.getElementById("zonaPozos").classList.add("oculto");
+        document.getElementById("listaPozos").innerHTML = "";
+
+        cerrarPaneles();
+        mostrarBienvenida();
+      }
+
+      if (data.tipo === "abrir-crear-pozo") {
+        clienteActual.id = data.clienteId || "";
+        clienteActual.nombre = data.clienteNombre || "";
+        pozoActual = { id: "", descripcion: "" };
+        actualizarEncabezado();
+
+        document.getElementById("zonaSinCliente").classList.add("oculto");
+        document.getElementById("zonaPozos").classList.remove("oculto");
+
+        mostrarCrearPozo();
+      }
+
+      if (data.tipo === "refrescar-historico" && pozoActual.id) {
+        cargarHistorico();
+      }
+    });
+
+    mostrarBienvenida();
+    actualizarEncabezado();
+  </script>
+</body>
+</html>
