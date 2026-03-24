@@ -5,34 +5,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Crear Cliente</title>
   <style>
-    * { box-sizing: border-box; font-family: Arial, sans-serif; }
-    body { margin: 0; padding: 14px; background: #fff; }
-    h3 { margin-top: 0; }
-    .grupo { margin-bottom: 12px; }
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 14px;
+      background: #fff;
+    }
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 14px;
+      font-size: 18px;
+    }
+
+    .grupo {
+      margin-bottom: 12px;
+    }
+
     label {
       display: block;
       margin-bottom: 6px;
       font-weight: bold;
     }
-    input {
+
+    input, textarea {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #bbb;
+      padding: 10px 12px;
+      border: 1px solid #c8c8c8;
       border-radius: 6px;
+      font-size: 15px;
     }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
     button {
       border: none;
       border-radius: 6px;
       padding: 10px 14px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 15px;
       background: #198754;
       color: white;
     }
+
     .estado {
-      margin-top: 10px;
-      font-size: 14px;
+      margin-top: 12px;
+      font-size: 15px;
       color: #444;
+    }
+
+    .ok {
+      color: #198754;
+    }
+
+    .error {
+      color: #b00020;
     }
   </style>
 </head>
@@ -45,8 +80,13 @@
   </div>
 
   <div class="grupo">
-    <label for="cuit">CUIT</label>
-    <input type="text" id="cuit" placeholder="Ej: 30-12345678-9" />
+    <label for="telefono">Teléfono</label>
+    <input type="text" id="telefono" placeholder="Ej: 3834123456" />
+  </div>
+
+  <div class="grupo">
+    <label for="descripcion">Descripción</label>
+    <textarea id="descripcion" placeholder="Detalle opcional del cliente"></textarea>
   </div>
 
   <div class="grupo">
@@ -56,45 +96,60 @@
   <div class="estado" id="estado"></div>
 
   <script>
-    // REEMPLAZAR por tu webhook n8n de guardar cliente
     const URL_GUARDAR_CLIENTE = "https://pablonahuel.app.n8n.cloud/webhook/guardar-cliente";
 
     async function guardarCliente() {
       const razonSocial = document.getElementById("razonSocial").value.trim();
-      const cuit = document.getElementById("cuit").value.trim();
+      const telefono = document.getElementById("telefono").value.trim();
+      const descripcion = document.getElementById("descripcion").value.trim();
       const estado = document.getElementById("estado");
 
+      estado.className = "estado";
+      estado.textContent = "";
+
       if (!razonSocial) {
-        alert("La Razón Social es obligatoria.");
+        estado.className = "estado error";
+        estado.textContent = "La Razón Social es obligatoria.";
         return;
       }
 
-      estado.textContent = "Guardando cliente...";
-
       try {
+        estado.textContent = "Guardando cliente...";
+
         const res = await fetch(URL_GUARDAR_CLIENTE, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json"
+          },
           body: JSON.stringify({
             Razon_Social: razonSocial,
-            CUIT: cuit
+            Telefono: telefono,
+            Descripcion: descripcion
           })
         });
 
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+
         const data = await res.json();
 
-        estado.textContent = "Cliente guardado correctamente.";
+        estado.className = "estado ok";
+        estado.textContent = data.mensaje || "Cliente guardado correctamente.";
 
         document.getElementById("razonSocial").value = "";
-        document.getElementById("cuit").value = "";
+        document.getElementById("telefono").value = "";
+        document.getElementById("descripcion").value = "";
 
         window.parent.postMessage({
           tipo: "cliente-creado",
           cliente: data
         }, "*");
+
       } catch (error) {
-        estado.textContent = "Error al guardar cliente.";
         console.error(error);
+        estado.className = "estado error";
+        estado.textContent = "Error al guardar cliente.";
       }
     }
   </script>
