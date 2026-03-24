@@ -78,83 +78,89 @@
     <div class="msg">Cargando clientes...</div>
   </div>
 
-  <script>
-    // REEMPLAZAR por tu webhook n8n de listar clientes
-    const URL_LISTAR_CLIENTES = "https://pablonahuel.app.n8n.cloud/webhook-test/listar-clientes";
+<script>
+  const URL_LISTAR_CLIENTES = "https://pablonahuel.app.n8n.cloud/webhook-test/listar-clientes";
 
-    let clientes = [];
+  let clientes = [];
 
-    async function cargarClientes() {
-      const lista = document.getElementById("listaClientes");
-      lista.innerHTML = `<div class="msg">Cargando clientes...</div>`;
+  async function cargarClientes() {
+    const lista = document.getElementById("listaClientes");
+    lista.innerHTML = `<div class="msg">Cargando clientes...</div>`;
 
-      try {
-        const res = await fetch(URL_LISTAR_CLIENTES);
-        const data = await res.json();
+    try {
+      const res = await fetch(URL_LISTAR_CLIENTES, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({})
+      });
 
-        clientes = Array.isArray(data) ? data : (data.items || []);
-        renderClientes();
-      } catch (error) {
-        lista.innerHTML = `<div class="msg">Error al cargar clientes.</div>`;
-        console.error(error);
-      }
+      const data = await res.json();
+
+      clientes = Array.isArray(data) ? data : (data.items || []);
+      renderClientes();
+    } catch (error) {
+      lista.innerHTML = `<div class="msg">Error al cargar clientes.</div>`;
+      console.error(error);
+    }
+  }
+
+  function renderClientes() {
+    const texto = document.getElementById("txtBuscar").value.trim().toLowerCase();
+    const lista = document.getElementById("listaClientes");
+
+    const filtrados = clientes.filter(c =>
+      String(c.Razon_Social || "").toLowerCase().includes(texto)
+    );
+
+    if (!filtrados.length) {
+      lista.innerHTML = `<div class="msg">No se encontraron clientes.</div>`;
+      return;
     }
 
-    function renderClientes() {
-      const texto = document.getElementById("txtBuscar").value.trim().toLowerCase();
-      const lista = document.getElementById("listaClientes");
-
-      const filtrados = clientes.filter(c =>
-        String(c.Razon_Social || "").toLowerCase().includes(texto)
-      );
-
-      if (!filtrados.length) {
-        lista.innerHTML = `<div class="msg">No se encontraron clientes.</div>`;
-        return;
-      }
-
-      lista.innerHTML = filtrados.map(c => `
-        <div class="item">
-          <div>
-            <div class="nombre">${escapeHtml(c.Razon_Social || "Sin nombre")}</div>
-            <div class="sub">CUIT: ${escapeHtml(c.CUIT || "-")}</div>
-          </div>
-          <button class="btn-sel" onclick="seleccionarCliente('${c.ID_Cliente}', '${encodeURIComponent(c.Razon_Social || "")}')">
-            Seleccionar
-          </button>
+    lista.innerHTML = filtrados.map(c => `
+      <div class="item">
+        <div>
+          <div class="nombre">${escapeHtml(c.Razon_Social || "Sin nombre")}</div>
+          <div class="sub">CUIT: ${escapeHtml(c.CUIT || "-")}</div>
         </div>
-      `).join("");
+        <button class="btn-sel" onclick="seleccionarCliente('${c.ID_Cliente}', '${encodeURIComponent(c.Razon_Social || "")}')">
+          Seleccionar
+        </button>
+      </div>
+    `).join("");
+  }
+
+  function seleccionarCliente(id, nombreCodificado) {
+    const nombre = decodeURIComponent(nombreCodificado);
+
+    window.parent.postMessage({
+      tipo: "cliente-seleccionado",
+      clienteId: id,
+      clienteNombre: nombre
+    }, "*");
+  }
+
+  function escapeHtml(texto) {
+    return String(texto)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  document.getElementById("txtBuscar").addEventListener("input", renderClientes);
+
+  window.addEventListener("message", (event) => {
+    const data = event.data || {};
+    if (data.tipo === "recargar-clientes") {
+      cargarClientes();
     }
+  });
 
-    function seleccionarCliente(id, nombreCodificado) {
-      const nombre = decodeURIComponent(nombreCodificado);
-
-      window.parent.postMessage({
-        tipo: "cliente-seleccionado",
-        clienteId: id,
-        clienteNombre: nombre
-      }, "*");
-    }
-
-    function escapeHtml(texto) {
-      return String(texto)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
-    }
-
-    document.getElementById("txtBuscar").addEventListener("input", renderClientes);
-
-    window.addEventListener("message", (event) => {
-      const data = event.data || {};
-      if (data.tipo === "recargar-clientes") {
-        cargarClientes();
-      }
-    });
-
-    cargarClientes();
-  </script>
+  cargarClientes();
+</script>
 </body>
 </html>
