@@ -34,50 +34,36 @@
   </div>
 
   <script>
-    async function guardarPozo() {
-      const idCliente = document.getElementById("idCliente").value.trim();
-      const diametro = document.getElementById("diametroPerforacion").value.trim();
+async function guardarPozo() {
+  const msg = document.getElementById("mensaje");
 
-      if (!idCliente) {
-        document.getElementById("mensaje").innerText = "Debe ingresar ID_Cliente.";
-        return;
-      }
+  try {
+    const payload = {
+      ID_Cliente: Number(document.getElementById("idCliente").value),
+      Diametro_Perforacion: Number(document.getElementById("diametro").value)
+    };
 
-      if (!diametro) {
-        document.getElementById("mensaje").innerText = "Debe ingresar Diametro_Perforacion.";
-        return;
-      }
+    const res = await fetch("TU_WEBHOOK", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
 
-      try {
-        const params = new URLSearchParams();
-        params.append("ID_Cliente", idCliente);
-        params.append("Diametro_Perforacion", diametro);
+    const texto = await res.text();
+    console.log("Respuesta status:", res.status);
+    console.log("Respuesta body:", texto);
 
-        const res = await fetch("https://pablonahuel.app.n8n.cloud/webhook/guardar-pozo", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: params.toString()
-        });
-
-        const data = await res.json();
-
-        if (data.accion === "guardado") {
-          document.getElementById("mensaje").innerText =
-            `✅ ${data.mensaje} | ID_Pozo: ${data.ID_Pozo} | ID_Cliente: ${data.ID_Cliente}`;
-        } else if (data.accion === "existe") {
-          document.getElementById("mensaje").innerText =
-            `⚠️ ${data.mensaje}`;
-        } else {
-          document.getElementById("mensaje").innerText = "❌ Respuesta no esperada.";
-        }
-
-      } catch (error) {
-        console.error(error);
-        document.getElementById("mensaje").innerText = "❌ Error al guardar pozo.";
-      }
+    if (!res.ok) {
+      msg.innerHTML = "❌ Error del servidor: " + texto;
+      return;
     }
+
+    msg.innerHTML = "✅ Pozo guardado correctamente";
+  } catch (error) {
+    console.error(error);
+    msg.innerHTML = "❌ Error al conectar con el webhook.";
+  }
+}
   </script>
 
 </body>
