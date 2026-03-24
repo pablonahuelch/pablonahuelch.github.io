@@ -310,7 +310,6 @@
   </div>
 
   <script>
-    // CAMBIAR POR TUS WEBHOOKS REALES
     const URL_LISTAR_POZOS = "https://pablonahuel.app.n8n.cloud/webhook/listar-pozos";
     const URL_GUARDAR_POZO = "https://pablonahuel.app.n8n.cloud/webhook/guardar-pozo";
 
@@ -319,6 +318,8 @@
     let pozos = [];
 
     let mapa = null;
+    let capaSatelital = null;
+    let capaEtiquetas = null;
     let marcador = null;
     let modoSeleccionManual = false;
     let coordenadasActuales = "";
@@ -356,9 +357,10 @@
 
       limpiarFormularioPozo();
       inicializarMapa();
+
       setTimeout(() => {
         if (mapa) mapa.invalidateSize();
-      }, 200);
+      }, 250);
     }
 
     function limpiarFormularioPozo() {
@@ -372,6 +374,7 @@
       $("caudal").value = "";
       $("observacionesPozo").value = "";
       coordenadasActuales = "";
+      modoSeleccionManual = false;
       actualizarTextoCoordenadas();
       quitarMarcador();
     }
@@ -566,27 +569,34 @@
       $("txtCoordenadas").textContent = coordenadasActuales || "Sin coordenadas";
     }
 
-function inicializarMapa() {
-  if (!mapa) {
-    mapa = L.map("mapaPozo").setView([-26.9, -65.4], 6);
+    function inicializarMapa() {
+      if (!mapa) {
+        mapa = L.map("mapaPozo").setView([-26.7179, -66.0338], 12);
 
-    L.tileLayer(
-      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-      {
-        attribution: "Tiles © Esri"
+        capaSatelital = L.tileLayer(
+          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          {
+            attribution: "Tiles © Esri"
+          }
+        ).addTo(mapa);
+
+        capaEtiquetas = L.tileLayer(
+          "https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+          {
+            attribution: "Labels © Esri"
+          }
+        ).addTo(mapa);
+
+        mapa.on("click", function(e) {
+          if (!modoSeleccionManual) return;
+          const lat = e.latlng.lat.toFixed(6);
+          const lng = e.latlng.lng.toFixed(6);
+          coordenadasActuales = `${lat},${lng}`;
+          ponerMarcador(lat, lng);
+          actualizarTextoCoordenadas();
+        });
       }
-    ).addTo(mapa);
-
-    mapa.on("click", function(e) {
-      if (!modoSeleccionManual) return;
-      const lat = e.latlng.lat.toFixed(6);
-      const lng = e.latlng.lng.toFixed(6);
-      coordenadasActuales = `${lat},${lng}`;
-      ponerMarcador(lat, lng);
-      actualizarTextoCoordenadas();
-    });
-  }
-}
+    }
 
     function activarSeleccionManual() {
       modoSeleccionManual = true;
@@ -608,7 +618,7 @@ function inicializarMapa() {
           ponerMarcador(lat, lng);
 
           if (mapa) {
-            mapa.setView([lat, lng], 15);
+            mapa.setView([lat, lng], 16);
           }
         },
         (err) => {
@@ -626,6 +636,7 @@ function inicializarMapa() {
       if (!mapa) return;
       quitarMarcador();
       marcador = L.marker([lat, lng]).addTo(mapa);
+      mapa.setView([parseFloat(lat), parseFloat(lng)], 16);
     }
 
     function quitarMarcador() {
