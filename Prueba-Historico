@@ -155,7 +155,7 @@
   </div>
 
   <script>
-    const WEBHOOK_HISTORICO = "guardar-historico";
+    const WEBHOOK_HISTORICO = guardar-historico;
 
     const form = document.getElementById("formHistorico");
     const mensaje = document.getElementById("mensaje");
