@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Selección de Cliente</title>
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { margin: 0; padding: 14px; background: #fff; }
+    h3 { margin-top: 0; }
+    .grupo { margin-bottom: 12px; }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+    }
+    button {
+      border: none;
+      border-radius: 6px;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn {
+      background: #0d6efd;
+      color: white;
+    }
+    .lista {
+      border: 1px solid #d8d8d8;
+      border-radius: 8px;
+      max-height: 240px;
+      overflow: auto;
+      background: #fafafa;
+    }
+    .item {
+      padding: 10px 12px;
+      border-bottom: 1px solid #ececec;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .item:last-child {
+      border-bottom: none;
+    }
+    .nombre {
+      font-weight: bold;
+    }
+    .sub {
+      font-size: 12px;
+      color: #555;
+      margin-top: 2px;
+    }
+    .btn-sel {
+      background: #198754;
+      color: white;
+      white-space: nowrap;
+    }
+    .msg {
+      padding: 10px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h3>Buscar cliente</h3>
+
+  <div class="grupo">
+    <input type="text" id="txtBuscar" placeholder="Escribí Razón Social..." />
+  </div>
+
+  <div class="grupo">
+    <button class="btn" onclick="cargarClientes()">Actualizar listado</button>
+  </div>
+
+  <div id="listaClientes" class="lista">
+    <div class="msg">Cargando clientes...</div>
+  </div>
+
+  <script>
+    // REEMPLAZAR por tu webhook n8n de listar clientes
+    const URL_LISTAR_CLIENTES = "TU_WEBHOOK_LISTAR_CLIENTES";
+
+    let clientes = [];
+
+    async function cargarClientes() {
+      const lista = document.getElementById("listaClientes");
+      lista.innerHTML = `<div class="msg">Cargando clientes...</div>`;
+
+      try {
+        const res = await fetch(URL_LISTAR_CLIENTES);
+        const data = await res.json();
+
+        clientes = Array.isArray(data) ? data : (data.items || []);
+        renderClientes();
+      } catch (error) {
+        lista.innerHTML = `<div class="msg">Error al cargar clientes.</div>`;
+        console.error(error);
+      }
+    }
+
+    function renderClientes() {
+      const texto = document.getElementById("txtBuscar").value.trim().toLowerCase();
+      const lista = document.getElementById("listaClientes");
+
+      const filtrados = clientes.filter(c =>
+        String(c.Razon_Social || "").toLowerCase().includes(texto)
+      );
+
+      if (!filtrados.length) {
+        lista.innerHTML = `<div class="msg">No se encontraron clientes.</div>`;
+        return;
+      }
+
+      lista.innerHTML = filtrados.map(c => `
+        <div class="item">
+          <div>
+            <div class="nombre">${escapeHtml(c.Razon_Social || "Sin nombre")}</div>
+            <div class="sub">CUIT: ${escapeHtml(c.CUIT || "-")}</div>
+          </div>
+          <button class="btn-sel" onclick="seleccionarCliente('${c.ID_Cliente}', '${encodeURIComponent(c.Razon_Social || "")}')">
+            Seleccionar
+          </button>
+        </div>
+      `).join("");
+    }
+
+    function seleccionarCliente(id, nombreCodificado) {
+      const nombre = decodeURIComponent(nombreCodificado);
+
+      window.parent.postMessage({
+        tipo: "cliente-seleccionado",
+        clienteId: id,
+        clienteNombre: nombre
+      }, "*");
+    }
+
+    function escapeHtml(texto) {
+      return String(texto)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    document.getElementById("txtBuscar").addEventListener("input", renderClientes);
+
+    window.addEventListener("message", (event) => {
+      const data = event.data || {};
+      if (data.tipo === "recargar-clientes") {
+        cargarClientes();
+      }
+    });
+
+    cargarClientes();
+  </script>
+</body>
+</html>
