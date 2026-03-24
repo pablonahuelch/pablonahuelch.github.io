@@ -123,23 +123,22 @@
         console.log("Respuesta status:", res.status);
         console.log("Respuesta body:", texto);
 
-        if (!res.ok) {
-          msg.innerHTML = "❌ Error del servidor: " + texto;
-          return;
-        }
+if (!res.ok) {
+  msg.innerHTML = "❌ Error del servidor: " + texto;
+  return;
+}
 
-        try {
-          const json = JSON.parse(texto);
-          msg.innerHTML = "✅ " + (json.mensaje || "Pozo guardado correctamente.");
-        } catch {
-          msg.innerHTML = "✅ Pozo guardado correctamente.";
-        }
+try {
+  const json = JSON.parse(texto);
 
-      } catch (error) {
-        console.error(error);
-        msg.innerHTML = "❌ Error al conectar con el webhook.";
-      }
-    }
+  if (json.ok) {
+    msg.innerHTML = "✅ " + json.mensaje;
+  } else {
+    msg.innerHTML = "⚠️ " + json.mensaje;
+  }
+} catch {
+  msg.innerHTML = "✅ Respuesta recibida correctamente.";
+}
   </script>
 
 </body>
