@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crear Cliente</title>
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { margin: 0; padding: 14px; background: #fff; }
+    h3 { margin-top: 0; }
+    .grupo { margin-bottom: 12px; }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 6px;
+    }
+    button {
+      border: none;
+      border-radius: 6px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: bold;
+      background: #198754;
+      color: white;
+    }
+    .estado {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+  <h3>Alta de cliente</h3>
+
+  <div class="grupo">
+    <label for="razonSocial">Razón Social</label>
+    <input type="text" id="razonSocial" placeholder="Ej: Empresa ABC SRL" />
+  </div>
+
+  <div class="grupo">
+    <label for="cuit">CUIT</label>
+    <input type="text" id="cuit" placeholder="Ej: 30-12345678-9" />
+  </div>
+
+  <div class="grupo">
+    <button onclick="guardarCliente()">Guardar cliente</button>
+  </div>
+
+  <div class="estado" id="estado"></div>
+
+  <script>
+    // REEMPLAZAR por tu webhook n8n de guardar cliente
+    const URL_GUARDAR_CLIENTE = "TU_WEBHOOK_GUARDAR_CLIENTE";
+
+    async function guardarCliente() {
+      const razonSocial = document.getElementById("razonSocial").value.trim();
+      const cuit = document.getElementById("cuit").value.trim();
+      const estado = document.getElementById("estado");
+
+      if (!razonSocial) {
+        alert("La Razón Social es obligatoria.");
+        return;
+      }
+
+      estado.textContent = "Guardando cliente...";
+
+      try {
+        const res = await fetch(URL_GUARDAR_CLIENTE, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            Razon_Social: razonSocial,
+            CUIT: cuit
+          })
+        });
+
+        const data = await res.json();
+
+        estado.textContent = "Cliente guardado correctamente.";
+
+        document.getElementById("razonSocial").value = "";
+        document.getElementById("cuit").value = "";
+
+        window.parent.postMessage({
+          tipo: "cliente-creado",
+          cliente: data
+        }, "*");
+      } catch (error) {
+        estado.textContent = "Error al guardar cliente.";
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
