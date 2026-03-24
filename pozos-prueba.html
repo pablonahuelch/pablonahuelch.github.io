@@ -3,324 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prueba Pozos</title>
+  <title>Prueba Guardar Pozo</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background: #f5f7fb;
-    }
-    .bloque {
-      background: white;
-      border: 1px solid #d9e2f1;
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    h1, h2 {
-      color: #1d4f91;
-    }
-    .fila {
-      display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 10px;
-      margin-bottom: 12px;
-      align-items: center;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #bfcde0;
-      border-radius: 6px;
-      box-sizing: border-box;
-    }
-    textarea {
-      min-height: 70px;
-      resize: vertical;
-    }
-    .acciones {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-    button {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      color: white;
-      font-weight: bold;
-    }
-    .btn-guardar { background: #198754; }
-    .btn-buscar { background: #0d6efd; }
-    .btn-limpiar { background: #6c757d; }
-    .mensaje {
-      margin-top: 15px;
-      padding: 12px;
-      background: #eef4ff;
-      border: 1px solid #cfe0ff;
-      border-radius: 6px;
-      white-space: pre-wrap;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-      background: white;
-    }
-    th, td {
-      border: 1px solid #d9e2f1;
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background: #eaf2ff;
-    }
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f5f7fb; }
+    .bloque { background: white; border: 1px solid #d9e2f1; border-radius: 10px; padding: 20px; max-width: 700px; }
+    .fila { display: grid; grid-template-columns: 180px 1fr; gap: 10px; margin-bottom: 12px; align-items: center; }
+    input, select { width: 100%; padding: 10px; border: 1px solid #bfcde0; border-radius: 6px; box-sizing: border-box; }
+    button { padding: 10px 16px; border: none; border-radius: 6px; background: #198754; color: white; font-weight: bold; cursor: pointer; }
+    .mensaje { margin-top: 15px; padding: 12px; background: #eef4ff; border: 1px solid #cfe0ff; border-radius: 6px; }
   </style>
 </head>
 <body>
 
-  <h1>Prueba de Pozos</h1>
-
   <div class="bloque">
-    <h2>1. Registrar Pozo</h2>
+    <h2>Guardar Pozo</h2>
 
     <div class="fila">
-      <label for="clientePozo">Cliente</label>
-      <select id="clientePozo"></select>
-    </div>
-
-    <div class="fila">
-      <label for="nombrePozo">Nombre del Pozo</label>
-      <input type="text" id="nombrePozo" placeholder="Ingrese nombre del pozo">
+      <label for="idCliente">ID Cliente</label>
+      <input type="text" id="idCliente" placeholder="Ej: 1">
     </div>
 
     <div class="fila">
-      <label for="ubicacionPozo">Ubicación</label>
-      <input type="text" id="ubicacionPozo" placeholder="Ingrese ubicación">
+      <label for="diametroPerforacion">Diametro Perforacion</label>
+      <input type="text" id="diametroPerforacion" placeholder="Ej: 6 pulgadas">
     </div>
 
-    <div class="fila">
-      <label for="descripcionPozo">Descripción</label>
-      <textarea id="descripcionPozo" placeholder="Ingrese descripción"></textarea>
-    </div>
+    <button onclick="guardarPozo()">Guardar Pozo</button>
 
-    <div class="acciones">
-      <button class="btn-guardar" onclick="guardarPozo()">Guardar Pozo</button>
-      <button class="btn-limpiar" onclick="limpiarFormularioPozo()">Limpiar</button>
-    </div>
-
-    <div id="mensajeGuardarPozo" class="mensaje">Listo para registrar pozos.</div>
-  </div>
-
-  <div class="bloque">
-    <h2>2. Consultar Pozos por Cliente</h2>
-
-    <div class="fila">
-      <label for="clienteBuscarPozo">Cliente</label>
-      <select id="clienteBuscarPozo"></select>
-    </div>
-
-    <div class="acciones">
-      <button class="btn-buscar" onclick="listarPozos()">Buscar Pozos</button>
-    </div>
-
-    <div id="mensajeListarPozo" class="mensaje">Sin búsquedas todavía.</div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>ID_Pozo</th>
-          <th>ID_Cliente</th>
-          <th>Nombre_Pozo</th>
-          <th>Ubicacion</th>
-          <th>Descripcion</th>
-        </tr>
-      </thead>
-      <tbody id="tablaPozosBody"></tbody>
-    </table>
+    <div id="mensaje" class="mensaje">Listo para probar.</div>
   </div>
 
   <script>
-    const URL_LISTAR_CLIENTES = "https://pablonahuel.app.n8n.cloud/webhook/listar-clientes";
-    const URL_GUARDAR_POZO = "https://pablonahuel.app.n8n.cloud/webhook/guardar-pozo";
-    const URL_LISTAR_POZOS = "https://pablonahuel.app.n8n.cloud/webhook/listar-pozos";
-
-    function setMensajeGuardar(texto) {
-      document.getElementById("mensajeGuardarPozo").innerText = texto;
-    }
-
-    function setMensajeListar(texto) {
-      document.getElementById("mensajeListarPozo").innerText = texto;
-    }
-
-    function limpiarFormularioPozo() {
-      document.getElementById("nombrePozo").value = "";
-      document.getElementById("ubicacionPozo").value = "";
-      document.getElementById("descripcionPozo").value = "";
-      setMensajeGuardar("Formulario de pozo limpio.");
-    }
-
-    function normalizarArray(data) {
-      if (Array.isArray(data)) return data;
-      if (data && typeof data === "object") return [data];
-      return [];
-    }
-
-    async function obtenerClientes() {
-      const res = await fetch(URL_LISTAR_CLIENTES, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: ""
-      });
-
-      if (!res.ok) throw new Error("No se pudieron obtener clientes");
-      const data = await res.json();
-      return normalizarArray(data);
-    }
-
-    async function cargarClientesEnCombos() {
-      try {
-        const clientes = await obtenerClientes();
-
-        const combo1 = document.getElementById("clientePozo");
-        const combo2 = document.getElementById("clienteBuscarPozo");
-
-        combo1.innerHTML = "";
-        combo2.innerHTML = "";
-
-        clientes.forEach(cliente => {
-          const texto = `${cliente.ID_Cliente} - ${cliente.Razon_Social}`;
-
-          const op1 = document.createElement("option");
-          op1.value = cliente.ID_Cliente;
-          op1.textContent = texto;
-          combo1.appendChild(op1);
-
-          const op2 = document.createElement("option");
-          op2.value = cliente.ID_Cliente;
-          op2.textContent = texto;
-          combo2.appendChild(op2);
-        });
-
-      } catch (error) {
-        console.error(error);
-        setMensajeGuardar("Error al cargar clientes.");
-        setMensajeListar("Error al cargar clientes.");
-      }
-    }
-
     async function guardarPozo() {
-      const idCliente = document.getElementById("clientePozo").value;
-      const nombrePozo = document.getElementById("nombrePozo").value.trim();
-      const ubicacion = document.getElementById("ubicacionPozo").value.trim();
-      const descripcion = document.getElementById("descripcionPozo").value.trim();
+      const idCliente = document.getElementById("idCliente").value.trim();
+      const diametro = document.getElementById("diametroPerforacion").value.trim();
 
       if (!idCliente) {
-        setMensajeGuardar("Debe seleccionar un cliente.");
+        document.getElementById("mensaje").innerText = "Debe ingresar ID_Cliente.";
         return;
       }
 
-      if (!nombrePozo) {
-        setMensajeGuardar("Debe ingresar el nombre del pozo.");
+      if (!diametro) {
+        document.getElementById("mensaje").innerText = "Debe ingresar Diametro_Perforacion.";
         return;
       }
 
       try {
         const params = new URLSearchParams();
         params.append("ID_Cliente", idCliente);
-        params.append("Nombre_Pozo", nombrePozo);
-        params.append("Ubicacion", ubicacion);
-        params.append("Descripcion", descripcion);
+        params.append("Diametro_Perforacion", diametro);
 
-        const res = await fetch(URL_GUARDAR_POZO, {
+        const res = await fetch("https://pablonahuel.app.n8n.cloud/webhook/guardar-pozo", {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded"
           },
           body: params.toString()
         });
-
-        if (!res.ok) throw new Error("No se pudo guardar el pozo");
 
         const data = await res.json();
 
         if (data.accion === "guardado") {
-          setMensajeGuardar(`✅ Pozo guardado: ${data.Nombre_Pozo} (ID_Pozo: ${data.ID_Pozo})`);
-          limpiarFormularioPozo();
-          await listarPozos();
+          document.getElementById("mensaje").innerText =
+            `✅ ${data.mensaje} | ID_Pozo: ${data.ID_Pozo} | ID_Cliente: ${data.ID_Cliente}`;
         } else if (data.accion === "existe") {
-          setMensajeGuardar(`⚠️ El pozo ya existe para ese cliente: ${data.Nombre_Pozo}`);
+          document.getElementById("mensaje").innerText =
+            `⚠️ ${data.mensaje}`;
         } else {
-          setMensajeGuardar("❌ Respuesta no esperada.");
+          document.getElementById("mensaje").innerText = "❌ Respuesta no esperada.";
         }
 
       } catch (error) {
         console.error(error);
-        setMensajeGuardar("❌ Error al guardar pozo.");
+        document.getElementById("mensaje").innerText = "❌ Error al guardar pozo.";
       }
     }
-
-    async function listarPozos() {
-      const idCliente = document.getElementById("clienteBuscarPozo").value;
-
-      if (!idCliente) {
-        setMensajeListar("Debe seleccionar un cliente.");
-        return;
-      }
-
-      try {
-        const params = new URLSearchParams();
-        params.append("ID_Cliente", idCliente);
-
-        const res = await fetch(URL_LISTAR_POZOS, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: params.toString()
-        });
-
-        if (!res.ok) throw new Error("No se pudieron listar los pozos");
-
-        const data = await res.json();
-        const pozos = normalizarArray(data);
-
-        const body = document.getElementById("tablaPozosBody");
-        body.innerHTML = "";
-
-        if (pozos.length === 0) {
-          setMensajeListar("No se encontraron pozos para ese cliente.");
-          return;
-        }
-
-        pozos.forEach(pozo => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${pozo.ID_Pozo || ""}</td>
-            <td>${pozo.ID_Cliente || ""}</td>
-            <td>${pozo.Nombre_Pozo || ""}</td>
-            <td>${pozo.Ubicacion || ""}</td>
-            <td>${pozo.Descripcion || ""}</td>
-          `;
-          body.appendChild(tr);
-        });
-
-        setMensajeListar(`Se encontraron ${pozos.length} pozo(s).`);
-
-      } catch (error) {
-        console.error(error);
-        setMensajeListar("❌ Error al listar pozos.");
-      }
-    }
-
-    window.addEventListener("load", async () => {
-      await cargarClientesEnCombos();
-      await listarPozos();
-    });
   </script>
 
 </body>
