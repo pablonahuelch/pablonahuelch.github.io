@@ -2,46 +2,318 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro de Clientes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f5f7fb;
+      color: #222;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .contenedor {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .bloque {
+      background: #fff;
+      border: 1px solid #d9e2f1;
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .bloque h2 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #1d4f91;
+    }
+
+    .fila {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+
+    .fila input,
+    .fila textarea,
+    .fila select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #bfcde0;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .fila textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .acciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn-verificar { background: #0d6efd; color: white; }
+    .btn-guardar   { background: #198754; color: white; }
+    .btn-actualizar{ background: #fd7e14; color: white; }
+    .btn-limpiar   { background: #6c757d; color: white; }
+    .btn-buscar    { background: #1d4f91; color: white; }
+    .btn-seleccionar { background: #20c997; color: white; }
+
+    .mensaje {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      background: #eef4ff;
+      border: 1px solid #cfe0ff;
+      white-space: pre-wrap;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: white;
+    }
+
+    th, td {
+      border: 1px solid #d9e2f1;
+      padding: 8px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: #eaf2ff;
+    }
+
+    .oculto {
+      display: none;
+    }
+  </style>
 </head>
 <body>
 
-  <h2>Agregar Cliente</h2>
+  <h1>Registro de Clientes</h1>
 
-  <input type="text" id="cliente" placeholder="Nombre del cliente">
-  <button onclick="guardarCliente()">Guardar</button>
+  <div class="contenedor">
 
-  <pre id="resultado"></pre>
+    <!-- BLOQUE 1 -->
+    <div class="bloque">
+      <h2>Bloque 1: Agregar / Editar Cliente</h2>
+
+      <div class="fila">
+        <label for="idCliente">ID Cliente</label>
+        <input type="text" id="idCliente" readonly>
+      </div>
+
+      <div class="fila">
+        <label for="razonSocial">Razón Social</label>
+        <input type="text" id="razonSocial" placeholder="Ingrese la razón social">
+      </div>
+
+      <div class="fila">
+        <label for="telefono">Teléfono</label>
+        <input type="text" id="telefono" placeholder="Ingrese teléfono">
+      </div>
+
+      <div class="fila">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" placeholder="Ingrese descripción"></textarea>
+      </div>
+
+      <div class="acciones">
+        <button class="btn-verificar" onclick="verificarCliente()">Verificar</button>
+        <button class="btn-guardar" onclick="guardarCliente()">Guardar nuevo</button>
+        <button class="btn-actualizar" onclick="actualizarCliente()">Actualizar</button>
+        <button class="btn-limpiar" onclick="limpiarFormulario()">Limpiar</button>
+      </div>
+
+      <div id="mensajeBloque1" class="mensaje">Sin acciones todavía.</div>
+    </div>
+
+    <!-- BLOQUE 2 -->
+    <div class="bloque">
+      <h2>Bloque 2: Consultar / Filtrar Clientes</h2>
+
+      <div class="fila">
+        <label for="buscarId">Buscar por ID</label>
+        <input type="text" id="buscarId" placeholder="Ingrese ID">
+      </div>
+
+      <div class="fila">
+        <label for="buscarNombre">Buscar por Nombre</label>
+        <input type="text" id="buscarNombre" placeholder="Ingrese nombre o parte del nombre">
+      </div>
+
+      <div class="acciones">
+        <button class="btn-buscar" onclick="buscarClientes()">Buscar</button>
+        <button class="btn-limpiar" onclick="limpiarBusqueda()">Limpiar búsqueda</button>
+      </div>
+
+      <div id="mensajeBloque2" class="mensaje">Sin búsquedas todavía.</div>
+
+      <table id="tablaClientes" class="oculto">
+        <thead>
+          <tr>
+            <th>ID_Cliente</th>
+            <th>Razon_Social</th>
+            <th>Telefono</th>
+            <th>Descripcion</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tablaClientesBody"></tbody>
+      </table>
+    </div>
+
+  </div>
 
   <script>
+    function setMensajeBloque1(texto) {
+      document.getElementById("mensajeBloque1").innerText = texto;
+    }
+
+    function setMensajeBloque2(texto) {
+      document.getElementById("mensajeBloque2").innerText = texto;
+    }
+
+    function limpiarFormulario() {
+      document.getElementById("idCliente").value = "";
+      document.getElementById("razonSocial").value = "";
+      document.getElementById("telefono").value = "";
+      document.getElementById("descripcion").value = "";
+      setMensajeBloque1("Formulario limpio.");
+    }
+
+    function limpiarBusqueda() {
+      document.getElementById("buscarId").value = "";
+      document.getElementById("buscarNombre").value = "";
+      document.getElementById("tablaClientesBody").innerHTML = "";
+      document.getElementById("tablaClientes").classList.add("oculto");
+      setMensajeBloque2("Búsqueda limpia.");
+    }
+
+    function cargarClienteEnFormulario(cliente) {
+      document.getElementById("idCliente").value = cliente.ID_Cliente || "";
+      document.getElementById("razonSocial").value = cliente.Razon_Social || "";
+      document.getElementById("telefono").value = cliente.Telefono || "";
+      document.getElementById("descripcion").value = cliente.Descripcion || "";
+      setMensajeBloque1("Cliente cargado en el bloque de edición.");
+    }
+
+    async function verificarCliente() {
+      const razonSocial = document.getElementById("razonSocial").value.trim();
+
+      if (!razonSocial) {
+        setMensajeBloque1("Debe ingresar una Razón Social para verificar.");
+        return;
+      }
+
+      setMensajeBloque1("Verificación pendiente de conexión con n8n.");
+    }
+
     async function guardarCliente() {
+      const razonSocial = document.getElementById("razonSocial").value.trim();
+      const telefono = document.getElementById("telefono").value.trim();
+      const descripcion = document.getElementById("descripcion").value.trim();
 
-      const nombre = document.getElementById("cliente").value;
+      if (!razonSocial) {
+        setMensajeBloque1("Debe ingresar la Razón Social.");
+        return;
+      }
 
-      const res = await fetch("https://pablonahuel.app.n8n.cloud/webhook/guardar-cliente", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          Razon_Social: nombre
-        })
+      setMensajeBloque1("Guardado pendiente de conexión con n8n.");
+    }
+
+    async function actualizarCliente() {
+      const idCliente = document.getElementById("idCliente").value.trim();
+
+      if (!idCliente) {
+        setMensajeBloque1("Debe cargar primero un cliente para actualizar.");
+        return;
+      }
+
+      setMensajeBloque1("Actualización pendiente de conexión con n8n.");
+    }
+
+    async function buscarClientes() {
+      const buscarId = document.getElementById("buscarId").value.trim();
+      const buscarNombre = document.getElementById("buscarNombre").value.trim();
+
+      if (!buscarId && !buscarNombre) {
+        setMensajeBloque2("Ingrese un ID o un nombre para buscar.");
+        return;
+      }
+
+      setMensajeBloque2("Búsqueda pendiente de conexión con n8n.");
+
+      // Ejemplo visual para probar el bloque 2 sin backend todavía
+      const resultados = [
+        {
+          ID_Cliente: "1",
+          Razon_Social: "Bodega",
+          Telefono: "3838",
+          Descripcion: "pozo prueba"
+        }
+      ];
+
+      renderTablaClientes(resultados);
+    }
+
+    function renderTablaClientes(clientes) {
+      const tabla = document.getElementById("tablaClientes");
+      const body = document.getElementById("tablaClientesBody");
+      body.innerHTML = "";
+
+      if (!clientes || clientes.length === 0) {
+        tabla.classList.add("oculto");
+        setMensajeBloque2("No se encontraron resultados.");
+        return;
+      }
+
+      clientes.forEach(cliente => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${cliente.ID_Cliente || ""}</td>
+          <td>${cliente.Razon_Social || ""}</td>
+          <td>${cliente.Telefono || ""}</td>
+          <td>${cliente.Descripcion || ""}</td>
+          <td><button class="btn-seleccionar" onclick='seleccionarCliente(${JSON.stringify(cliente)})'>Seleccionar</button></td>
+        `;
+
+        body.appendChild(tr);
       });
 
-const data = await res.json();
+      tabla.classList.remove("oculto");
+      setMensajeBloque2(`Se encontraron ${clientes.length} resultado(s).`);
+    }
 
-if (data.accion === "guardado") {
-  document.getElementById("resultado").innerText =
-    "✅ Cliente guardado: " + data.Razon_Social + " (ID: " + data.ID_Cliente + ")";
-}
-else if (data.accion === "existe") {
-  document.getElementById("resultado").innerText =
-    "⚠️ El cliente ya existe: " + data.Razon_Social + " (ID: " + data.ID_Cliente + ")";
-}
-else if (data.accion === "error") {
-  document.getElementById("resultado").innerText =
-    "❌ Error: " + data.mensaje;
-}
+    function seleccionarCliente(cliente) {
+      cargarClienteEnFormulario(cliente);
     }
   </script>
 
