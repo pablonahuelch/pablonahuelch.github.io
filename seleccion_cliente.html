@@ -5,61 +5,108 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Selección de Cliente</title>
   <style>
-    * { box-sizing: border-box; font-family: Arial, sans-serif; }
-    body { margin: 0; padding: 14px; background: #fff; }
-    h3 { margin-top: 0; }
-    .grupo { margin-bottom: 12px; }
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 14px;
+      background: #fff;
+    }
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 14px;
+      font-size: 18px;
+    }
+
+    .grupo {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
     input {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #bbb;
+      padding: 10px 12px;
+      border: 1px solid #c8c8c8;
       border-radius: 6px;
+      font-size: 15px;
     }
+
     button {
       border: none;
       border-radius: 6px;
-      padding: 10px 12px;
+      padding: 10px 14px;
       cursor: pointer;
       font-weight: bold;
+      font-size: 15px;
     }
-    .btn {
-      background: #0d6efd;
+
+    .btn-principal {
+      background: #1677ff;
       color: white;
     }
-    .lista {
-      border: 1px solid #d8d8d8;
-      border-radius: 8px;
-      max-height: 240px;
-      overflow: auto;
-      background: #fafafa;
-    }
-    .item {
-      padding: 10px 12px;
-      border-bottom: 1px solid #ececec;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-    .item:last-child {
-      border-bottom: none;
-    }
-    .nombre {
-      font-weight: bold;
-    }
-    .sub {
-      font-size: 12px;
-      color: #555;
-      margin-top: 2px;
-    }
-    .btn-sel {
+
+    .btn-seleccionar {
       background: #198754;
       color: white;
       white-space: nowrap;
     }
-    .msg {
-      padding: 10px;
+
+    .lista {
+      margin-top: 14px;
+      border: 1px solid #d9d9d9;
+      border-radius: 8px;
+      background: #fafafa;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-bottom: 1px solid #ececec;
+    }
+
+    .item:last-child {
+      border-bottom: none;
+    }
+
+    .cliente-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .cliente-nombre {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .cliente-extra {
+      font-size: 13px;
       color: #666;
+      word-break: break-word;
+    }
+
+    .mensaje {
+      padding: 14px;
+      color: #555;
+    }
+
+    .error {
+      color: #b00020;
     }
   </style>
 </head>
@@ -71,96 +118,129 @@
   </div>
 
   <div class="grupo">
-    <button class="btn" onclick="cargarClientes()">Actualizar listado</button>
+    <button class="btn-principal" onclick="cargarClientes()">Actualizar listado</button>
   </div>
 
   <div id="listaClientes" class="lista">
-    <div class="msg">Cargando clientes...</div>
+    <div class="mensaje">Cargando clientes...</div>
   </div>
 
-<script>
-  const URL_LISTAR_CLIENTES = "https://pablonahuel.app.n8n.cloud/webhook-test/listar-clientes";
+  <script>
+    // CAMBIÁ ESTA URL POR LA TUYA
+    // Si estás probando con "Listen for test event", usá webhook-test
+    // Si el flujo está activo, usá webhook
+    const URL_LISTAR_CLIENTES = "https://pablonahuel.app.n8n.cloud/webhook/listar-clientes";
 
-  let clientes = [];
+    let clientes = [];
 
-  async function cargarClientes() {
-    const lista = document.getElementById("listaClientes");
-    lista.innerHTML = `<div class="msg">Cargando clientes...</div>`;
+    async function cargarClientes() {
+      const lista = document.getElementById("listaClientes");
+      lista.innerHTML = `<div class="mensaje">Cargando clientes...</div>`;
 
-    try {
-      const res = await fetch(URL_LISTAR_CLIENTES, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({})
+      try {
+        const res = await fetch(URL_LISTAR_CLIENTES, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({})
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        // n8n puede devolver array directo o dentro de alguna propiedad
+        clientes = Array.isArray(data) ? data : (data.items || data.data || []);
+
+        renderClientes();
+      } catch (error) {
+        console.error("Error al cargar clientes:", error);
+        lista.innerHTML = `<div class="mensaje error">Error al cargar clientes.</div>`;
+      }
+    }
+
+    function renderClientes() {
+      const lista = document.getElementById("listaClientes");
+      const texto = document.getElementById("txtBuscar").value.trim().toLowerCase();
+
+      const filtrados = clientes.filter(c => {
+        const razon = String(c.Razon_Social || "").toLowerCase();
+        return razon.includes(texto);
       });
 
-      const data = await res.json();
+      if (!filtrados.length) {
+        lista.innerHTML = `<div class="mensaje">No se encontraron clientes.</div>`;
+        return;
+      }
 
-      clientes = Array.isArray(data) ? data : (data.items || []);
-      renderClientes();
-    } catch (error) {
-      lista.innerHTML = `<div class="msg">Error al cargar clientes.</div>`;
-      console.error(error);
+      lista.innerHTML = filtrados.map(c => {
+        const idCliente = String(c.ID_Cliente ?? "");
+        const razonSocial = String(c.Razon_Social ?? "Sin nombre");
+        const telefono = String(c.Telefono ?? "");
+        const descripcion = String(c.Descripcion ?? "");
+
+        return `
+          <div class="item">
+            <div class="cliente-info">
+              <div class="cliente-nombre">${escapeHtml(razonSocial)}</div>
+              <div class="cliente-extra">
+                ${telefono ? `Teléfono: ${escapeHtml(telefono)}` : ""}
+                ${telefono && descripcion ? " | " : ""}
+                ${descripcion ? `Descripción: ${escapeHtml(descripcion)}` : ""}
+              </div>
+            </div>
+            <button 
+              class="btn-seleccionar"
+              onclick="seleccionarCliente('${escapeJs(idCliente)}', '${escapeJs(razonSocial)}')"
+            >
+              Seleccionar
+            </button>
+          </div>
+        `;
+      }).join("");
     }
-  }
 
-  function renderClientes() {
-    const texto = document.getElementById("txtBuscar").value.trim().toLowerCase();
-    const lista = document.getElementById("listaClientes");
-
-    const filtrados = clientes.filter(c =>
-      String(c.Razon_Social || "").toLowerCase().includes(texto)
-    );
-
-    if (!filtrados.length) {
-      lista.innerHTML = `<div class="msg">No se encontraron clientes.</div>`;
-      return;
+    function seleccionarCliente(idCliente, razonSocial) {
+      // Al padre le mandamos el ID para trabajar internamente,
+      // pero al usuario le mostramos Razón Social
+      window.parent.postMessage({
+        tipo: "cliente-seleccionado",
+        clienteId: idCliente,
+        clienteNombre: razonSocial
+      }, "*");
     }
 
-    lista.innerHTML = filtrados.map(c => `
-      <div class="item">
-        <div>
-          <div class="nombre">${escapeHtml(c.Razon_Social || "Sin nombre")}</div>
-          <div class="sub">CUIT: ${escapeHtml(c.CUIT || "-")}</div>
-        </div>
-        <button class="btn-sel" onclick="seleccionarCliente('${c.ID_Cliente}', '${encodeURIComponent(c.Razon_Social || "")}')">
-          Seleccionar
-        </button>
-      </div>
-    `).join("");
-  }
-
-  function seleccionarCliente(id, nombreCodificado) {
-    const nombre = decodeURIComponent(nombreCodificado);
-
-    window.parent.postMessage({
-      tipo: "cliente-seleccionado",
-      clienteId: id,
-      clienteNombre: nombre
-    }, "*");
-  }
-
-  function escapeHtml(texto) {
-    return String(texto)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#39;");
-  }
-
-  document.getElementById("txtBuscar").addEventListener("input", renderClientes);
-
-  window.addEventListener("message", (event) => {
-    const data = event.data || {};
-    if (data.tipo === "recargar-clientes") {
-      cargarClientes();
+    function escapeHtml(texto) {
+      return String(texto)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
     }
-  });
 
-  cargarClientes();
-</script>
+    function escapeJs(texto) {
+      return String(texto)
+        .replaceAll("\\", "\\\\")
+        .replaceAll("'", "\\'")
+        .replaceAll('"', '\\"')
+        .replaceAll("\n", " ")
+        .replaceAll("\r", " ");
+    }
+
+    document.getElementById("txtBuscar").addEventListener("input", renderClientes);
+
+    window.addEventListener("message", (event) => {
+      const data = event.data || {};
+      if (data.tipo === "recargar-clientes") {
+        cargarClientes();
+      }
+    });
+
+    cargarClientes();
+  </script>
 </body>
 </html>
