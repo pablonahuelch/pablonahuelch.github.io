@@ -123,22 +123,28 @@
         console.log("Respuesta status:", res.status);
         console.log("Respuesta body:", texto);
 
-if (!res.ok) {
-  msg.innerHTML = "❌ Error del servidor: " + texto;
-  return;
-}
+        if (!res.ok) {
+          msg.innerHTML = "❌ Error del servidor: " + texto;
+          return;
+        }
 
-try {
-  const json = JSON.parse(texto);
+        try {
+          const json = JSON.parse(texto);
 
-  if (json.ok) {
-    msg.innerHTML = "✅ " + json.mensaje;
-  } else {
-    msg.innerHTML = "⚠️ " + json.mensaje;
-  }
-} catch {
-  msg.innerHTML = "✅ Respuesta recibida correctamente.";
-}
+          if (json.ok) {
+            msg.innerHTML = "✅ " + json.mensaje;
+          } else {
+            msg.innerHTML = "⚠️ " + json.mensaje;
+          }
+        } catch (e) {
+          msg.innerHTML = "✅ Respuesta recibida correctamente.";
+        }
+
+      } catch (error) {
+        console.error(error);
+        msg.innerHTML = "❌ Error al conectar con el webhook.";
+      }
+    }
   </script>
 
 </body>
