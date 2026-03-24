@@ -246,22 +246,22 @@
       return [];
     }
 
-    async function obtenerClientesDesdeN8N() {
-      const res = await fetch(URL_LISTAR_CLIENTES, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({})
-      });
+async function obtenerClientesDesdeN8N() {
+  const res = await fetch(URL_LISTAR_CLIENTES, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: ""
+  });
 
-      if (!res.ok) {
-        throw new Error("No se pudo consultar la lista de clientes.");
-      }
+  if (!res.ok) {
+    throw new Error("No se pudo consultar la lista de clientes.");
+  }
 
-      const data = await res.json();
-      return normalizarClientes(data);
-    }
+  const data = await res.json();
+  return normalizarClientes(data);
+}
 
     async function cargarListaClientes() {
       try {
@@ -320,17 +320,18 @@
       }
 
       try {
-        const res = await fetch(URL_GUARDAR_CLIENTE, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            Razon_Social: razonSocial,
-            Telefono: telefono,
-            Descripcion: descripcion
-          })
-        });
+const params = new URLSearchParams();
+params.append("Razon_Social", razonSocial);
+params.append("Telefono", telefono);
+params.append("Descripcion", descripcion);
+
+const res = await fetch(URL_GUARDAR_CLIENTE, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  body: params.toString()
+});
 
         if (!res.ok) {
           throw new Error("No se pudo guardar el cliente.");
