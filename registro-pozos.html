@@ -28,9 +28,20 @@
         })
       });
 
-      const texto = await res.text();
+const data = await res.json();
 
-      document.getElementById("resultado").innerText = texto;
+if (data.accion === "guardado") {
+  document.getElementById("resultado").innerText =
+    "✅ Cliente guardado: " + data.Razon_Social + " (ID: " + data.ID_Cliente + ")";
+}
+else if (data.accion === "existe") {
+  document.getElementById("resultado").innerText =
+    "⚠️ El cliente ya existe: " + data.Razon_Social + " (ID: " + data.ID_Cliente + ")";
+}
+else if (data.accion === "error") {
+  document.getElementById("resultado").innerText =
+    "❌ Error: " + data.mensaje;
+}
     }
   </script>
 
