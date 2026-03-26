@@ -504,10 +504,12 @@
         <label for="filtroPozo">Filtrar por descripción</label>
         <input type="text" id="filtroPozo" placeholder="Buscar pozo..." />
 
-        <div class="acciones">
-          <button class="btn-pri" onclick="cargarPozos()">Actualizar pozos</button>
-          <button class="btn-alt" onclick="mostrarCrearPozo()">Crear pozo</button>
-        </div>
+<div class="acciones">
+  <button class="btn-pri" onclick="abrirMapsPozoSeleccionado()">Abrir ubicación en Google Maps</button>
+  <button class="btn-sec" onclick="cargarHistoricoPozo()">Actualizar histórico</button>
+  <button class="btn-ok" onclick="mostrarCrearHistorico()">Crear histórico</button>
+  <button class="btn-alt" onclick="generarPDF()">Generar PDF</button>
+</div>
 
         <div id="listaPozos" class="lista">
           <div class="item">Sin datos</div>
@@ -627,35 +629,23 @@
               </div>
             </div>
 
-            <div class="visual-card">
-              <h4>Vista rápida</h4>
-
-              <div class="simuladores">
-                <div class="sim-box">
-                  <div class="sim-titulo">Diámetro de perforación / cañería</div>
-                  <div class="diametros-wrap" id="simDiametros"></div>
-                </div>
-
-                <div class="sim-box">
-                  <div class="sim-titulo">Niveles del pozo</div>
-                  <div class="pozo-nivel" id="simNiveles"></div>
-                </div>
-
-                <div class="sim-box caudal-box">
-                  <div class="sim-titulo">Caudal estimado</div>
-                  <div class="caudal-medidor">
-                    <div class="caudal-barra" id="simCaudalBarra"></div>
-                  </div>
-                  <div class="caudal-info">
-                    <div><strong id="simCaudalValor">-</strong> m³/h</div>
-                    <div class="subtle" id="simCaudalTexto">Sin dato cargado</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div id="detalleInfoPozo" class="coord-box oculto"></div>
+          <div id="panelCrearHistorico" class="card oculto">
+  <h4>Nuevo registro histórico</h4>
+
+  <label>Fecha y hora</label>
+  <input type="datetime-local" id="histFecha" />
+
+  <label>Observaciones</label>
+  <textarea id="histObservaciones" placeholder="Detalle del evento..."></textarea>
+
+  <div class="acciones">
+    <button class="btn-ok" onclick="guardarHistorico()">Guardar</button>
+    <button class="btn-sec" onclick="cerrarCrearHistorico()">Cancelar</button>
+  </div>
+
+  <div id="estadoHistorico" class="mensaje"></div>
+</div>  
 
           <div class="historial-card">
             <div class="historial-header">
@@ -678,6 +668,7 @@
     const URL_LISTAR_POZOS = "https://pablonahuel.app.n8n.cloud/webhook/listar-pozos";
     const URL_GUARDAR_POZO = "https://pablonahuel.app.n8n.cloud/webhook/guardar-pozo";
     const URL_LISTAR_HISTORICO_POZO = "https://pablonahuel.app.n8n.cloud/webhook/listar-historico";
+    const URL_GUARDAR_HISTORICO = "https://pablonahuel.app.n8n.cloud/webhook/guardar-historico";
 
     let clienteActual = { id: "", nombre: "" };
     let pozoActual = { id: "", descripcion: "", coordenadas: "" };
@@ -1364,6 +1355,136 @@
 
     mostrarBienvenida();
     actualizarEncabezado();
+
+function mostrarCrearHistorico() {
+  if (!pozoActual.id) {
+    alert("Seleccioná un pozo primero");
+    return;
+  }
+
+  $("panelCrearHistorico").classList.remove("oculto");
+
+  const ahora = new Date();
+  const iso = ahora.toISOString().slice(0,16);
+  $("histFecha").value = iso;
+}
+
+function cerrarCrearHistorico() {
+  $("panelCrearHistorico").classList.add("oculto");
+}
+
+async function guardarHistorico() {
+  const estado = $("estadoHistorico");
+
+  const payload = {
+    ID_Pozo: pozoActual.id,
+    Fecha_Hora: $("histFecha").value,
+    Observaciones: $("histObservaciones").value.trim()
+  };
+
+  if (!payload.Observaciones) {
+    estado.className = "mensaje error";
+    estado.textContent = "La observación es obligatoria";
+    return;
+  }
+
+  try {
+    estado.textContent = "Guardando...";
+
+    const res = await fetch(URL_GUARDAR_HISTORICO, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) throw new Error();
+
+    estado.className = "mensaje ok";
+    estado.textContent = "Guardado correctamente";
+
+    cerrarCrearHistorico();
+    cargarHistoricoPozo();
+
+  } catch (e) {
+    estado.className = "mensaje error";
+    estado.textContent = "Error al guardar";
+  }
+}    
   </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+async function generarPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  let y = 10;
+
+  // LOGO
+  const img = new Image();
+  img.src = "logo.png";
+
+  await new Promise(resolve => {
+    img.onload = resolve;
+  });
+
+  doc.addImage(img, "PNG", 10, y, 50, 30);
+  y += 35;
+
+  // FECHA
+  const fecha = new Date().toLocaleDateString();
+  doc.setFontSize(10);
+  doc.text(`Fecha: ${fecha}`, 150, 15);
+
+  // CLIENTE
+  doc.setFontSize(14);
+  doc.text("Cliente", 10, y);
+  y += 6;
+
+  doc.setFontSize(11);
+  doc.text(clienteActual.nombre || "-", 10, y);
+  y += 10;
+
+  // POZO
+  doc.setFontSize(14);
+  doc.text("Datos del pozo", 10, y);
+  y += 6;
+
+  doc.setFontSize(10);
+
+  doc.text(`Descripción: ${pozoActual.descripcion}`, 10, y); y += 6;
+  doc.text(`Coordenadas: ${pozoActual.coordenadas}`, 10, y); y += 6;
+
+  y += 5;
+
+  // HISTÓRICO
+  doc.setFontSize(14);
+  doc.text("Histórico", 10, y);
+  y += 6;
+
+  const items = document.querySelectorAll(".hist-item");
+
+  doc.setFontSize(10);
+
+  items.forEach(item => {
+    const fecha = item.querySelector(".hist-fecha")?.innerText || "";
+    const detalle = item.querySelector(".hist-det")?.innerText || "";
+
+    doc.text(fecha, 10, y);
+    y += 5;
+
+    const lines = doc.splitTextToSize(detalle, 180);
+    doc.text(lines, 10, y);
+    y += lines.length * 5 + 3;
+
+    if (y > 270) {
+      doc.addPage();
+      y = 10;
+    }
+  });
+
+  doc.save("informe_pozo.pdf");
+}  
+</script>    
 </body>
 </html>
