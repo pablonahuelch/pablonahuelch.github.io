@@ -148,17 +148,9 @@
       font-size: 14px;
     }
 
-    .error {
-      color: #b00020;
-    }
-
-    .ok {
-      color: #198754;
-    }
-
-    .oculto {
-      display: none;
-    }
+    .error { color: #b00020; }
+    .ok { color: #198754; }
+    .oculto { display: none; }
 
     #mapaPozo {
       width: 100%;
@@ -178,28 +170,14 @@
       font-size: 14px;
     }
 
-    .separador {
-      border: none;
-      border-top: 1px solid #e6e6e6;
-      margin: 18px 0;
-    }
-
     .detalle-wrap {
       display: grid;
       gap: 14px;
     }
 
-    .detalle-top {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 14px;
-      align-items: stretch;
-      margin-bottom: 14px;
-    }
-
-    .visual-card,
     .datos-card,
-    .historial-card {
+    .historial-card,
+    .form-card {
       background: #fbfcff;
       border: 1px solid #dfe7f5;
       border-radius: 12px;
@@ -237,6 +215,7 @@
       font-weight: bold;
       line-height: 1.1;
       color: #10223d;
+      word-break: break-word;
     }
 
     .dato-chip .u {
@@ -280,137 +259,6 @@
       font-size: 14px;
       line-height: 1.45;
       color: #334;
-    }
-
-    .simuladores {
-      display: grid;
-      gap: 12px;
-    }
-
-    .sim-box {
-      background: #fff;
-      border: 1px solid #e1e6ef;
-      border-radius: 12px;
-      padding: 12px;
-    }
-
-    .sim-titulo {
-      font-size: 13px;
-      font-weight: bold;
-      color: #56657a;
-      margin-bottom: 8px;
-    }
-
-    .diametros-wrap {
-      display: flex;
-      align-items: end;
-      gap: 20px;
-      min-height: 150px;
-      justify-content: center;
-      padding: 10px 0;
-    }
-
-    .cilindro {
-      background: linear-gradient(180deg, #78b0ff 0%, #2a7cf7 100%);
-      border: 2px solid #1f64ca;
-      border-radius: 999px;
-      min-width: 30px;
-      display: flex;
-      align-items: end;
-      justify-content: center;
-      color: #fff;
-      font-size: 11px;
-      font-weight: bold;
-      padding-bottom: 8px;
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.15);
-    }
-
-    .cilindro-sec {
-      background: linear-gradient(180deg, #8fd0ff 0%, #4fa1f1 100%);
-      border-color: #397dbe;
-    }
-
-    .cilindro-col {
-      text-align: center;
-      flex: 1;
-    }
-
-    .cilindro-label {
-      margin-top: 8px;
-      font-size: 12px;
-      color: #526171;
-      line-height: 1.35;
-    }
-
-    .pozo-nivel {
-      position: relative;
-      height: 220px;
-      border: 2px solid #b8c8de;
-      border-radius: 18px 18px 30px 30px;
-      background: linear-gradient(180deg, #edf4ff 0%, #dceaff 100%);
-      overflow: hidden;
-      margin-top: 4px;
-    }
-
-    .pozo-nivel .agua-estatica,
-    .pozo-nivel .agua-dinamica {
-      position: absolute;
-      left: 0;
-      width: 100%;
-      border-top: 2px dashed;
-    }
-
-    .pozo-nivel .agua-estatica {
-      border-color: #0d6efd;
-      background: rgba(13,110,253,0.10);
-    }
-
-    .pozo-nivel .agua-dinamica {
-      border-color: #20a779;
-      background: rgba(32,167,121,0.10);
-    }
-
-    .pozo-nivel .etiqueta-nivel {
-      position: absolute;
-      right: 8px;
-      transform: translateY(-50%);
-      background: rgba(255,255,255,0.85);
-      border: 1px solid #dce4ef;
-      border-radius: 20px;
-      padding: 2px 8px;
-      font-size: 11px;
-      color: #334a66;
-      white-space: nowrap;
-    }
-
-    .caudal-box {
-      padding-top: 4px;
-    }
-
-    .caudal-medidor {
-      height: 18px;
-      border-radius: 999px;
-      background: #e8edf5;
-      overflow: hidden;
-      border: 1px solid #d6dde8;
-      margin-bottom: 10px;
-    }
-
-    .caudal-barra {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #6fc3ff 0%, #1b84ff 60%, #0f62c7 100%);
-      width: 0%;
-      transition: width .3s ease;
-    }
-
-    .caudal-info {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 13px;
-      color: #546274;
-      flex-wrap: wrap;
     }
 
     .subtle {
@@ -463,22 +311,12 @@
       white-space: pre-wrap;
     }
 
-    @media (max-width: 1150px) {
-      .detalle-top {
-        grid-template-columns: 1fr;
-      }
-
-      .otros-datos {
-        grid-template-columns: 1fr;
-      }
-    }
-
     @media (max-width: 1000px) {
       .grid {
         grid-template-columns: 1fr;
       }
 
-      .fila-2, .fila-3, .mini-grid {
+      .fila-2, .fila-3, .mini-grid, .otros-datos {
         grid-template-columns: 1fr;
       }
     }
@@ -601,51 +439,49 @@
         <label>Pozo</label>
         <input type="text" id="detallePozo" readonly />
 
-<div class="acciones">
-  <button class="btn-pri" onclick="abrirMapsPozoSeleccionado()">Abrir ubicación en Google Maps</button>
-  <button class="btn-sec" onclick="cargarHistoricoPozo()">Actualizar histórico</button>
-  <button class="btn-ok" onclick="mostrarCrearHistorico()">Crear histórico</button>
-  <button class="btn-alt" onclick="generarPDF()">Generar PDF</button>
-</div>
+        <div class="acciones">
+          <button class="btn-pri" onclick="abrirMapsPozoSeleccionado()">Abrir ubicación en Google Maps</button>
+          <button class="btn-sec" onclick="cargarHistoricoPozo()">Actualizar histórico</button>
+          <button class="btn-ok" onclick="mostrarCrearHistorico()">Crear histórico</button>
+          <button class="btn-alt" onclick="generarPDF()">Generar PDF</button>
+        </div>
 
         <div class="detalle-wrap">
-          <div class="detalle-top">
-            <div class="datos-card">
-              <h4>Resumen técnico</h4>
+          <div class="datos-card">
+            <h4>Resumen técnico</h4>
 
-              <div class="mini-grid" id="detalleMiniGrid">
-                <div class="dato-chip">
-                  <div class="k"><span class="iconito">🛢️</span> Diám. perforación</div>
-                  <div class="v">-</div>
-                  <div class="u">pulgadas</div>
-                </div>
-              </div>
-
-              <div class="otros-datos" id="detalleOtrosDatos"></div>
-
-              <div class="observacion-box">
-                <strong>Observaciones:</strong>
-                <div id="detalleObservaciones">Sin dato</div>
+            <div class="mini-grid" id="detalleMiniGrid">
+              <div class="dato-chip">
+                <div class="k"><span class="iconito">🛢️</span> Diám. perforación</div>
+                <div class="v">-</div>
+                <div class="u">pulgadas</div>
               </div>
             </div>
 
-          <div id="detalleInfoPozo" class="coord-box oculto"></div>
-          <div id="panelCrearHistorico" class="card oculto">
-  <h4>Nuevo registro histórico</h4>
+            <div class="otros-datos" id="detalleOtrosDatos"></div>
 
-  <label>Fecha y hora</label>
-  <input type="datetime-local" id="histFecha" />
+            <div class="observacion-box">
+              <strong>Observaciones:</strong>
+              <div id="detalleObservaciones">Sin dato</div>
+            </div>
+          </div>
 
-  <label>Observaciones</label>
-  <textarea id="histObservaciones" placeholder="Detalle del evento..."></textarea>
+          <div id="panelCrearHistorico" class="form-card oculto">
+            <h4>Nuevo registro histórico</h4>
 
-  <div class="acciones">
-    <button class="btn-ok" onclick="guardarHistorico()">Guardar</button>
-    <button class="btn-sec" onclick="cerrarCrearHistorico()">Cancelar</button>
-  </div>
+            <label for="histFecha">Fecha y hora</label>
+            <input type="datetime-local" id="histFecha" />
 
-  <div id="estadoHistorico" class="mensaje"></div>
-</div>  
+            <label for="histObservaciones">Observaciones</label>
+            <textarea id="histObservaciones" placeholder="Detalle del evento..."></textarea>
+
+            <div class="acciones">
+              <button class="btn-ok" onclick="guardarHistorico()">Guardar</button>
+              <button class="btn-sec" onclick="cerrarCrearHistorico()">Cancelar</button>
+            </div>
+
+            <div id="estadoHistorico" class="mensaje"></div>
+          </div>
 
           <div class="historial-card">
             <div class="historial-header">
@@ -661,8 +497,11 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
     const URL_LISTAR_POZOS = "https://pablonahuel.app.n8n.cloud/webhook/listar-pozos";
@@ -671,8 +510,15 @@
     const URL_GUARDAR_HISTORICO = "https://pablonahuel.app.n8n.cloud/webhook/guardar-historico";
 
     let clienteActual = { id: "", nombre: "" };
-    let pozoActual = { id: "", descripcion: "", coordenadas: "" };
+    let pozoActual = {
+      id: "",
+      descripcion: "",
+      coordenadas: "",
+      detalle: null
+    };
+
     let pozos = [];
+    let historicosActuales = [];
 
     let mapa = null;
     let capaSatelital = null;
@@ -739,12 +585,15 @@
     function mostrarDetallePozo(pozo) {
       cerrarPaneles();
       $("panelDetallePozo").classList.remove("oculto");
+      $("panelCrearHistorico").classList.add("oculto");
+      $("estadoHistorico").textContent = "";
+      $("histObservaciones").value = "";
 
       $("detalleCliente").value = clienteActual.nombre;
       $("detallePozo").value = pozo.Descripcion || "";
 
       const diamPerf = numeroONull(pozo.Diametro_Perforacion);
-      const diamCan = numeroONull(pozo.Diametro_Cañeria);
+      const diamCan = numeroONull(pozo["Diametro_Cañeria"]);
       const nivelEst = numeroONull(pozo.Nivel_Estatico);
       const nivelDin = numeroONull(pozo.Nivel_Dinamico);
       const caudal = numeroONull(pozo.Caudal);
@@ -764,24 +613,6 @@
       `;
 
       $("detalleObservaciones").textContent = valorTexto(pozo.Observaciones);
-
-      renderSimDiametros(diamPerf, diamCan);
-      renderSimNiveles(nivelEst, nivelDin);
-      renderSimCaudal(caudal);
-
-      const htmlOriginal = `
-        <div><strong>Diám. perforación:</strong> ${valorUnidad(diamPerf, "pulgadas")}</div>
-        <div><strong>Diám. cañería:</strong> ${valorUnidad(diamCan, "pulgadas")}</div>
-        <div><strong>Tipo tablero:</strong> ${escapeHtml(valorTexto(pozo.Tipo_Tablero))}</div>
-        <div><strong>Nivel estático:</strong> ${valorUnidad(nivelEst, "m")}</div>
-        <div><strong>Nivel dinámico:</strong> ${valorUnidad(nivelDin, "m")}</div>
-        <div><strong>Potencia / Marca:</strong> ${escapeHtml(valorTexto(pozo.Potencia_Marca))}</div>
-        <div><strong>Caudal:</strong> ${valorUnidad(caudal, "m³/h")}</div>
-        <div><strong>Coordenadas:</strong> ${escapeHtml(valorTexto(pozo.Coordenadas))}</div>
-        <div><strong>Observaciones:</strong> ${escapeHtml(valorTexto(pozo.Observaciones))}</div>
-      `;
-      $("detalleInfoPozo").innerHTML = htmlOriginal;
-
       cargarHistoricoPozo();
     }
 
@@ -793,90 +624,6 @@
           <div class="u">${escapeHtml(unidad || "")}</div>
         </div>
       `;
-    }
-
-    function renderSimDiametros(perf, can) {
-      const wrap = $("simDiametros");
-
-      const perfVal = perf && perf > 0 ? perf : 0;
-      const canVal = can && can > 0 ? can : 0;
-      const max = Math.max(perfVal, canVal, 1);
-
-      const h1 = Math.max(55, (perfVal / max) * 120);
-      const h2 = Math.max(45, (canVal / max) * 120);
-      const w1 = Math.max(42, (perfVal / max) * 90);
-      const w2 = Math.max(32, (canVal / max) * 90);
-
-      wrap.innerHTML = `
-        <div class="cilindro-col">
-          <div class="cilindro" style="height:${h1}px; width:${w1}px;">
-            ${perfVal ? escapeHtml(formatearNumero(perfVal)) : "-"}
-          </div>
-          <div class="cilindro-label">
-            <strong>Perforación</strong><br>${perfVal ? escapeHtml(formatearNumero(perfVal)) + ' pulg.' : 'Sin dato'}
-          </div>
-        </div>
-        <div class="cilindro-col">
-          <div class="cilindro cilindro-sec" style="height:${h2}px; width:${w2}px;">
-            ${canVal ? escapeHtml(formatearNumero(canVal)) : "-"}
-          </div>
-          <div class="cilindro-label">
-            <strong>Cañería</strong><br>${canVal ? escapeHtml(formatearNumero(canVal)) + ' pulg.' : 'Sin dato'}
-          </div>
-        </div>
-      `;
-    }
-
-    function renderSimNiveles(estatico, dinamico) {
-      const box = $("simNiveles");
-
-      const est = estatico && estatico > 0 ? estatico : null;
-      const din = dinamico && dinamico > 0 ? dinamico : null;
-      const max = Math.max(est || 0, din || 0, 1);
-
-      let html = "";
-
-      if (est !== null) {
-        const topEst = Math.min(92, Math.max(8, (est / max) * 92));
-        html += `
-          <div class="agua-estatica" style="top:${topEst}%;">
-            <div class="etiqueta-nivel">Estático: ${escapeHtml(formatearNumero(est))} m</div>
-          </div>
-        `;
-      }
-
-      if (din !== null) {
-        const topDin = Math.min(92, Math.max(8, (din / max) * 92));
-        html += `
-          <div class="agua-dinamica" style="top:${topDin}%;">
-            <div class="etiqueta-nivel">Dinámico: ${escapeHtml(formatearNumero(din))} m</div>
-          </div>
-        `;
-      }
-
-      if (!html) {
-        html = `<div class="etiqueta-nivel" style="top:50%; right:50%; transform:translate(50%,-50%);">Sin niveles cargados</div>`;
-      }
-
-      box.innerHTML = html;
-    }
-
-    function renderSimCaudal(caudal) {
-      const barra = $("simCaudalBarra");
-      const valor = $("simCaudalValor");
-      const texto = $("simCaudalTexto");
-
-      if (caudal === null || caudal === undefined || isNaN(caudal) || caudal <= 0) {
-        barra.style.width = "0%";
-        valor.textContent = "-";
-        texto.textContent = "Sin dato cargado";
-        return;
-      }
-
-      const porcentaje = Math.min(100, Math.max(6, (caudal / 100) * 100));
-      barra.style.width = porcentaje + "%";
-      valor.textContent = formatearNumero(caudal);
-      texto.textContent = caudal >= 50 ? "Caudal alto" : (caudal >= 20 ? "Caudal medio" : "Caudal bajo");
     }
 
     async function cargarPozos() {
@@ -951,7 +698,8 @@
       pozoActual = {
         id: pozo.ID_Pozo || "",
         descripcion: pozo.Descripcion || "",
-        coordenadas: pozo.Coordenadas || ""
+        coordenadas: pozo.Coordenadas || "",
+        detalle: pozo
       };
 
       actualizarEncabezado();
@@ -973,15 +721,7 @@
             <div class="hist-det">Seleccioná un pozo para ver su histórico.</div>
           </div>
         `;
-        return;
-      }
-
-      if (!URL_LISTAR_HISTORICO_POZO || URL_LISTAR_HISTORICO_POZO.includes("PEGAR_AQUI")) {
-        lista.innerHTML = `
-          <div class="hist-item">
-            <div class="hist-det">Falta configurar la URL del webhook para listar histórico.</div>
-          </div>
-        `;
+        historicosActuales = [];
         return;
       }
 
@@ -1007,10 +747,11 @@
         }
 
         const data = await res.json();
-        const historicos = Array.isArray(data) ? data : (data.items || data.data || []);
-        renderHistoricoPozo(historicos);
+        historicosActuales = Array.isArray(data) ? data : (data.items || data.data || []);
+        renderHistoricoPozo(historicosActuales);
       } catch (error) {
         console.error(error);
+        historicosActuales = [];
         lista.innerHTML = `
           <div class="hist-item">
             <div class="hist-det">Error al cargar el histórico del pozo.</div>
@@ -1034,18 +775,11 @@
       lista.innerHTML = historicos.map(h => {
         const fecha =
           h.Fecha ||
+          h.Fecha_Hora ||
           h.fecha ||
           h.Fecha_Registro ||
           h.FechaSeguimiento ||
           "Sin fecha";
-
-        const subtitulo =
-          h.Tipo ||
-          h.Categoria ||
-          h.Estado ||
-          h.Usuario ||
-          h.Responsable ||
-          "";
 
         const detalle =
           h.Detalle ||
@@ -1056,12 +790,82 @@
 
         return `
           <div class="hist-item">
-            <div class="hist-fecha">${escapeHtml(formatearFecha(fecha))}</div>
-            ${subtitulo ? `<div class="hist-sub">${escapeHtml(subtitulo)}</div>` : ``}
+            <div class="hist-fecha">${escapeHtml(formatearFechaHora(fecha))}</div>
             <div class="hist-det">${escapeHtml(String(detalle))}</div>
           </div>
         `;
       }).join("");
+    }
+
+    function mostrarCrearHistorico() {
+      if (!pozoActual.id) {
+        alert("Seleccioná un pozo primero.");
+        return;
+      }
+
+      $("panelCrearHistorico").classList.remove("oculto");
+      $("estadoHistorico").className = "mensaje";
+      $("estadoHistorico").textContent = "";
+      $("histObservaciones").value = "";
+
+      const ahora = new Date();
+      const offset = ahora.getTimezoneOffset();
+      const local = new Date(ahora.getTime() - offset * 60000).toISOString().slice(0, 16);
+      $("histFecha").value = local;
+    }
+
+    function cerrarCrearHistorico() {
+      $("panelCrearHistorico").classList.add("oculto");
+    }
+
+    async function guardarHistorico() {
+      const estado = $("estadoHistorico");
+
+      const payload = {
+        ID_Pozo: pozoActual.id,
+        Fecha_Hora: $("histFecha").value,
+        Observaciones: $("histObservaciones").value.trim()
+      };
+
+      if (!pozoActual.id) {
+        estado.className = "mensaje error";
+        estado.textContent = "No hay pozo seleccionado.";
+        return;
+      }
+
+      if (!payload.Observaciones) {
+        estado.className = "mensaje error";
+        estado.textContent = "La observación es obligatoria.";
+        return;
+      }
+
+      try {
+        estado.className = "mensaje";
+        estado.textContent = "Guardando histórico...";
+
+        const res = await fetch(URL_GUARDAR_HISTORICO, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        estado.className = "mensaje ok";
+        estado.textContent = "Histórico guardado correctamente.";
+
+        await cargarHistoricoPozo();
+
+        setTimeout(() => {
+          cerrarCrearHistorico();
+        }, 500);
+      } catch (e) {
+        console.error(e);
+        estado.className = "mensaje error";
+        estado.textContent = "Error al guardar el histórico.";
+      }
     }
 
     async function guardarPozo() {
@@ -1112,7 +916,8 @@
         pozoActual = {
           id: data.ID_Pozo || "",
           descripcion: payload.Descripcion,
-          coordenadas: payload.Coordenadas || ""
+          coordenadas: payload.Coordenadas || "",
+          detalle: null
         };
 
         actualizarEncabezado();
@@ -1130,6 +935,138 @@
         estado.className = "mensaje error";
         estado.textContent = "Error al guardar pozo.";
       }
+    }
+
+    async function generarPDF() {
+      if (!pozoActual.id || !pozoActual.detalle) {
+        alert("Seleccioná un pozo antes de generar el PDF.");
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      let y = 12;
+
+      try {
+        const logoData = await cargarImagenComoDataURL("logo.png");
+        doc.addImage(logoData, "PNG", 10, y, 34, 34);
+      } catch (e) {
+        console.warn("No se pudo cargar logo.png");
+      }
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.text("Informe de pozo", 50, 20);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.text(`Fecha del informe: ${new Date().toLocaleDateString("es-AR")}`, 50, 27);
+      y = 52;
+
+      doc.setDrawColor(180);
+      doc.rect(10, y, 190, 18);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text("Cliente", 14, y + 7);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(11);
+      doc.text(clienteActual.nombre || "-", 14, y + 14);
+      y += 24;
+
+      const p = pozoActual.detalle;
+
+      const bloquePozo = [
+        `Descripción: ${valorTexto(p.Descripcion)}`,
+        `Diám. perforación: ${valorUnidad(numeroONull(p.Diametro_Perforacion), "pulgadas")}`,
+        `Diám. cañería: ${valorUnidad(numeroONull(p["Diametro_Cañeria"]), "pulgadas")}`,
+        `Tipo tablero: ${valorTexto(p.Tipo_Tablero)}`,
+        `Nivel estático: ${valorUnidad(numeroONull(p.Nivel_Estatico), "m")}`,
+        `Nivel dinámico: ${valorUnidad(numeroONull(p.Nivel_Dinamico), "m")}`,
+        `Potencia / Marca: ${valorTexto(p.Potencia_Marca)}`,
+        `Caudal: ${valorUnidad(numeroONull(p.Caudal), "m³/h")}`,
+        `Coordenadas: ${valorTexto(p.Coordenadas)}`,
+        `Observaciones: ${valorTexto(p.Observaciones)}`
+      ];
+
+      doc.rect(10, y, 190, 62);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text("Pozo", 14, y + 7);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+
+      let yy = y + 14;
+      bloquePozo.forEach(linea => {
+        const lines = doc.splitTextToSize(linea, 180);
+        doc.text(lines, 14, yy);
+        yy += lines.length * 5;
+      });
+
+      y += 68;
+
+      doc.rect(10, y, 190, 10);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text("Histórico", 14, y + 7);
+      y += 14;
+
+      if (!historicosActuales.length) {
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.text("Sin registros históricos cargados.", 14, y);
+      } else {
+        historicosActuales.forEach((h, index) => {
+          const fecha = formatearFechaHora(
+            h.Fecha || h.Fecha_Hora || h.fecha || h.Fecha_Registro || h.FechaSeguimiento || ""
+          );
+          const detalle = String(
+            h.Detalle || h.Observacion || h.Observaciones || h.Descripcion || "Sin detalle"
+          );
+
+          if (y > 260) {
+            doc.addPage();
+            y = 16;
+          }
+
+          doc.setFont("helvetica", "bold");
+          doc.setFontSize(10);
+          doc.text(`${index + 1}. ${fecha}`, 14, y);
+
+          y += 5;
+          doc.setFont("helvetica", "normal");
+
+          const lines = doc.splitTextToSize(detalle, 180);
+          doc.text(lines, 18, y);
+          y += lines.length * 5 + 4;
+        });
+      }
+
+      doc.save(`Informe_Pozo_${sanitizarNombreArchivo(pozoActual.descripcion || "pozo")}.pdf`);
+    }
+
+    function cargarImagenComoDataURL(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = function () {
+          const canvas = document.createElement("canvas");
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas.toDataURL("image/png"));
+        };
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+
+    function sanitizarNombreArchivo(texto) {
+      return String(texto)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9_-]/g, "_");
     }
 
     function numeroONull(valor) {
@@ -1156,23 +1093,19 @@
       return `${formatearNumero(v)} ${unidad}`;
     }
 
-    function formatearFecha(valor) {
+    function formatearFechaHora(valor) {
       if (!valor) return "Sin fecha";
 
       const txt = String(valor).trim();
+      const fecha = new Date(txt);
 
-      if (/^\d{4}-\d{2}-\d{2}/.test(txt)) {
-        const base = txt.slice(0, 10);
-        const [y, m, d] = base.split("-");
-        return `${d}/${m}/${y}`;
-      }
-
-      const f = new Date(txt);
-      if (!isNaN(f.getTime())) {
-        const d = String(f.getDate()).padStart(2, "0");
-        const m = String(f.getMonth() + 1).padStart(2, "0");
-        const y = f.getFullYear();
-        return `${d}/${m}/${y}`;
+      if (!isNaN(fecha.getTime())) {
+        const d = String(fecha.getDate()).padStart(2, "0");
+        const m = String(fecha.getMonth() + 1).padStart(2, "0");
+        const y = fecha.getFullYear();
+        const hh = String(fecha.getHours()).padStart(2, "0");
+        const mm = String(fecha.getMinutes()).padStart(2, "0");
+        return `${d}/${m}/${y} ${hh}:${mm}`;
       }
 
       return txt;
@@ -1188,16 +1121,12 @@
 
         capaSatelital = L.tileLayer(
           "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-          {
-            attribution: "Tiles © Esri"
-          }
+          { attribution: "Tiles © Esri" }
         ).addTo(mapa);
 
         capaEtiquetas = L.tileLayer(
           "https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-          {
-            attribution: "Labels © Esri"
-          }
+          { attribution: "Labels © Esri" }
         ).addTo(mapa);
 
         mapa.on("click", function(e) {
@@ -1312,7 +1241,8 @@
       if (data.tipo === "cliente-seleccionado") {
         clienteActual.id = data.clienteId || "";
         clienteActual.nombre = data.clienteNombre || "";
-        pozoActual = { id: "", descripcion: "", coordenadas: "" };
+        pozoActual = { id: "", descripcion: "", coordenadas: "", detalle: null };
+        historicosActuales = [];
 
         actualizarEncabezado();
 
@@ -1325,7 +1255,8 @@
 
       if (data.tipo === "cliente-limpiado") {
         clienteActual = { id: "", nombre: "" };
-        pozoActual = { id: "", descripcion: "", coordenadas: "" };
+        pozoActual = { id: "", descripcion: "", coordenadas: "", detalle: null };
+        historicosActuales = [];
         actualizarEncabezado();
 
         $("zonaSinCliente").classList.remove("oculto");
@@ -1343,7 +1274,8 @@
       if (data.tipo === "abrir-crear-pozo") {
         clienteActual.id = data.clienteId || "";
         clienteActual.nombre = data.clienteNombre || "";
-        pozoActual = { id: "", descripcion: "", coordenadas: "" };
+        pozoActual = { id: "", descripcion: "", coordenadas: "", detalle: null };
+        historicosActuales = [];
         actualizarEncabezado();
 
         $("zonaSinCliente").classList.add("oculto");
@@ -1355,136 +1287,6 @@
 
     mostrarBienvenida();
     actualizarEncabezado();
-
-function mostrarCrearHistorico() {
-  if (!pozoActual.id) {
-    alert("Seleccioná un pozo primero");
-    return;
-  }
-
-  $("panelCrearHistorico").classList.remove("oculto");
-
-  const ahora = new Date();
-  const iso = ahora.toISOString().slice(0,16);
-  $("histFecha").value = iso;
-}
-
-function cerrarCrearHistorico() {
-  $("panelCrearHistorico").classList.add("oculto");
-}
-
-async function guardarHistorico() {
-  const estado = $("estadoHistorico");
-
-  const payload = {
-    ID_Pozo: pozoActual.id,
-    Fecha_Hora: $("histFecha").value,
-    Observaciones: $("histObservaciones").value.trim()
-  };
-
-  if (!payload.Observaciones) {
-    estado.className = "mensaje error";
-    estado.textContent = "La observación es obligatoria";
-    return;
-  }
-
-  try {
-    estado.textContent = "Guardando...";
-
-    const res = await fetch(URL_GUARDAR_HISTORICO, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (!res.ok) throw new Error();
-
-    estado.className = "mensaje ok";
-    estado.textContent = "Guardado correctamente";
-
-    cerrarCrearHistorico();
-    cargarHistoricoPozo();
-
-  } catch (e) {
-    estado.className = "mensaje error";
-    estado.textContent = "Error al guardar";
-  }
-}    
   </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
-async function generarPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-
-  let y = 10;
-
-  // LOGO
-  const img = new Image();
-  img.src = "logo.png";
-
-  await new Promise(resolve => {
-    img.onload = resolve;
-  });
-
-  doc.addImage(img, "PNG", 10, y, 50, 30);
-  y += 35;
-
-  // FECHA
-  const fecha = new Date().toLocaleDateString();
-  doc.setFontSize(10);
-  doc.text(`Fecha: ${fecha}`, 150, 15);
-
-  // CLIENTE
-  doc.setFontSize(14);
-  doc.text("Cliente", 10, y);
-  y += 6;
-
-  doc.setFontSize(11);
-  doc.text(clienteActual.nombre || "-", 10, y);
-  y += 10;
-
-  // POZO
-  doc.setFontSize(14);
-  doc.text("Datos del pozo", 10, y);
-  y += 6;
-
-  doc.setFontSize(10);
-
-  doc.text(`Descripción: ${pozoActual.descripcion}`, 10, y); y += 6;
-  doc.text(`Coordenadas: ${pozoActual.coordenadas}`, 10, y); y += 6;
-
-  y += 5;
-
-  // HISTÓRICO
-  doc.setFontSize(14);
-  doc.text("Histórico", 10, y);
-  y += 6;
-
-  const items = document.querySelectorAll(".hist-item");
-
-  doc.setFontSize(10);
-
-  items.forEach(item => {
-    const fecha = item.querySelector(".hist-fecha")?.innerText || "";
-    const detalle = item.querySelector(".hist-det")?.innerText || "";
-
-    doc.text(fecha, 10, y);
-    y += 5;
-
-    const lines = doc.splitTextToSize(detalle, 180);
-    doc.text(lines, 10, y);
-    y += lines.length * 5 + 3;
-
-    if (y > 270) {
-      doc.addPage();
-      y = 10;
-    }
-  });
-
-  doc.save("informe_pozo.pdf");
-}  
-</script>    
 </body>
 </html>
