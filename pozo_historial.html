@@ -504,12 +504,10 @@
         <label for="filtroPozo">Filtrar por descripción</label>
         <input type="text" id="filtroPozo" placeholder="Buscar pozo..." />
 
-<div class="acciones">
-  <button class="btn-pri" onclick="abrirMapsPozoSeleccionado()">Abrir ubicación en Google Maps</button>
-  <button class="btn-sec" onclick="cargarHistoricoPozo()">Actualizar histórico</button>
-  <button class="btn-ok" onclick="mostrarCrearHistorico()">Crear histórico</button>
-  <button class="btn-alt" onclick="generarPDF()">Generar PDF</button>
-</div>
+        <div class="acciones">
+          <button class="btn-pri" onclick="cargarPozos()">Actualizar pozos</button>
+          <button class="btn-alt" onclick="mostrarCrearPozo()">Crear pozo</button>
+        </div>
 
         <div id="listaPozos" class="lista">
           <div class="item">Sin datos</div>
@@ -603,10 +601,12 @@
         <label>Pozo</label>
         <input type="text" id="detallePozo" readonly />
 
-        <div class="acciones">
-          <button class="btn-pri" onclick="abrirMapsPozoSeleccionado()">Abrir ubicación en Google Maps</button>
-          <button class="btn-sec" onclick="cargarHistoricoPozo()">Actualizar histórico</button>
-        </div>
+<div class="acciones">
+  <button class="btn-pri" onclick="abrirMapsPozoSeleccionado()">Abrir ubicación en Google Maps</button>
+  <button class="btn-sec" onclick="cargarHistoricoPozo()">Actualizar histórico</button>
+  <button class="btn-ok" onclick="mostrarCrearHistorico()">Crear histórico</button>
+  <button class="btn-alt" onclick="generarPDF()">Generar PDF</button>
+</div>
 
         <div class="detalle-wrap">
           <div class="detalle-top">
