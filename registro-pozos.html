@@ -34,7 +34,8 @@
       min-height: 250px;
     }
 
-    .bloque h2 {
+    .bloque h2,
+    .bloque-inferior h2 {
       margin: 0;
       padding: 14px 12px;
       text-align: center;
@@ -43,6 +44,26 @@
       color: #fff;
       font-weight: bold;
       letter-spacing: 0.3px;
+      transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .bloque h2:hover,
+    .bloque-inferior h2:hover {
+      filter: brightness(1.05);
+    }
+
+    .bloque h2:active,
+    .bloque-inferior h2:active {
+      transform: scale(0.995);
+    }
+
+    .bloque h2:focus-visible,
+    .bloque-inferior h2:focus-visible {
+      outline: 3px solid rgba(0,0,0,0.25);
+      outline-offset: -3px;
     }
 
     .titulo-seleccion {
@@ -78,17 +99,6 @@
       border: 2px solid #222;
       border-radius: 8px;
       overflow: hidden;
-    }
-
-    .bloque-inferior h2 {
-      margin: 0;
-      padding: 14px 12px;
-      text-align: center;
-      border-bottom: 2px solid #222;
-      font-size: 22px;
-      color: #fff;
-      font-weight: bold;
-      letter-spacing: 0.3px;
     }
 
     .barra-estado {
@@ -131,14 +141,12 @@
       color: white;
     }
 
-    .btn-pri {
-      background: #0d6efd;
-      color: white;
-    }
-
-    .btn-ok {
-      background: #198754;
-      color: white;
+    .titulo-info {
+      font-size: 13px;
+      text-align: center;
+      color: rgba(255,255,255,0.95);
+      margin-top: 4px;
+      font-weight: normal;
     }
 
     @media (max-width: 900px) {
@@ -149,6 +157,21 @@
       .acciones {
         margin-left: 0;
         width: 100%;
+      }
+
+      .bloque h2,
+      .bloque-inferior h2 {
+        font-size: 20px;
+        padding: 16px 12px;
+      }
+
+      #frameCliente,
+      #frameCrearCliente {
+        height: 400px;
+      }
+
+      #framePozoHistorial {
+        height: 860px;
       }
     }
   </style>
@@ -165,19 +188,46 @@
     </div>
 
     <div class="fila-superior">
-      <div class="bloque">
-        <h2 class="titulo-seleccion">Selección de cliente</h2>
+      <div class="bloque" id="bloqueSeleccionCliente">
+        <h2
+          class="titulo-seleccion"
+          tabindex="0"
+          onclick="irASeccion('cliente')"
+          onkeydown="if(event.key==='Enter' || event.key===' '){ event.preventDefault(); irASeccion('cliente'); }"
+          title="Tocar para ir al formulario de selección de cliente"
+        >
+          Selección de cliente
+          <div class="titulo-info">Tocar aquí para enfocarte en esta sección</div>
+        </h2>
         <iframe id="frameCliente" src="seleccion_cliente.html"></iframe>
       </div>
 
-      <div class="bloque">
-        <h2 class="titulo-creacion">Creación de cliente</h2>
+      <div class="bloque" id="bloqueCreacionCliente">
+        <h2
+          class="titulo-creacion"
+          tabindex="0"
+          onclick="irASeccion('crearCliente')"
+          onkeydown="if(event.key==='Enter' || event.key===' '){ event.preventDefault(); irASeccion('crearCliente'); }"
+          title="Tocar para ir al formulario de creación de cliente"
+        >
+          Creación de cliente
+          <div class="titulo-info">Tocar aquí para enfocarte en esta sección</div>
+        </h2>
         <iframe id="frameCrearCliente" src="crear_cliente.html"></iframe>
       </div>
     </div>
 
-    <div class="bloque-inferior">
-      <h2 class="titulo-pozos">En esta sección: Registra y Consulta la gestion de pozos</h2>
+    <div class="bloque-inferior" id="bloquePozos">
+      <h2
+        class="titulo-pozos"
+        tabindex="0"
+        onclick="irASeccion('pozos')"
+        onkeydown="if(event.key==='Enter' || event.key===' '){ event.preventDefault(); irASeccion('pozos'); }"
+        title="Tocar para ir a la gestión de pozos"
+      >
+        En esta sección: Registra y Consulta la gestión de pozos
+        <div class="titulo-info">Tocar aquí para enfocarte en esta sección</div>
+      </h2>
       <iframe id="framePozoHistorial" src="pozo_historial.html"></iframe>
     </div>
   </div>
@@ -207,27 +257,95 @@
       estado.pozoId = "";
       estado.pozoDescripcion = "";
       refrescarEstadoVisual();
+
       framePozoHistorial.contentWindow.postMessage({
         tipo: "cliente-limpiado"
       }, "*");
     }
 
-    function abrirModoCrearPozo() {
-      if (!estado.clienteId) {
-        alert("Primero seleccioná un cliente.");
-        return;
+    function scrollSuaveA(elemento) {
+      if (!elemento) return;
+      elemento.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+
+    function enfocarPrimerCampoEnIframe(iframe, mensajeTipo) {
+      if (!iframe) return;
+
+      try {
+        const doc = iframe.contentWindow.document;
+
+        const candidato =
+          doc.querySelector("input:not([type='hidden']):not([disabled])") ||
+          doc.querySelector("select:not([disabled])") ||
+          doc.querySelector("textarea:not([disabled])") ||
+          doc.querySelector("button:not([disabled])");
+
+        if (candidato) {
+          setTimeout(() => {
+            candidato.focus();
+            if (typeof candidato.select === "function" && (candidato.tagName === "INPUT" || candidato.tagName === "TEXTAREA")) {
+              candidato.select();
+            }
+          }, 250);
+        }
+      } catch (e) {
+        // Si no deja acceder directamente al iframe, usamos postMessage.
       }
 
-      estado.pozoId = "";
-      estado.pozoDescripcion = "";
-      refrescarEstadoVisual();
-
-      framePozoHistorial.contentWindow.postMessage({
-        tipo: "abrir-crear-pozo",
-        clienteId: estado.clienteId,
-        clienteNombre: estado.clienteNombre
-      }, "*");
+      iframe.contentWindow.postMessage({ tipo: mensajeTipo }, "*");
     }
+
+    function ajustarDescripcionCrearCliente() {
+      try {
+        const doc = frameCrearCliente.contentWindow.document;
+
+        const campoDescripcion =
+          doc.querySelector("#Descripcion") ||
+          doc.querySelector("[name='Descripcion']") ||
+          doc.querySelector("[name='descripcion']") ||
+          doc.querySelector("#descripcion") ||
+          doc.querySelector("textarea");
+
+        if (campoDescripcion) {
+          campoDescripcion.style.minHeight = "60px";
+          campoDescripcion.style.height = "60px";
+          campoDescripcion.style.maxHeight = "80px";
+          campoDescripcion.style.resize = "vertical";
+
+          if (campoDescripcion.tagName === "TEXTAREA") {
+            campoDescripcion.rows = 2;
+          }
+        }
+      } catch (e) {
+        // Si no se puede tocar desde acá, habrá que hacerlo dentro de crear_cliente.html
+      }
+    }
+
+    function irASeccion(seccion) {
+      if (seccion === "cliente") {
+        scrollSuaveA(document.getElementById("bloqueSeleccionCliente"));
+        enfocarPrimerCampoEnIframe(frameCliente, "enfocar-seleccion-cliente");
+      }
+
+      if (seccion === "crearCliente") {
+        scrollSuaveA(document.getElementById("bloqueCreacionCliente"));
+        enfocarPrimerCampoEnIframe(frameCrearCliente, "enfocar-crear-cliente");
+      }
+
+      if (seccion === "pozos") {
+        scrollSuaveA(document.getElementById("bloquePozos"));
+        enfocarPrimerCampoEnIframe(framePozoHistorial, "enfocar-pozos");
+      }
+    }
+
+    frameCrearCliente.addEventListener("load", () => {
+      setTimeout(() => {
+        ajustarDescripcionCrearCliente();
+      }, 300);
+    });
 
     window.addEventListener("message", (event) => {
       const data = event.data || {};
