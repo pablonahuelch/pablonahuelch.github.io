@@ -6,6 +6,7 @@
   <title>Registro de Clientes, Pozos e Historial</title>
   <style>
     * { box-sizing: border-box; font-family: Arial, sans-serif; }
+
     body {
       margin: 0;
       background: #f4f6f9;
@@ -35,11 +36,25 @@
 
     .bloque h2 {
       margin: 0;
-      padding: 12px;
+      padding: 14px 12px;
       text-align: center;
-      background: #f0f0f0;
       border-bottom: 2px solid #222;
       font-size: 22px;
+      color: #fff;
+      font-weight: bold;
+      letter-spacing: 0.3px;
+    }
+
+    .titulo-seleccion {
+      background: linear-gradient(135deg, #0d6efd, #3b82f6);
+    }
+
+    .titulo-creacion {
+      background: linear-gradient(135deg, #198754, #20c997);
+    }
+
+    .titulo-pozos {
+      background: linear-gradient(135deg, #fd7e14, #f59e0b);
     }
 
     iframe {
@@ -67,11 +82,13 @@
 
     .bloque-inferior h2 {
       margin: 0;
-      padding: 12px;
+      padding: 14px 12px;
       text-align: center;
-      background: #f0f0f0;
       border-bottom: 2px solid #222;
       font-size: 22px;
+      color: #fff;
+      font-weight: bold;
+      letter-spacing: 0.3px;
     }
 
     .barra-estado {
@@ -143,25 +160,24 @@
       <div class="pill"><strong>Pozo seleccionado:</strong> <span id="lblPozo">Ninguno</span></div>
 
       <div class="acciones">
-        <button class="btn-pri" onclick="abrirModoCrearPozo()">Crear pozo para cliente seleccionado</button>
         <button class="btn-sec" onclick="limpiarSeleccion()">Limpiar selección</button>
       </div>
     </div>
 
     <div class="fila-superior">
       <div class="bloque">
-        <h2>Selección de cliente</h2>
+        <h2 class="titulo-seleccion">Selección de cliente</h2>
         <iframe id="frameCliente" src="seleccion_cliente.html"></iframe>
       </div>
 
       <div class="bloque">
-        <h2>Creación de cliente</h2>
+        <h2 class="titulo-creacion">Creación de cliente</h2>
         <iframe id="frameCrearCliente" src="crear_cliente.html"></iframe>
       </div>
     </div>
 
     <div class="bloque-inferior">
-      <h2>En esta sección: Registra y Consulta la gestion de pozos</h2>
+      <h2 class="titulo-pozos">En esta sección: Registra y Consulta la gestion de pozos</h2>
       <iframe id="framePozoHistorial" src="pozo_historial.html"></iframe>
     </div>
   </div>
