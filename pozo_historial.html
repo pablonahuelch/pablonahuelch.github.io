@@ -320,6 +320,41 @@
         grid-template-columns: 1fr;
       }
     }
+
+    @media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  .card,
+  .datos-card,
+  .historial-card,
+  .form-card {
+    padding: 12px;
+  }
+
+  input, textarea, select {
+    font-size: 16px;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+  }
+
+  .acciones {
+    flex-direction: column;
+  }
+
+  #mapaPozo {
+    height: 260px;
+  }
+
+  .encabezado {
+    font-size: 14px;
+  }
+}    
   </style>
 </head>
 <body>
@@ -367,42 +402,42 @@
         <input type="text" id="crearPozoCliente" readonly />
 
         <label for="descripcionPozo">Descripción</label>
-        <input type="text" id="descripcionPozo" placeholder="Ej: Pozo 1 - Campo Norte" />
+        <input type="text" id="descripcionPozo" placeholder="Ej: Pozo 1 - Campo Norte" enterkeyhint="next" />
 
         <div class="fila-2">
           <div>
             <label for="diametroPerforacion">Diámetro perforación (pulgadas)</label>
-            <input type="number" step="0.01" id="diametroPerforacion" placeholder="Ej: 8.5" />
+            <input type="number" step="0.01" id="diametroPerforacion" placeholder="Ej: 8.5" inputmode="decimal" enterkeyhint="next" />
           </div>
           <div>
             <label for="diametroCanieria">Diámetro cañería (pulgadas)</label>
-            <input type="number" step="0.01" id="diametroCanieria" placeholder="Ej: 4" />
+            <input type="number" step="0.01" id="diametroCanieria" placeholder="Ej: 4" inputmode="decimal" enterkeyhint="next" />
           </div>
         </div>
 
         <div class="fila-2">
           <div>
             <label for="tipoTablero">Tipo tablero</label>
-            <input type="text" id="tipoTablero" placeholder="Texto" />
+            <input type="text" id="tipoTablero" placeholder="Texto" enterkeyhint="next" />
           </div>
           <div>
             <label for="potenciaMarca">Potencia / Marca</label>
-            <input type="text" id="potenciaMarca" placeholder="Texto" />
+            <input type="text" id="potenciaMarca" placeholder="Texto" enterkeyhint="next" />
           </div>
         </div>
 
         <div class="fila-3">
           <div>
             <label for="nivelEstatico">Nivel estático (m)</label>
-            <input type="number" step="0.01" id="nivelEstatico" placeholder="Ej: 15" />
+            <input type="number" step="0.01" id="nivelEstatico" placeholder="Ej: 15" inputmode="decimal" enterkeyhint="next" />
           </div>
           <div>
             <label for="nivelDinamico">Nivel dinámico (m)</label>
-            <input type="number" step="0.01" id="nivelDinamico" placeholder="Ej: 22" />
+            <input type="number" step="0.01" id="nivelDinamico" placeholder="Ej: 22" inputmode="decimal" enterkeyhint="next" />/>
           </div>
           <div>
             <label for="caudal">Caudal (m³/h)</label>
-            <input type="number" step="0.01" id="caudal" placeholder="Ej: 12" />
+            <input type="number" step="0.01" id="caudal" placeholder="Ej: 12" inputmode="decimal" enterkeyhint="next" />
           </div>
         </div>
 
@@ -420,7 +455,7 @@
         <div id="mapaPozo"></div>
 
         <label for="observacionesPozo">Observaciones</label>
-        <textarea id="observacionesPozo" placeholder="Texto que el usuario ingresa"></textarea>
+        <textarea id="observacionesPozo" placeholder="Texto que el usuario ingresa" enterkeyhint="done"></textarea>
 
         <div class="acciones">
           <button class="btn-ok" onclick="guardarPozo()">Guardar pozo</button>
@@ -473,7 +508,7 @@
             <input type="datetime-local" id="histFecha" />
 
             <label for="histObservaciones">Observaciones</label>
-            <textarea id="histObservaciones" placeholder="Detalle del evento..."></textarea>
+            <textarea id="histObservaciones" placeholder="Detalle del evento..." enterkeyhint="done"></textarea>
 
             <div class="acciones">
               <button class="btn-ok" onclick="guardarHistorico()">Guardar</button>
@@ -531,6 +566,41 @@
       return document.getElementById(id);
     }
 
+  const ES_MOVIL = window.matchMedia("(max-width: 768px)").matches;
+
+  function enfocarCampo(id, delay = 250) {
+    setTimeout(() => {
+      const el = $(id);
+      if (!el) return;
+
+      el.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+      try {
+        el.focus({ preventScroll: true });
+      } catch {
+        el.focus();
+      }
+
+      if (ES_MOVIL && (el.tagName === "INPUT" || el.tagName === "TEXTAREA")) {
+        const largo = el.value ? el.value.length : 0;
+        if (typeof el.setSelectionRange === "function") {
+          el.setSelectionRange(largo, largo);
+        }
+      }
+    }, delay);
+  }
+
+  function enfocarPrimerCampoPozo() {
+    enfocarCampo("descripcionPozo", 350);
+  }
+
+  function enfocarPrimerCampoHistorico() {
+    enfocarCampo("histObservaciones", 250);
+  }
+    
     function actualizarEncabezado() {
       $("lblCliente").textContent = clienteActual.nombre || "Ninguno seleccionado";
       $("lblPozo").textContent = pozoActual.descripcion || "Ninguno seleccionado";
@@ -547,24 +617,26 @@
       $("panelBienvenida").classList.remove("oculto");
     }
 
-    function mostrarCrearPozo() {
-      if (!clienteActual.id) {
-        alert("Primero seleccioná un cliente.");
-        return;
-      }
+function mostrarCrearPozo() {
+  if (!clienteActual.id) {
+    alert("Primero seleccioná un cliente.");
+    return;
+  }
 
-      cerrarPaneles();
-      $("panelCrearPozo").classList.remove("oculto");
-      $("crearPozoCliente").value = clienteActual.nombre;
-      $("estadoPozo").textContent = "";
+  cerrarPaneles();
+  $("panelCrearPozo").classList.remove("oculto");
+  $("crearPozoCliente").value = clienteActual.nombre;
+  $("estadoPozo").textContent = "";
 
-      limpiarFormularioPozo();
-      inicializarMapa();
+  limpiarFormularioPozo();
+  inicializarMapa();
 
-      setTimeout(() => {
-        if (mapa) mapa.invalidateSize();
-      }, 250);
-    }
+  setTimeout(() => {
+    if (mapa) mapa.invalidateSize();
+  }, 250);
+
+  enfocarPrimerCampoPozo();
+}
 
     function limpiarFormularioPozo() {
       $("descripcionPozo").value = "";
@@ -797,22 +869,24 @@
       }).join("");
     }
 
-    function mostrarCrearHistorico() {
-      if (!pozoActual.id) {
-        alert("Seleccioná un pozo primero.");
-        return;
-      }
+function mostrarCrearHistorico() {
+  if (!pozoActual.id) {
+    alert("Seleccioná un pozo primero.");
+    return;
+  }
 
-      $("panelCrearHistorico").classList.remove("oculto");
-      $("estadoHistorico").className = "mensaje";
-      $("estadoHistorico").textContent = "";
-      $("histObservaciones").value = "";
+  $("panelCrearHistorico").classList.remove("oculto");
+  $("estadoHistorico").className = "mensaje";
+  $("estadoHistorico").textContent = "";
+  $("histObservaciones").value = "";
 
-      const ahora = new Date();
-      const offset = ahora.getTimezoneOffset();
-      const local = new Date(ahora.getTime() - offset * 60000).toISOString().slice(0, 16);
-      $("histFecha").value = local;
-    }
+  const ahora = new Date();
+  const offset = ahora.getTimezoneOffset();
+  const local = new Date(ahora.getTime() - offset * 60000).toISOString().slice(0, 16);
+  $("histFecha").value = local;
+
+  enfocarPrimerCampoHistorico();
+}
 
     function cerrarCrearHistorico() {
       $("panelCrearHistorico").classList.add("oculto");
@@ -1285,8 +1359,41 @@
       }
     });
 
-    mostrarBienvenida();
-    actualizarEncabezado();
+mostrarBienvenida();
+actualizarEncabezado();
+configurarNavegacionMovil();
+
+    function configurarNavegacionMovil() {
+  const secuenciaPozo = [
+    "descripcionPozo",
+    "diametroPerforacion",
+    "diametroCanieria",
+    "tipoTablero",
+    "potenciaMarca",
+    "nivelEstatico",
+    "nivelDinamico",
+    "caudal",
+    "observacionesPozo"
+  ];
+
+  secuenciaPozo.forEach((id, index) => {
+    const el = $(id);
+    if (!el) return;
+
+    el.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter") return;
+      if (el.tagName === "TEXTAREA") return;
+
+      e.preventDefault();
+
+      const siguiente = secuenciaPozo[index + 1];
+      if (siguiente) {
+        enfocarCampo(siguiente, 50);
+      }
+    });
+  });
+}
+    
   </script>
 </body>
 </html>
